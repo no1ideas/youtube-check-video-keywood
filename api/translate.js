@@ -1,7 +1,7 @@
 // --- CHỨC NĂNG BACKEND: /api/translate ---
 // API này nhận một danh sách văn bản và một ngôn ngữ mục tiêu (targetLang),
 // sau đó gọi đến API dịch (không chính thức) của Google.
-// PHIÊN BẢN 4.0: Sửa lỗi dịch, chuyển sang GET và chia lô (batching)
+// PHIÊN BẢN 4.1: Sửa lỗi dịch, siết chặt logic chia lô (batching)
 
 export default async function handler(request, response) {
     // Chỉ chấp nhận phương thức POST (vì frontend gửi POST)
@@ -27,29 +27,38 @@ export default async function handler(request, response) {
 
         if (uniqueNonEmptyTexts.length > 0) {
             
-            // 4. CHIA LÔ (BATCHING)
-            // URL GET có giới hạn. Chúng ta sẽ giới hạn mỗi URL khoảng 4000 ký tự.
+            // 4. CHIA LÔ (BATCHING) - Logic v4.1 (An toàn hơn)
+            // URL GET có giới hạn. Giới hạn 2000 ký tự và 20 bình luận/lô cho an toàn.
+            const MAX_URL_LENGTH = 2000;
+            const MAX_BATCH_ITEMS = 20;
+            
             const batches = [];
             let currentBatch = [];
-            let currentLength = 0;
+            let currentParamsLength = 0;
             const baseURL = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${langCode}&dt=t`;
+            const baseLength = baseURL.length;
 
             for (const text of uniqueNonEmptyTexts) {
                 // + 3 cho '&q='
-                const textLength = encodeURIComponent(text).length + 3; 
+                const textParamLength = encodeURIComponent(text).length + 3; 
                 
-                // Nếu thêm text này vào sẽ vượt quá 4000,
-                // hoặc nếu lô hiện tại đã có 25 bình luận (một giới hạn an toàn khác)
-                if ((currentLength + textLength > 4000 && currentBatch.length > 0) || currentBatch.length >= 25) {
+                // Kiểm tra xem việc thêm text này có vượt giới hạn không
+                if (
+                    (baseLength + currentParamsLength + textParamLength > MAX_URL_LENGTH && currentBatch.length > 0) || 
+                    currentBatch.length >= MAX_BATCH_ITEMS
+                ) {
                     batches.push(currentBatch); // Đẩy lô cũ vào
                     currentBatch = [text];     // Bắt đầu lô mới
-                    currentLength = textLength;
+                    currentParamsLength = textParamLength;
                 } else {
                     currentBatch.push(text);
-                    currentLength += textLength;
+                    currentParamsLength += textParamLength;
                 }
             }
-            batches.push(currentBatch); // Đẩy lô cuối cùng
+            // Đẩy lô cuối cùng vào nếu nó không rỗng
+            if (currentBatch.length > 0) {
+                batches.push(currentBatch); 
+            }
 
             const allTranslatedSegments = [];
 
@@ -64,20 +73,22 @@ export default async function handler(request, response) {
                 const transResponse = await fetch(url, { method: 'GET' }); // Dùng GET
 
                 if (!transResponse.ok) {
-                    throw new Error(`Google Translate API error! Status: ${transResponse.status}`);
+                    // Nếu lô này lỗi, ghi lại và thêm kết quả rỗng
+                    console.warn(`Google Translate API error! Status: ${transResponse.status} for batch:`, batch[0]);
+                    allTranslatedSegments.push(...batch.map(() => '')); // Thêm chuỗi rỗng
+                    continue; // Bỏ qua lô này và tiếp tục lô tiếp theo
                 }
 
                 const transData = await transResponse.json();
                 
-                // Xử lý phản hồi (Logic của v3.0, nhưng cho GET)
+                // Xử lý phản hồi
                 if (transData && transData[0]) {
-                    // Khi gửi nhiều 'q' qua GET, transData[0] là một mảng các kết quả
                     const batchTranslations = transData[0].map(segment => 
                         (segment && segment[0]) ? segment[0] : ''
                     );
                     allTranslatedSegments.push(...batchTranslations);
                 } else {
-                    // Nếu lô thất bại, thêm chuỗi rỗng
+                    // Nếu lô thất bại (dữ liệu rỗng), thêm chuỗi rỗng
                     allTranslatedSegments.push(...batch.map(() => ''));
                 }
             }
@@ -96,7 +107,9 @@ export default async function handler(request, response) {
         // 7. Xây dựng mảng kết quả cuối cùng theo đúng thứ tự của 'texts'
         const finalTranslations = texts.map(originalText => {
             if (!originalText || originalText.trim().length === 0) return ''; // Trả về chuỗi rỗng nếu đầu vào là rỗng
-            return originalToTranslated.get(originalText.trim()) || '(Lỗi dịch)';
+            // Lấy bản dịch, nếu nó là chuỗi rỗng (do lỗi) thì trả về (Lỗi dịch)
+            const translation = originalToTranslated.get(originalText.trim());
+            return translation || '(Lỗi dịch)';
         });
 
         // Trả về kết quả thành công
