@@ -1,8 +1,8 @@
 // --- CHỨC NĂNG BACKEND: /api/translate ---
 // API này nhận một danh sách văn bản và một ngôn ngữ mục tiêu (targetLang),
 // sau đó gọi đến API dịch (không chính thức) của Google.
-// PHIÊN BẢN 6.0: Quay lại gọi tuần tự (sequential) để tăng độ ổn định
-// Lỗi song song (v5.0) là quá nhanh, bị API của Google chặn.
+// PHIÊN BẢN 6.1: Quay lại gọi tuần tự (sequential) và ẨN LỖI
+// Thay vì báo (Lỗi dịch), ta trả về văn bản gốc nếu dịch thất bại.
 
 export default async function handler(request, response) {
     // Chỉ chấp nhận phương thức POST
@@ -91,16 +91,24 @@ export default async function handler(request, response) {
                     const originalText = batch[i];
                     originalToTranslated.set(originalText, translatedText);
                 });
+                
+                // Thêm một khoảng dừng nhỏ (100ms) giữa các lô để tránh bị chặn
+                await new Promise(resolve => setTimeout(resolve, 100)); 
             }
         }
 
         // 7. Xây dựng mảng kết quả cuối cùng theo đúng thứ tự của 'texts'
+        // --- LOGIC V6.1 (ẨN LỖI) ---
         const finalTranslations = texts.map(originalText => {
             if (!originalText || originalText.trim().length === 0) return '';
             const translation = originalToTranslated.get(originalText.trim());
-            // Nếu dịch thành công (kể cả ra chuỗi rỗng) thì dùng, nếu không (undefined) thì báo lỗi
-            return (translation !== undefined) ? translation : '(Lỗi dịch)';
+            
+            // Nếu dịch thành công VÀ CÓ NỘI DUNG (translation !== '') thì dùng.
+            // Nếu dịch thất bại (undefined) HOẶC dịch ra chuỗi rỗng (''),
+            // thì trả về chính văn bản GỐC.
+            return (translation) ? translation : originalText;
         });
+        // --- KẾT THÚC LOGIC V6.1 ---
 
         // Trả về kết quả thành công
         return response.status(200).json({ translations: finalTranslations });
