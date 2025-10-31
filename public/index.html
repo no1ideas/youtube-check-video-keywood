@@ -2,40 +2,212 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-<!-- ... existing code ... -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công Cụ Phân Tích YouTube & Tạo Từ Khoá</title>
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Tùy chỉnh font chữ Inter */
+        body {
+            font-family: "Inter", sans-serif;
+        }
+        /* Tùy chỉnh thanh cuộn */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        /* Lớp để ẩn popover */
+        .popover {
+            display: none;
+            position: absolute;
+            z-index: 50;
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            word-wrap: break-word;
+        }
+        /* Lớp để hiển thị popover khi hover .result-btn */
+        .result-btn:hover + .popover,
+        .popover:hover {
+            display: block;
+        }
+
+        /* Hiệu ứng loading */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <!-- 
+      *** PHẦN SỬA LỖI QUAN TRỌNG ***
+      Chúng ta bọc toàn bộ code JS trong 'DOMContentLoaded'
+      để đảm bảo nó chỉ chạy SAU KHI HTML đã tải xong.
+    -->
     <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
         const videoInputsContainer = document.getElementById('video-inputs');
-<!-- ... existing code ... -->
+        const searchButton = document.getElementById('search-button');
+        const generateKeywordsButton = document.getElementById('generate-keywords-button');
         const keywordResultsContainer = document.getElementById('keyword-results');
 
         // KHÔNG CÒN API KEY Ở ĐÂY NỮA
         const NUM_INPUTS = 15;
         
         // Nơi lưu trữ dữ liệu video sau khi fetch
-<!-- ... existing code ... -->
+        let videoDataStore = new Array(NUM_INPUTS).fill(null);
+
+        // --- KHỞI TẠO GIAO DIỆN ---
+
+        function createInputRows() {
+            // Kiểm tra xem div có tồn tại không
+            if (!videoInputsContainer) {
+                console.error("Không tìm thấy 'video-inputs' div!");
+                return;
+            }
+            videoInputsContainer.innerHTML = ''; // Xóa nội dung cũ
+            for (let i = 0; i < NUM_INPUTS; i++) {
+                const row = document.createElement('div');
+                row.className = 'flex items-center space-x-2 relative';
+                row.innerHTML = `
+                    <span class="font-semibold text-gray-500 w-6 text-right">${i + 1}.</span>
+                    <input type="text" data-index="${i}" class="video-url-input flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Dán link YouTube...">
+                    
+                    <!-- Nút Thông tin / Kết quả -->
+                    <button data-index="${i}" class="info-btn w-28 bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition duration-300 hover:bg-gray-400">
+                        Thông tin
+                    </button>
+
+                    <!-- Popover (ẩn ban đầu) -->
+                    <div class="popover bg-white border border-gray-300 rounded-lg shadow-xl p-4 right-0 top-10 w-80 max-h-96 overflow-y-auto">
+                        <p class="text-gray-600">Chưa có dữ liệu. Vui lòng nhấn "Tìm kiếm".</p>
+                    </div>
+                `;
+                videoInputsContainer.appendChild(row);
+            }
+        }
+
         // --- LOGIC XỬ LÝ SỰ KIỆN ---
 
         // 1. Sự kiện click nút "Tìm kiếm"
-<!-- ... existing code ... -->
+        if (searchButton) {
+            searchButton.addEventListener('click', async () => {
+                setLoading(searchButton, true, "Đang tìm kiếm...");
+                const inputs = document.querySelectorAll('.video-url-input');
+                const infoButtons = document.querySelectorAll('.info-btn');
+                const popovers = document.querySelectorAll('.popover');
                 
-                if (videoId) {
-                    // Thêm promise vào mảng
-                    fetchPromises.push(
-                        fetchYouTubeVideoInfo(videoId) // Hàm này đã được thay đổi
-                            .then(data => {
-<!-- ... existing code ... -->
-                                videoDataStore[index] = { error: data.message || 'Không thể tải dữ liệu' };
-                                updatePopover(popovers[index], videoDataStore[index]);
-                            })
-                    );
-                } else {
-<!-- ... existing code ... -->
-            try {
-                // Gọi Gemini API
-                const result = await callGeminiApi(combinedText); // Hàm này đã được thay đổi
-                // Hiển thị kết quả
-                displayKeywordResults(result);
-<!-- ... existing code ... -->
+                videoDataStore = new Array(NUM_INPUTS).fill(null); // Reset kho dữ liệu
+                let fetchPromises = [];
+
+                inputs.forEach((input, index) => {
+                    const url = input.value.trim();
+                    const videoId = getYoutubeId(url);
+                    
+                    if (videoId) {
+                        // Thêm promise vào mảng
+                        fetchPromises.push(
+                            fetchYouTubeVideoInfo(videoId) // Hàm này đã được thay đổi
+                                .then(data => {
+                                    videoDataStore[index] = data; // Lưu dữ liệu
+                                    // Cập nhật popover cho nút này
+                                    updatePopover(popovers[index], data);
+                                })
+                                .catch(error => {
+                                    console.error(`Lỗi khi fetch video ${videoId}:`, error);
+                                    videoDataStore[index] = { error: error.message || 'Không thể tải dữ liệu' };
+                                    updatePopover(popovers[index], videoDataStore[index]);
+                                })
+                        );
+                    } else {
+                        // Nếu link trống hoặc không hợp lệ
+                        videoDataStore[index] = null;
+                        updatePopover(popovers[index], null); // Cập nhật popover là rỗng
+                    }
+                });
+
+                // Chờ tất cả các API call hoàn tất
+                await Promise.all(fetchPromises);
+
+                // Đổi tên tất cả các nút
+                infoButtons.forEach(button => {
+                    button.textContent = 'Kết quả';
+                    button.classList.remove('bg-gray-300', 'text-gray-700', 'hover:bg-gray-400');
+                    button.classList.add('bg-indigo-500', 'text-white', 'hover:bg-indigo-600', 'result-btn');
+                });
+
+                setLoading(searchButton, false, "Tìm kiếm Thông Tin Video");
+            });
+        } else {
+            console.error("Không tìm thấy 'search-button'!");
+        }
+
+        // 2. Sự kiện click nút "Tạo Bộ Từ Khoá"
+        if (generateKeywordsButton) {
+            generateKeywordsButton.addEventListener('click', async () => {
+                setLoading(generateKeywordsButton, true, "Đang tạo...");
+                keywordResultsContainer.innerHTML = '<div class="flex justify-center items-center p-10"><div class="loader"></div><span class="ml-3">Đang liên hệ với Gemini...</span></div>';
+
+                // Tổng hợp dữ liệu từ videoDataStore
+                let combinedText = "";
+                videoDataStore.forEach(data => {
+                    if (data && !data.error) {
+                        combinedText += `Tiêu đề: ${data.title}\n`;
+                        combinedText += `Mô tả: ${data.description}\n`;
+                        if (data.tags && data.tags.length > 0) {
+                            combinedText += `Tags: ${data.tags.join(', ')}\n`;
+                        }
+                        combinedText += "---\n";
+                    }
+                });
+
+                if (combinedText.trim() === "") {
+                    keywordResultsContainer.innerHTML = '<p class="text-red-500 text-center">Không có dữ liệu video để phân tích. Vui lòng "Tìm kiếm" video trước.</p>';
+                    setLoading(generateKeywordsButton, false, "Tạo Bộ Từ Khoá Của Chủ Đề");
+                    return;
+                }
+
+                try {
+                    // Gọi Gemini API
+                    const result = await callGeminiApi(combinedText); // Hàm này đã được thay đổi
+                    // Hiển thị kết quả
+                    displayKeywordResults(result);
+                } catch (error) {
+                    console.error("Lỗi khi gọi Gemini API:", error);
+                    keywordResultsContainer.innerHTML = `<p class="text-red-500 text-center"><strong>Đã xảy ra lỗi:</strong> ${error.message}</p>`;
+                } finally {
+                    setLoading(generateKeywordsButton, false, "Tạo Bộ Từ Khoá Của Chủ Đề");
+                }
+            });
+        } else {
+            console.error("Không tìm thấy 'generate-keywords-button'!");
+        }
+
+        // --- HÀM HỖ TRỢ ---
+
+        // Trích xuất Video ID từ URL YouTube
+        function getYoutubeId(url) {
+            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+            const match = url.match(regex);
+            return match ? match[1] : null;
         }
 
         // Gọi API YouTube Data v3 (Đã sửa đổi)
@@ -57,7 +229,69 @@
         }
 
         // Cập nhật nội dung popover
-<!-- ... existing code ... -->
+        function updatePopover(popoverElement, data) {
+            if (data && !data.error) {
+                const descriptionShort = data.description.length > 200 ? data.description.substring(0, 200) + '...' : data.description;
+                const tagsDisplay = data.tags.length > 0
+                    ? data.tags.map(tag => `<span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs">${tag}</span>`).join(' ')
+                    : '<i class="text-gray-500">Không có tags</i>';
+
+                popoverElement.innerHTML = `
+                    <h4 class="font-bold text-base text-gray-900 mb-2">${data.title}</h4>
+                    <p class="text-sm text-gray-700 mb-3">${descriptionShort}</p>
+                    <div class="text-sm font-semibold text-gray-800 mb-1">Từ khoá/Hashtag:</div>
+                    <div class="flex flex-wrap gap-1">
+                        ${tagsDisplay}
+                    </div>
+                `;
+            } else if (data && data.error) {
+                popoverElement.innerHTML = `<p class="text-red-500">${data.error}</p>`;
+            } else {
+                popoverElement.innerHTML = `<p class="text-gray-500">Link trống hoặc không hợp lệ.</p>`;
+            }
+        }
+
+        // Cập nhật trạng thái loading cho nút
+        function setLoading(button, isLoading, loadingText) {
+            if (!button) return; // Thêm kiểm tra an toàn
+            
+            const originalContent = button.innerHTML;
+            if (!button.dataset.originalContent) {
+                button.dataset.originalContent = originalContent;
+            }
+
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = `
+                    <div class="loader"></div>
+                    <span>${loadingText}</span>
+                `;
+            } else {
+                button.disabled = false;
+                // Khôi phục nội dung gốc, nhưng chỉ lấy phần span và svg
+                const originalSpan = (new DOMParser()).parseFromString(button.dataset.originalContent, 'text/html').querySelector('span');
+                const originalSvg = (new DOMParser()).parseFromString(button.dataset.originalContent, 'text/html').querySelector('svg');
+                button.innerHTML = `${originalSvg ? originalSvg.outerHTML : ''}<span>${originalSpan ? originalSpan.textContent : loadingText}</span>`;
+
+                // Nếu là nút tìm kiếm, khôi phục lại icon
+                if(button.id === 'search-button') {
+                     button.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                        <span>${loadingText}</span>
+                     `;
+                }
+                // Nếu là nút generate
+                if(button.id === 'generate-keywords-button') {
+                    button.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.T... (Dài quá, cắt bớt) ...zM12 15a3 3 0 100-6 3 3 0 000 6z" />
+                        </svg>
+                        <span>${loadingText}</span>
+                    `;
+                }
+            }
         }
 
         // --- LOGIC GEMINI API ---
@@ -80,4 +314,101 @@
         }
 
         // Hiển thị kết quả từ Gemini
-<!-- ... existing code ... -->
+        function displayKeywordResults(data) {
+            if (!keywordResultsContainer) return;
+            keywordResultsContainer.innerHTML = ''; // Xóa nội dung cũ
+
+            // Hàm trợ giúp để tạo một khối kết quả
+            const createSection = (title, content) => {
+                const section = document.createElement('div');
+                section.className = 'border border-gray-200 rounded-lg p-4 bg-gray-50';
+                
+                const titleEl = document.createElement('h3');
+                titleEl.className = 'text-lg font-semibold text-gray-800 mb-3';
+                titleEl.textContent = title;
+                section.appendChild(titleEl);
+
+                if (Array.isArray(content) && content.length > 0) {
+                    const list = document.createElement('div');
+                    list.className = 'flex flex-wrap gap-2';
+                    content.forEach(item => {
+                        const itemEl = document.createElement('span');
+                        itemEl.className = 'bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full';
+                        itemEl.textContent = item;
+                        list.appendChild(itemEl);
+                    });
+                    section.appendChild(list);
+                } else if (typeof content === 'string') {
+                    const contentEl = document.createElement('p');
+                    contentEl.className = 'text-gray-700 whitespace-pre-wrap'; // Giữ nguyên định dạng xuống dòng
+                    contentEl.textContent = content;
+                    section.appendChild(contentEl);
+                } else {
+                     const contentEl = document.createElement('p');
+                    contentEl.className = 'text-gray-500 italic';
+                    contentEl.textContent = 'Không có dữ liệu';
+                    section.appendChild(contentEl);
+                }
+                keywordResultsContainer.appendChild(section);
+            };
+
+            // Tạo các khối cho từng phần dữ liệu
+            createSection('Tiêu Đề Chủ Đề (Danh sách phát)', data.tieuDeChuDe);
+            createSection('Mô Tả Chủ Đề (Danh sách phát)', data.moTaChuDe);
+            createSection('Bộ Từ Khoá Chính', data.boTuKhoaChinh);
+            createSection('Từ Khoá Bổ Trợ', data.tuKhoaBoTro);
+            createSection('Từ Khoá Liên Quan', data.tuKhoaLienQuan);
+            createSection('Hashtags', data.hashtags);
+            createSection('Từ Khoá Thương Hiệu', data.tuKhoaThuongHieu);
+        }
+
+        // --- KHỞI ĐỘNG ỨNG DỤNG ---
+        createInputRows();
+
+    }); // <-- ĐÓNG THẺ 'DOMContentLoaded'
+    </script>
+
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 max-w-7xl">
+        <h1 class="text-3xl font-bold text-center text-blue-600 mb-6">Công Cụ Phân Tích YouTube & Tạo Từ Khoá Chủ Đề</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- CỘT BÊN TRÁI -->
+            <div class="bg-white p-5 rounded-lg shadow-lg">
+                <h2 class="text-xl font-semibold mb-4">Danh Sách Link YouTube (Tối đa 15)</h2>
+                <!-- Đây là DIV mà JS cần tìm -->
+                <div id="video-inputs" class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+                    <!-- 15 hàng sẽ được tạo bằng JS -->
+                </div>
+                <button id="search-button" class="mt-5 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Tìm kiếm Thông Tin Video</span>
+                </button>
+            </div>
+
+            <!-- CỘT BÊN PHẢI -->
+            <div class="bg-white p-5 rounded-lg shadow-lg">
+                <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
+                <button id="generate-keywords-button" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478-.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478-.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" />
+                    </svg>
+                    <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
+                </button>
+
+                <div id="keyword-results" class="mt-5 space-y-4 max-h-[550px] overflow-y-auto pr-2">
+                    <!-- Kết quả Gemini sẽ hiển thị ở đây -->
+                    <p class="text-gray-500 text-center">Kết quả tạo từ khoá sẽ xuất hiện ở đây sau khi bạn nhấn nút.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
