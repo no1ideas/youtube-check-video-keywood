@@ -27,11 +27,11 @@ export default async function handler(request, response) {
 Nhiệm vụ của bạn là phân tích dữ liệu (tiêu đề, mô tả, tags) từ một loạt video YouTube và tạo ra một bộ dữ liệu SEO hoàn chỉnh, chuẩn SEO cho một chủ đề chung (ví dụ: một danh sách phát).
 
 QUY TRÌNH BẮT BUỘC:
-1.  **PHÂN TÍCH & TRÍCH XUẤT:** Đọc kỹ toàn bộ tiêu đề, mô tả, tags được cung cấp. Xác định các chủ đề cốt lõi, từ khoá chính, và các thực thể (ví dụ: tên kênh, vật liệu cụ thể như "hồ cá xi măng", kỹ thuật cụ thể như "làm thác nước").
-2.  **TẠO TỪ KHÓA CHUẨN SEO:**
-    * **Từ Khoá Chính (boTuKhoaChinh):** Tạo các từ khóa "đuôi dài" (long-tail, 3-5 từ) có ý định tìm kiếm cao, bám sát vào các chủ đề cốt lõi đã trích xuất. Tránh các từ chung chung (như "DIY").
-    * **Từ Khoá Bổ Trợ (tuKhoaBoTro):** Tạo các từ khóa liên quan, các biến thể, hoặc từ khóa ngữ nghĩa (LSI) hỗ trợ cho từ khóa chính.
-    * **Từ Khoá Liên Quan (tuKhoaLienQuan):** Các từ khóa mở rộng chủ đề, trả lời các câu hỏi liên quan (ví dụ: "cách nuôi cá", "làm bộ lọc hồ cá").
+1.  **PHÂN TÍCH & TRÍCH XUẤT:** Đọc kỹ toàn bộ tiêu đề, mô tả, tags được cung cấp. Xác định các chủ đề cốt lõi và các thực thể (ví dụ: tên kênh, vật liệu cụ thể như "hồ cá xi măng", kỹ thuật cụ thể như "làm thác nước").
+2.  **TẠO TỪ KHÓA CHUẨN SEO (LOGIC MỚI):**
+    * **Từ Khoá Chính (boTuKhoaChinh):** Tạo các "từ khóa gốc" (seed/head keywords) ngắn gọn (1-3 từ), đây là chủ đề cốt lõi nhất. (Ví dụ: "hồ cá xi măng", "DIY aquarium").
+    * **Từ Khoá Bổ Trợ (tuKhoaBoTro):** Tạo các "từ khóa đuôi dài" (long-tail, 3-6 từ) có ý định tìm kiếm cao (how-to, tutorial, best), bám sát vào các từ khóa gốc. (Ví dụ: "cách xây hồ cá xi măng", "hướng dẫn làm hồ cá thác nước").
+    * **Từ Khoá Liên Quan (tuKhoaLienQuan):** Các từ khóa mở rộng chủ đề, trả lời các câu hỏi liên quan (ví dụ: "cách nuôi cá", "làm bộ lọc hồ cá", "trang trí hồ cá").
     * **Từ Khoá Thương Hiệu (tuKhoaThuongHieu):** Chỉ trích xuất tên kênh hoặc thương hiệu cụ thể được lặp lại (ví dụ: "No1Ideas"). Nếu không có, trả về mảng rỗng [].
 3.  **TẠO NỘI DUNG CHUẨN SEO:**
     * Tạo "Tiêu Đề Chủ Đề" (tieuDeChuDe) hấp dẫn, chứa từ khóa chính.
