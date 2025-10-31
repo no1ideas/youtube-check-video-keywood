@@ -31,7 +31,7 @@
             display: none;
             position: absolute;
             z-index: 50;
-            width: 320px; /* Tăng chiều rộng 1 chút */
+            width: 320px; 
             max-height: 400px;
             overflow-y: auto;
             word-wrap: break-word;
@@ -76,6 +76,11 @@
             color: #065f46; /* text-green-800 */
             cursor: not-allowed;
         }
+        /* Nút copy nhỏ hơn cho popover */
+        .copy-btn-popover {
+            padding: 1px 6px;
+            font-size: 0.75rem; /* text-xs */
+        }
 
         /* Hiệu ứng loading */
         .loader {
@@ -118,7 +123,7 @@
                 <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
                 <button id="generate-keywords-button" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46-.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478-.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478-.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46-.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" />
                     </svg>
                     <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
                 </button>
@@ -162,17 +167,23 @@
                             Thông tin
                         </button>
 
-                        <!-- Popover (cấu trúc mới) -->
+                        <!-- Popover (cấu trúc mới với nút copy) -->
                         <div class="popover bg-white border border-gray-300 rounded-lg shadow-xl p-4 right-0 top-10">
                             <p class="popover-placeholder text-gray-600">Chưa có dữ liệu. Vui lòng nhấn "Tìm kiếm".</p>
                             <div class="popover-content hidden space-y-3">
                                 <!-- Tiêu đề -->
                                 <div>
-                                    <h4 class="font-bold text-base text-gray-900 mb-1 popover-title"></h4>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <h4 class="font-bold text-base text-gray-900 popover-title flex-1 break-words"></h4>
+                                        <button class="copy-btn copy-btn-popover ml-2" data-copy-type="title">Copy</button>
+                                    </div>
                                 </div>
-                                <!-- Mô tả (với nút đóng/mở) -->
+                                <!-- Mô tả -->
                                 <div>
-                                    <h5 class="text-sm font-semibold text-gray-800 mb-1">Mô tả:</h5>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <h5 class="text-sm font-semibold text-gray-800">Mô tả:</h5>
+                                        <button class="copy-btn copy-btn-popover" data-copy-type="desc">Copy</button>
+                                    </div>
                                     <p class="text-sm text-gray-700 popover-description">
                                         <span class="desc-short"></span>
                                         <span class="desc-full"></span>
@@ -181,14 +192,20 @@
                                 </div>
                                 <!-- Từ khóa -->
                                 <div>
-                                    <h5 class="text-sm font-semibold text-gray-800 mb-1">Từ khoá:</h5>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <h5 class="text-sm font-semibold text-gray-800">Từ khoá:</h5>
+                                        <button class="copy-btn copy-btn-popover" data-copy-type="tags">Copy</button>
+                                    </div>
                                     <div class="flex flex-wrap gap-1 popover-tags">
                                         <!-- Tags sẽ được chèn vào đây -->
                                     </div>
                                 </div>
-                                <!-- Hashtag (lấy từ mô tả) -->
+                                <!-- Hashtag -->
                                 <div>
-                                    <h5 class="text-sm font-semibold text-gray-800 mb-1">Hashtags:</h5>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <h5 class="text-sm font-semibold text-gray-800">Hashtags:</h5>
+                                        <button class="copy-btn copy-btn-popover" data-copy-type="hashtags">Copy</button>
+                                    </div>
                                     <div class="flex flex-wrap gap-1 popover-hashtags">
                                         <!-- Hashtags sẽ được chèn vào đây -->
                                     </div>
@@ -314,14 +331,11 @@
                 });
 
                 if (!response.ok) {
-                    // *** ĐÃ SỬA LỖI JSON ***
-                    // Thử đọc lỗi dưới dạng JSON, nếu thất bại, đọc dưới dạng text
                     let errorMessage = `Lỗi máy chủ: ${response.status}`;
                     try {
                         const errorData = await response.json();
                         errorMessage = errorData.message || JSON.stringify(errorData);
                     } catch (e) {
-                        // Lỗi không phải JSON
                         errorMessage = await response.text();
                     }
                     throw new Error(errorMessage);
@@ -423,6 +437,17 @@
                         hashtagsContainer.innerHTML = '<i class="text-gray-500 text-xs">Không có hashtags</i>';
                     }
 
+                    // 5. GÁN SỰ KIỆN CHO CÁC NÚT COPY MỚI
+                    const copyTitleBtn = contentDiv.querySelector('[data-copy-type="title"]');
+                    const copyDescBtn = contentDiv.querySelector('[data-copy-type="desc"]');
+                    const copyTagsBtn = contentDiv.querySelector('[data-copy-type="tags"]');
+                    const copyHashtagsBtn = contentDiv.querySelector('[data-copy-type="hashtags"]');
+
+                    copyTitleBtn.onclick = () => copyToClipboard(title, copyTitleBtn);
+                    copyDescBtn.onclick = () => copyToClipboard(description, copyDescBtn);
+                    copyTagsBtn.onclick = () => copyToClipboard(tags.join(', '), copyTagsBtn);
+                    copyHashtagsBtn.onclick = () => copyToClipboard(foundHashtags.join(' '), copyHashtagsBtn);
+
                 } else {
                     // Lỗi hoặc rỗng
                     placeholder.classList.remove('hidden');
@@ -469,21 +494,17 @@
                 });
                 
                 if (!response.ok) {
-                    // *** ĐÃ SỬA LỖI JSON ***
-                    // Thử đọc lỗi dưới dạng JSON, nếu thất bại, đọc dưới dạng text
                     let errorMessage = `Lỗi máy chủ: ${response.status}`;
                     try {
                         const errorData = await response.json();
                         errorMessage = errorData.message || JSON.stringify(errorData);
                     } catch (e) {
-                        // Lỗi không phải JSON (giống như "A server error...")
                         errorMessage = await response.text();
                     }
                     throw new Error(errorMessage);
                 }
                 
-                // Nếu response.ok, chúng ta mong đợi JSON
-                const result = await response.json(); // Nhận JSON từ backend
+                const result = await response.json(); 
                 return result; 
             }
 
