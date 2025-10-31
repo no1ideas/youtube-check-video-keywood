@@ -25,20 +25,56 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
-        /* Lớp để ẩn popover */
+        
+        /* --- CSS CHO POPOVER --- */
         .popover {
             display: none;
             position: absolute;
             z-index: 50;
-            width: 300px;
+            width: 320px; /* Tăng chiều rộng 1 chút */
             max-height: 400px;
             overflow-y: auto;
             word-wrap: break-word;
         }
-        /* Lớp để hiển thị popover khi hover .result-btn */
+        /* Hiển thị popover khi hover .result-btn */
         .result-btn:hover + .popover,
         .popover:hover {
             display: block;
+        }
+        /* Nút xem thêm/thu gọn mô tả */
+        .toggle-desc {
+            color: #2563eb; /* text-blue-600 */
+            font-weight: 500;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+        .toggle-desc:hover {
+            text-decoration: underline;
+        }
+        .desc-full {
+            display: none; /* Ẩn mô tả đầy đủ ban đầu */
+        }
+
+        /* --- CSS CHO NÚT COPY --- */
+        .copy-btn {
+            background-color: #f3f4f6; /* bg-gray-100 */
+            color: #374151; /* text-gray-700 */
+            border: 1px solid #d1d5db; /* border-gray-300 */
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* medium */
+            transition: all 0.2s;
+            cursor: pointer;
+            flex-shrink: 0; /* Ngăn nút bị co lại */
+        }
+        .copy-btn:hover {
+            background-color: #e5e7eb; /* bg-gray-200 */
+        }
+        .copy-btn:disabled {
+            background-color: #d1fae5; /* bg-green-100 */
+            color: #065f46; /* text-green-800 */
+            cursor: not-allowed;
         }
 
         /* Hiệu ứng loading */
@@ -55,60 +91,118 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
 
-    <!-- 
-      *** PHẦN SỬA LỖI QUAN TRỌNG ***
-      Chúng ta bọc toàn bộ code JS trong 'DOMContentLoaded'
-      để đảm bảo nó chỉ chạy SAU KHI HTML đã tải xong.
-    -->
+    <div class="container mx-auto p-4 max-w-7xl">
+        <h1 class="text-3xl font-bold text-center text-blue-600 mb-6">Công Cụ Phân Tích YouTube & Tạo Từ Khoá Chủ Đề</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- CỘT BÊN TRÁI -->
+            <div class="bg-white p-5 rounded-lg shadow-lg">
+                <h2 class="text-xl font-semibold mb-4">Danh Sách Link YouTube (Tối đa 15)</h2>
+                <div id="video-inputs" class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+                    <!-- 15 hàng sẽ được tạo bằng JS -->
+                </div>
+                <button id="search-button" class="mt-5 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Tìm kiếm Thông Tin Video</span>
+                </button>
+            </div>
+
+            <!-- CỘT BÊN PHẢI -->
+            <div class="bg-white p-5 rounded-lg shadow-lg">
+                <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
+                <button id="generate-keywords-button" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46-.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" />
+                    </svg>
+                    <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
+                </button>
+
+                <div id="keyword-results" class="mt-5 space-y-4 max-h-[550px] overflow-y-auto pr-2">
+                    <!-- Kết quả Gemini sẽ hiển thị ở đây -->
+                    <p class="text-gray-500 text-center">Kết quả tạo từ khoá sẽ xuất hiện ở đây sau khi bạn nhấn nút.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
+        // SỬA LỖI TẢI TRANG: Đợi DOM tải xong mới chạy script
+        document.addEventListener('DOMContentLoaded', () => {
 
-        const videoInputsContainer = document.getElementById('video-inputs');
-        const searchButton = document.getElementById('search-button');
-        const generateKeywordsButton = document.getElementById('generate-keywords-button');
-        const keywordResultsContainer = document.getElementById('keyword-results');
+            const videoInputsContainer = document.getElementById('video-inputs');
+            const searchButton = document.getElementById('search-button');
+            const generateKeywordsButton = document.getElementById('generate-keywords-button');
+            const keywordResultsContainer = document.getElementById('keyword-results');
 
-        // KHÔNG CÒN API KEY Ở ĐÂY NỮA
-        const NUM_INPUTS = 15;
-        
-        // Nơi lưu trữ dữ liệu video sau khi fetch
-        let videoDataStore = new Array(NUM_INPUTS).fill(null);
+            // KHÔNG CÒN API KEY Ở ĐÂY NỮA
+            const NUM_INPUTS = 15;
+            
+            // Nơi lưu trữ dữ liệu video sau khi fetch
+            let videoDataStore = new Array(NUM_INPUTS).fill(null);
 
-        // --- KHỞI TẠO GIAO DIỆN ---
+            // --- KHỞI TẠO GIAO DIỆN ---
 
-        function createInputRows() {
-            // Kiểm tra xem div có tồn tại không
-            if (!videoInputsContainer) {
-                console.error("Không tìm thấy 'video-inputs' div!");
-                return;
+            function createInputRows() {
+                for (let i = 0; i < NUM_INPUTS; i++) {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-center space-x-2 relative';
+                    row.innerHTML = `
+                        <span class="font-semibold text-gray-500 w-6 text-right">${i + 1}.</span>
+                        <input type="text" data-index="${i}" class="video-url-input flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Dán link YouTube...">
+                        
+                        <!-- Nút Thông tin / Kết quả -->
+                        <button data-index="${i}" class="info-btn w-28 bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition duration-300 hover:bg-gray-400">
+                            Thông tin
+                        </button>
+
+                        <!-- Popover (cấu trúc mới) -->
+                        <div class="popover bg-white border border-gray-300 rounded-lg shadow-xl p-4 right-0 top-10">
+                            <p class="popover-placeholder text-gray-600">Chưa có dữ liệu. Vui lòng nhấn "Tìm kiếm".</p>
+                            <div class="popover-content hidden space-y-3">
+                                <!-- Tiêu đề -->
+                                <div>
+                                    <h4 class="font-bold text-base text-gray-900 mb-1 popover-title"></h4>
+                                </div>
+                                <!-- Mô tả (với nút đóng/mở) -->
+                                <div>
+                                    <h5 class="text-sm font-semibold text-gray-800 mb-1">Mô tả:</h5>
+                                    <p class="text-sm text-gray-700 popover-description">
+                                        <span class="desc-short"></span>
+                                        <span class="desc-full"></span>
+                                        <button class="toggle-desc hidden">Xem thêm</button>
+                                    </p>
+                                </div>
+                                <!-- Từ khóa -->
+                                <div>
+                                    <h5 class="text-sm font-semibold text-gray-800 mb-1">Từ khoá:</h5>
+                                    <div class="flex flex-wrap gap-1 popover-tags">
+                                        <!-- Tags sẽ được chèn vào đây -->
+                                    </div>
+                                </div>
+                                <!-- Hashtag (lấy từ mô tả) -->
+                                <div>
+                                    <h5 class="text-sm font-semibold text-gray-800 mb-1">Hashtags:</h5>
+                                    <div class="flex flex-wrap gap-1 popover-hashtags">
+                                        <!-- Hashtags sẽ được chèn vào đây -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    videoInputsContainer.appendChild(row);
+                }
             }
-            videoInputsContainer.innerHTML = ''; // Xóa nội dung cũ
-            for (let i = 0; i < NUM_INPUTS; i++) {
-                const row = document.createElement('div');
-                row.className = 'flex items-center space-x-2 relative';
-                row.innerHTML = `
-                    <span class="font-semibold text-gray-500 w-6 text-right">${i + 1}.</span>
-                    <input type="text" data-index="${i}" class="video-url-input flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Dán link YouTube...">
-                    
-                    <!-- Nút Thông tin / Kết quả -->
-                    <button data-index="${i}" class="info-btn w-28 bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition duration-300 hover:bg-gray-400">
-                        Thông tin
-                    </button>
 
-                    <!-- Popover (ẩn ban đầu) -->
-                    <div class="popover bg-white border border-gray-300 rounded-lg shadow-xl p-4 right-0 top-10 w-80 max-h-96 overflow-y-auto">
-                        <p class="text-gray-600">Chưa có dữ liệu. Vui lòng nhấn "Tìm kiếm".</p>
-                    </div>
-                `;
-                videoInputsContainer.appendChild(row);
-            }
-        }
+            // --- LOGIC XỬ LÝ SỰ KIỆN ---
 
-        // --- LOGIC XỬ LÝ SỰ KIỆN ---
-
-        // 1. Sự kiện click nút "Tìm kiếm"
-        if (searchButton) {
+            // 1. Sự kiện click nút "Tìm kiếm"
             searchButton.addEventListener('click', async () => {
                 setLoading(searchButton, true, "Đang tìm kiếm...");
                 const inputs = document.querySelectorAll('.video-url-input');
@@ -118,50 +212,53 @@
                 videoDataStore = new Array(NUM_INPUTS).fill(null); // Reset kho dữ liệu
                 let fetchPromises = [];
 
+                // Reset tất cả nút về trạng thái "Thông tin"
+                infoButtons.forEach((button, index) => {
+                    updateInfoButton(button, null); // null = trạng thái ban đầu
+                    updatePopover(popovers[index], null);
+                });
+
                 inputs.forEach((input, index) => {
                     const url = input.value.trim();
                     const videoId = getYoutubeId(url);
+                    const button = infoButtons[index];
+                    const popover = popovers[index];
                     
                     if (videoId) {
                         // Thêm promise vào mảng
                         fetchPromises.push(
-                            fetchYouTubeVideoInfo(videoId) // Hàm này đã được thay đổi
+                            fetchYouTubeVideoInfo(videoId)
                                 .then(data => {
                                     videoDataStore[index] = data; // Lưu dữ liệu
-                                    // Cập nhật popover cho nút này
-                                    updatePopover(popovers[index], data);
+                                    updatePopover(popover, data); // Cập nhật popover
+                                    updateInfoButton(button, true); // Cập nhật nút (true = thành công)
                                 })
                                 .catch(error => {
                                     console.error(`Lỗi khi fetch video ${videoId}:`, error);
-                                    videoDataStore[index] = { error: error.message || 'Không thể tải dữ liệu' };
-                                    updatePopover(popovers[index], videoDataStore[index]);
+                                    const errorData = { error: 'Không thể tải dữ liệu' };
+                                    videoDataStore[index] = errorData;
+                                    updatePopover(popover, errorData);
+                                    updateInfoButton(button, false); // Cập nhật nút (false = thất bại)
                                 })
                         );
+                    } else if (url !== "") { 
+                        // Link không hợp lệ
+                        const errorData = { error: 'Link không hợp lệ' };
+                        videoDataStore[index] = errorData;
+                        updatePopover(popover, errorData);
+                        updateInfoButton(button, false); // Cập nhật nút (false = thất bại)
                     } else {
-                        // Nếu link trống hoặc không hợp lệ
-                        videoDataStore[index] = null;
-                        updatePopover(popovers[index], null); // Cập nhật popover là rỗng
+                        // Ô trống, không làm gì
                     }
                 });
 
                 // Chờ tất cả các API call hoàn tất
-                await Promise.all(fetchPromises);
-
-                // Đổi tên tất cả các nút
-                infoButtons.forEach(button => {
-                    button.textContent = 'Kết quả';
-                    button.classList.remove('bg-gray-300', 'text-gray-700', 'hover:bg-gray-400');
-                    button.classList.add('bg-indigo-500', 'text-white', 'hover:bg-indigo-600', 'result-btn');
-                });
+                await Promise.allSettled(fetchPromises); // Dùng allSettled để đảm bảo chạy hết
 
                 setLoading(searchButton, false, "Tìm kiếm Thông Tin Video");
             });
-        } else {
-            console.error("Không tìm thấy 'search-button'!");
-        }
 
-        // 2. Sự kiện click nút "Tạo Bộ Từ Khoá"
-        if (generateKeywordsButton) {
+            // 2. Sự kiện click nút "Tạo Bộ Từ Khoá"
             generateKeywordsButton.addEventListener('click', async () => {
                 setLoading(generateKeywordsButton, true, "Đang tạo...");
                 keywordResultsContainer.innerHTML = '<div class="flex justify-center items-center p-10"><div class="loader"></div><span class="ml-3">Đang liên hệ với Gemini...</span></div>';
@@ -186,8 +283,8 @@
                 }
 
                 try {
-                    // Gọi Gemini API
-                    const result = await callGeminiApi(combinedText); // Hàm này đã được thay đổi
+                    // Gọi Gemini API (qua backend)
+                    const result = await callGeminiApi(combinedText);
                     // Hiển thị kết quả
                     displayKeywordResults(result);
                 } catch (error) {
@@ -197,218 +294,275 @@
                     setLoading(generateKeywordsButton, false, "Tạo Bộ Từ Khoá Của Chủ Đề");
                 }
             });
-        } else {
-            console.error("Không tìm thấy 'generate-keywords-button'!");
-        }
 
-        // --- HÀM HỖ TRỢ ---
+            // --- HÀM HỖ TRỢ ---
 
-        // Trích xuất Video ID từ URL YouTube
-        function getYoutubeId(url) {
-            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
-            const match = url.match(regex);
-            return match ? match[1] : null;
-        }
-
-        // Gọi API YouTube Data v3 (Đã sửa đổi)
-        async function fetchYouTubeVideoInfo(videoId) {
-            // GỌI ĐẾN BACKEND CỦA CHÚNG TA (người gác cổng)
-            const response = await fetch('/api/youtube', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ videoId: videoId })
-            });
-
-            if (!response.ok) {
-                // Lấy lỗi từ backend và ném ra
-                const errorData = await response.json();
-                throw new Error(errorData.message || `Lỗi máy chủ: ${response.status}`);
-            }
-            // Backend sẽ trả về dữ liệu y hệt như API của YouTube
-            return response.json();
-        }
-
-        // Cập nhật nội dung popover
-        function updatePopover(popoverElement, data) {
-            if (data && !data.error) {
-                const descriptionShort = data.description.length > 200 ? data.description.substring(0, 200) + '...' : data.description;
-                const tagsDisplay = data.tags.length > 0
-                    ? data.tags.map(tag => `<span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs">${tag}</span>`).join(' ')
-                    : '<i class="text-gray-500">Không có tags</i>';
-
-                popoverElement.innerHTML = `
-                    <h4 class="font-bold text-base text-gray-900 mb-2">${data.title}</h4>
-                    <p class="text-sm text-gray-700 mb-3">${descriptionShort}</p>
-                    <div class="text-sm font-semibold text-gray-800 mb-1">Từ khoá/Hashtag:</div>
-                    <div class="flex flex-wrap gap-1">
-                        ${tagsDisplay}
-                    </div>
-                `;
-            } else if (data && data.error) {
-                popoverElement.innerHTML = `<p class="text-red-500">${data.error}</p>`;
-            } else {
-                popoverElement.innerHTML = `<p class="text-gray-500">Link trống hoặc không hợp lệ.</p>`;
-            }
-        }
-
-        // Cập nhật trạng thái loading cho nút
-        function setLoading(button, isLoading, loadingText) {
-            if (!button) return; // Thêm kiểm tra an toàn
-            
-            const originalContent = button.innerHTML;
-            if (!button.dataset.originalContent) {
-                button.dataset.originalContent = originalContent;
+            // Trích xuất Video ID từ URL YouTube
+            function getYoutubeId(url) {
+                const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+                const match = url.match(regex);
+                return match ? match[1] : null;
             }
 
-            if (isLoading) {
-                button.disabled = true;
-                button.innerHTML = `
-                    <div class="loader"></div>
-                    <span>${loadingText}</span>
-                `;
-            } else {
-                button.disabled = false;
-                // Khôi phục nội dung gốc, nhưng chỉ lấy phần span và svg
-                const originalSpan = (new DOMParser()).parseFromString(button.dataset.originalContent, 'text/html').querySelector('span');
-                const originalSvg = (new DOMParser()).parseFromString(button.dataset.originalContent, 'text/html').querySelector('svg');
-                button.innerHTML = `${originalSvg ? originalSvg.outerHTML : ''}<span>${originalSpan ? originalSpan.textContent : loadingText}</span>`;
+            // Gọi API YouTube Data v3 (qua backend)
+            async function fetchYouTubeVideoInfo(videoId) {
+                // API key đã được giấu trên backend
+                const response = await fetch('/api/youtube', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ videoId: videoId })
+                });
 
-                // Nếu là nút tìm kiếm, khôi phục lại icon
-                if(button.id === 'search-button') {
-                     button.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                        </svg>
-                        <span>${loadingText}</span>
-                     `;
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Lỗi máy chủ: ${response.status}`);
                 }
-                // Nếu là nút generate
-                if(button.id === 'generate-keywords-button') {
+                return response.json(); // Nhận dữ liệu đã xử lý từ backend
+            }
+
+            // Cập nhật trạng thái nút "Thông tin" / "Kết quả"
+            function updateInfoButton(buttonElement, isSuccess) {
+                // Xóa các lớp cũ
+                buttonElement.classList.remove('bg-gray-300', 'text-gray-700', 'hover:bg-gray-400');
+                buttonElement.classList.remove('bg-indigo-500', 'text-white', 'hover:bg-indigo-600', 'result-btn');
+                buttonElement.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-600');
+
+                if (isSuccess === true) {
+                    // Thành công
+                    buttonElement.textContent = 'Kết quả';
+                    buttonElement.classList.add('bg-indigo-500', 'text-white', 'hover:bg-indigo-600', 'result-btn');
+                } else if (isSuccess === false) {
+                    // Thất bại
+                    buttonElement.textContent = 'Lỗi';
+                    buttonElement.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600');
+                } else {
+                    // Trạng thái ban đầu (null)
+                    buttonElement.textContent = 'Thông tin';
+                    buttonElement.classList.add('bg-gray-300', 'text-gray-700', 'hover:bg-gray-400');
+                }
+            }
+
+
+            // Cập nhật nội dung popover (đã nâng cấp)
+            function updatePopover(popoverElement, data) {
+                const placeholder = popoverElement.querySelector('.popover-placeholder');
+                const contentDiv = popoverElement.querySelector('.popover-content');
+
+                if (data && !data.error) {
+                    // Có dữ liệu
+                    placeholder.classList.add('hidden');
+                    contentDiv.classList.remove('hidden');
+
+                    const { title, description, tags } = data;
+
+                    // 1. Tiêu đề
+                    contentDiv.querySelector('.popover-title').textContent = title;
+
+                    // 2. Mô tả (với logic đóng/mở)
+                    const descP = contentDiv.querySelector('.popover-description');
+                    const descShort = descP.querySelector('.desc-short');
+                    const descFull = descP.querySelector('.desc-full');
+                    const toggleBtn = descP.querySelector('.toggle-desc');
+
+                    if (description.length > 120) {
+                        descShort.textContent = description.substring(0, 120) + '...';
+                        descFull.textContent = description;
+                        toggleBtn.classList.remove('hidden');
+                        
+                        // Reset trạng thái (quan trọng)
+                        descFull.style.display = 'none';
+                        toggleBtn.textContent = 'Xem thêm';
+                        toggleBtn.onclick = () => { // Gán sự kiện
+                            const isHidden = descFull.style.display === 'none';
+                            descFull.style.display = isHidden ? 'inline' : 'none';
+                            toggleBtn.textContent = isHidden ? 'Thu gọn' : 'Xem thêm';
+                        };
+                    } else {
+                        descShort.textContent = description;
+                        descFull.textContent = '';
+                        toggleBtn.classList.add('hidden');
+                    }
+
+                    // 3. Từ khóa (Tags)
+                    const tagsContainer = contentDiv.querySelector('.popover-tags');
+                    tagsContainer.innerHTML = ''; // Xóa tags cũ
+                    if (tags.length > 0) {
+                        tags.forEach(tag => {
+                            const tagEl = document.createElement('span');
+                            tagEl.className = 'bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs';
+                            tagEl.textContent = tag;
+                            tagsContainer.appendChild(tagEl);
+                        });
+                    } else {
+                        tagsContainer.innerHTML = '<i class="text-gray-500 text-xs">Không có tags</i>';
+                    }
+
+                    // 4. Hashtags (Trích xuất từ mô tả)
+                    const hashtagsContainer = contentDiv.querySelector('.popover-hashtags');
+                    hashtagsContainer.innerHTML = '';
+                    const hashtagRegex = /#[\w\d]+/g;
+                    const foundHashtags = description.match(hashtagRegex) || [];
+                    
+                    if (foundHashtags.length > 0) {
+                        foundHashtags.forEach(tag => {
+                            const tagEl = document.createElement('span');
+                            tagEl.className = 'bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs';
+                            tagEl.textContent = tag;
+                            hashtagsContainer.appendChild(tagEl);
+                        });
+                    } else {
+                        hashtagsContainer.innerHTML = '<i class="text-gray-500 text-xs">Không có hashtags</i>';
+                    }
+
+                } else {
+                    // Lỗi hoặc rỗng
+                    placeholder.classList.remove('hidden');
+                    contentDiv.classList.add('hidden');
+                    if (data && data.error) {
+                        placeholder.textContent = data.error;
+                        placeholder.classList.add('text-red-500');
+                    } else {
+                        placeholder.textContent = 'Chưa có dữ liệu. Vui lòng nhấn "Tìm kiếm".';
+                        placeholder.classList.remove('text-red-500');
+                    }
+                }
+            }
+
+            // Cập nhật trạng thái loading cho nút
+            function setLoading(button, isLoading, loadingText) {
+                if (!button.dataset.originalContent) {
+                    button.dataset.originalContent = button.innerHTML;
+                }
+                const originalContent = button.dataset.originalContent;
+
+                if (isLoading) {
+                    button.disabled = true;
                     button.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.T... (Dài quá, cắt bớt) ...zM12 15a3 3 0 100-6 3 3 0 000 6z" />
-                        </svg>
+                        <div class="loader"></div>
                         <span>${loadingText}</span>
                     `;
-                }
-            }
-        }
-
-        // --- LOGIC GEMINI API ---
-
-        async function callGeminiApi(promptText) {
-            // GỌI ĐẾN BACKEND GEMINI CỦA CHÚNG TA
-            const response = await fetch('/api/gemini', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: promptText }) // Chỉ gửi prompt
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `Lỗi máy chủ Gemini: ${response.status}`);
-            }
-            
-            // Backend đã xử lý và trả về JSON
-            return response.json();
-        }
-
-        // Hiển thị kết quả từ Gemini
-        function displayKeywordResults(data) {
-            if (!keywordResultsContainer) return;
-            keywordResultsContainer.innerHTML = ''; // Xóa nội dung cũ
-
-            // Hàm trợ giúp để tạo một khối kết quả
-            const createSection = (title, content) => {
-                const section = document.createElement('div');
-                section.className = 'border border-gray-200 rounded-lg p-4 bg-gray-50';
-                
-                const titleEl = document.createElement('h3');
-                titleEl.className = 'text-lg font-semibold text-gray-800 mb-3';
-                titleEl.textContent = title;
-                section.appendChild(titleEl);
-
-                if (Array.isArray(content) && content.length > 0) {
-                    const list = document.createElement('div');
-                    list.className = 'flex flex-wrap gap-2';
-                    content.forEach(item => {
-                        const itemEl = document.createElement('span');
-                        itemEl.className = 'bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full';
-                        itemEl.textContent = item;
-                        list.appendChild(itemEl);
-                    });
-                    section.appendChild(list);
-                } else if (typeof content === 'string') {
-                    const contentEl = document.createElement('p');
-                    contentEl.className = 'text-gray-700 whitespace-pre-wrap'; // Giữ nguyên định dạng xuống dòng
-                    contentEl.textContent = content;
-                    section.appendChild(contentEl);
                 } else {
-                     const contentEl = document.createElement('p');
-                    contentEl.className = 'text-gray-500 italic';
-                    contentEl.textContent = 'Không có dữ liệu';
-                    section.appendChild(contentEl);
+                    button.disabled = false;
+                    // Khôi phục nội dung gốc dựa trên text
+                    button.innerHTML = originalContent.replace(/<span>(.*?)<\/span>/, `<span>${loadingText}</span>`);
                 }
-                keywordResultsContainer.appendChild(section);
-            };
+            }
 
-            // Tạo các khối cho từng phần dữ liệu
-            createSection('Tiêu Đề Chủ Đề (Danh sách phát)', data.tieuDeChuDe);
-            createSection('Mô Tả Chủ Đề (Danh sách phát)', data.moTaChuDe);
-            createSection('Bộ Từ Khoá Chính', data.boTuKhoaChinh);
-            createSection('Từ Khoá Bổ Trợ', data.tuKhoaBoTro);
-            createSection('Từ Khoá Liên Quan', data.tuKhoaLienQuan);
-            createSection('Hashtags', data.hashtags);
-            createSection('Từ Khoá Thương Hiệu', data.tuKhoaThuongHieu);
-        }
+            // --- LOGIC GEMINI API ---
 
-        // --- KHỞI ĐỘNG ỨNG DỤNG ---
-        createInputRows();
+            // Gọi API Gemini (qua backend)
+            async function callGeminiApi(promptText) {
+                // API key đã được giấu trên backend
+                const response = await fetch('/api/gemini', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: promptText })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Lỗi máy chủ: ${response.status}`);
+                }
+                const result = await response.json(); // Nhận JSON từ backend
+                return result; 
+            }
 
-    }); // <-- ĐÓNG THẺ 'DOMContentLoaded'
+            // Hiển thị kết quả từ Gemini (đã nâng cấp với nút Copy)
+            function displayKeywordResults(data) {
+                keywordResultsContainer.innerHTML = ''; // Xóa nội dung cũ
+
+                // Hàm trợ giúp để tạo một khối kết quả (có nút copy)
+                const createSection = (title, content, copyText) => {
+                    const section = document.createElement('div');
+                    section.className = 'border border-gray-200 rounded-lg p-4 bg-gray-50';
+                    
+                    // Tiêu đề và nút copy
+                    const header = document.createElement('div');
+                    header.className = 'flex justify-between items-center mb-3';
+                    
+                    const titleEl = document.createElement('h3');
+                    titleEl.className = 'text-lg font-semibold text-gray-800';
+                    titleEl.textContent = title;
+                    header.appendChild(titleEl);
+
+                    // Nút Copy
+                    const copyButton = document.createElement('button');
+                    copyButton.className = 'copy-btn';
+                    copyButton.textContent = 'Copy';
+                    // Lưu văn bản cần copy vào dataset
+                    copyButton.dataset.copyText = copyText || ''; 
+                    copyButton.addEventListener('click', () => {
+                        copyToClipboard(copyButton.dataset.copyText, copyButton);
+                    });
+                    header.appendChild(copyButton);
+                    
+                    section.appendChild(header);
+
+                    // Nội dung
+                    if (Array.isArray(content) && content.length > 0) {
+                        const list = document.createElement('div');
+                        list.className = 'flex flex-wrap gap-2';
+                        content.forEach(item => {
+                            const itemEl = document.createElement('span');
+                            itemEl.className = 'bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full';
+                            itemEl.textContent = item;
+                            list.appendChild(itemEl);
+                        });
+                        section.appendChild(list);
+                    } else if (typeof content === 'string' && content) {
+                        const contentEl = document.createElement('p');
+                        contentEl.className = 'text-gray-700 whitespace-pre-wrap'; // Giữ nguyên định dạng xuống dòng
+                        contentEl.textContent = content;
+                        section.appendChild(contentEl);
+                    } else {
+                         const contentEl = document.createElement('p');
+                        contentEl.className = 'text-gray-500 italic';
+                        contentEl.textContent = (content && content.length === 0) ? 'Không có' : 'N/A';
+                        section.appendChild(contentEl);
+                    }
+                    keywordResultsContainer.appendChild(section);
+                };
+
+                // Tạo các khối cho từng phần dữ liệu
+                // Thứ tự theo yêu cầu của bạn
+                createSection('Bộ Từ Khoá Chính', data.boTuKhoaChinh, data.boTuKhoaChinh.join(', '));
+                createSection('Từ Khoá Bổ Trợ', data.tuKhoaBoTro, data.tuKhoaBoTro.join(', '));
+                createSection('Từ Khoá Liên Quan', data.tuKhoaLienQuan, data.tuKhoaLienQuan.join(', '));
+                createSection('Từ Khoá Thương Hiệu', data.tuKhoaThuongHieu, data.tuKhoaThuongHieu.join(', '));
+                createSection('Hashtags', data.hashtags, data.hashtags.join(' '));
+                createSection('Tiêu Đề Chủ Đề (Danh sách phát)', data.tieuDeChuDe, data.tieuDeChuDe);
+                createSection('Mô Tả Chủ Đề (Danh sách phát)', data.moTaChuDe, data.moTaChuDe);
+            }
+
+            // Hàm Copy to Clipboard (dùng execCommand cho an toàn)
+            function copyToClipboard(text, buttonElement) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed'; // Ngăn cuộn trang
+                textArea.style.top = '-9999px';
+                textArea.style.left = '-9999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    buttonElement.textContent = 'Đã chép!';
+                    buttonElement.disabled = true;
+                    setTimeout(() => {
+                        buttonElement.textContent = 'Copy';
+                        buttonElement.disabled = false;
+                    }, 2000);
+                } catch (err) {
+                    console.error('Không thể copy:', err);
+                    buttonElement.textContent = 'Lỗi';
+                }
+                document.body.removeChild(textArea);
+            }
+
+            // --- KHỞI ĐỘNG ỨNG DỤNG ---
+            createInputRows();
+        
+        }); // Kết thúc DOMContentLoaded
     </script>
-
-</head>
-<body class="bg-gray-100 text-gray-800">
-
-    <div class="container mx-auto p-4 max-w-7xl">
-        <h1 class="text-3xl font-bold text-center text-blue-600 mb-6">Công Cụ Phân Tích YouTube & Tạo Từ Khoá Chủ Đề</h1>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            <!-- CỘT BÊN TRÁI -->
-            <div class="bg-white p-5 rounded-lg shadow-lg">
-                <h2 class="text-xl font-semibold mb-4">Danh Sách Link YouTube (Tối đa 15)</h2>
-                <!-- Đây là DIV mà JS cần tìm -->
-                <div id="video-inputs" class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
-                    <!-- 15 hàng sẽ được tạo bằng JS -->
-                </div>
-                <button id="search-button" class="mt-5 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                    </svg>
-                    <span>Tìm kiếm Thông Tin Video</span>
-                </button>
-            </div>
-
-            <!-- CỘT BÊN PHẢI -->
-            <div class="bg-white p-5 rounded-lg shadow-lg">
-                <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
-                <button id="generate-keywords-button" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478-.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478-.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" />
-                    </svg>
-                    <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
-                </button>
-
-                <div id="keyword-results" class="mt-5 space-y-4 max-h-[550px] overflow-y-auto pr-2">
-                    <!-- Kết quả Gemini sẽ hiển thị ở đây -->
-                    <p class="text-gray-500 text-center">Kết quả tạo từ khoá sẽ xuất hiện ở đây sau khi bạn nhấn nút.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
 </body>
 </html>
+
