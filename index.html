@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+<!-- ... existing code ... -->
+    <script>
+        const videoInputsContainer = document.getElementById('video-inputs');
+<!-- ... existing code ... -->
+        const keywordResultsContainer = document.getElementById('keyword-results');
+
+        // KHÔNG CÒN API KEY Ở ĐÂY NỮA
+        const NUM_INPUTS = 15;
+        
+        // Nơi lưu trữ dữ liệu video sau khi fetch
+<!-- ... existing code ... -->
+        // --- LOGIC XỬ LÝ SỰ KIỆN ---
+
+        // 1. Sự kiện click nút "Tìm kiếm"
+<!-- ... existing code ... -->
+                
+                if (videoId) {
+                    // Thêm promise vào mảng
+                    fetchPromises.push(
+                        fetchYouTubeVideoInfo(videoId) // Hàm này đã được thay đổi
+                            .then(data => {
+<!-- ... existing code ... -->
+                                videoDataStore[index] = { error: data.message || 'Không thể tải dữ liệu' };
+                                updatePopover(popovers[index], videoDataStore[index]);
+                            })
+                    );
+                } else {
+<!-- ... existing code ... -->
+            try {
+                // Gọi Gemini API
+                const result = await callGeminiApi(combinedText); // Hàm này đã được thay đổi
+                // Hiển thị kết quả
+                displayKeywordResults(result);
+<!-- ... existing code ... -->
+        }
+
+        // Gọi API YouTube Data v3 (Đã sửa đổi)
+        async function fetchYouTubeVideoInfo(videoId) {
+            // GỌI ĐẾN BACKEND CỦA CHÚNG TA (người gác cổng)
+            const response = await fetch('/api/youtube', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ videoId: videoId })
+            });
+
+            if (!response.ok) {
+                // Lấy lỗi từ backend và ném ra
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Lỗi máy chủ: ${response.status}`);
+            }
+            // Backend sẽ trả về dữ liệu y hệt như API của YouTube
+            return response.json();
+        }
+
+        // Cập nhật nội dung popover
+<!-- ... existing code ... -->
+        }
+
+        // --- LOGIC GEMINI API ---
+
+        async function callGeminiApi(promptText) {
+            // GỌI ĐẾN BACKEND GEMINI CỦA CHÚNG TA
+            const response = await fetch('/api/gemini', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: promptText }) // Chỉ gửi prompt
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Lỗi máy chủ Gemini: ${response.status}`);
+            }
+            
+            // Backend đã xử lý và trả về JSON
+            return response.json();
+        }
+
+        // Hiển thị kết quả từ Gemini
+<!-- ... existing code ... -->
