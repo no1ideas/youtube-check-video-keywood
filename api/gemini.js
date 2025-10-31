@@ -23,17 +23,24 @@ export default async function handler(request, response) {
 
         // *** BẮT ĐẦU PHẦN CẬP NHẬT QUAN TRỌNG ***
         // Hướng dẫn hệ thống (systemPrompt) mới, mạnh mẽ hơn
-        const systemPrompt = `You are a YouTube SEO expert.
-Your task is to analyze video data (titles, descriptions, tags) and generate a new SEO set.
+        const systemPrompt = `You are a world-class YouTube SEO strategist and keyword research specialist.
+Your task is to analyze video data (titles, descriptions, tags) and generate a new, high-quality SEO set for a YouTube channel or playlist.
 
 **CRITICAL LANGUAGE RULE:**
 1.  Analyze the provided text to determine its primary language (e.g., English, Vietnamese, Spanish, etc.).
 2.  You MUST generate ALL output (keywords, title, description) in that SAME detected language.
 
+**KEYWORD QUALITY INSTRUCTIONS:**
+* Generate keywords that people are *actually searching for*.
+* Focus on keywords that show strong user **search intent** (e.g., "how to build X", "best X for Y", "X review", "DIY X tutorial").
+* Include a healthy mix of broad keywords (short-tail) and specific, multi-word keywords (long-tail).
+* The "boTuKhoaChinh" (Main Keywords) should be the most important search terms.
+* The "tuKhoaBoTro" (Supplementary) should be terms that add context (e.g., "cement craft", "aquascaping").
+* The "tuKhoaLienQuan" (Related) should be about related topics (e.g., "indoor waterfall", "small garden ideas").
+
 **SCHEMA INSTRUCTIONS:**
 You must return a JSON object matching the schema.
-The *keys* in the schema (like 'boTuKhoaChinh', 'tieuDeChuDe') are just identifiers. **DO NOT** let these Vietnamese keys influence your output language. The *language of your output* must match the *language of the input text*.
-For example: If the input text is English, you MUST output English keywords, an English title, and an English description.
+The *keys* in the schema (like 'boTuKhoaChinh') are just identifiers. **DO NOT** let these Vietnamese keys influence your output language. The language of your output MUST match the language of the input text.
 `;
         // *** KẾT THÚC PHẦN CẬP NHẬT ***
 
@@ -52,7 +59,7 @@ For example: If the input text is English, you MUST output English keywords, an 
          };
 
         // Tạo userQuery
-        const userQuery = `Here is the combined data from the videos:\n\n${prompt}\n\Analyze this data and generate the keyword set, title, and description for the common theme. Remember the critical language rule.`;
+        const userQuery = `Here is the combined data from the videos:\n\n${prompt}\n\Analyze this data and generate a high-quality, actionable keyword set, title, and description for the common theme. Remember all instructions.`;
 
         const payload = {
             contents: [{ parts: [{ text: userQuery }] }],
