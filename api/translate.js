@@ -1,7 +1,8 @@
 // --- CHỨC NĂNG BACKEND: /api/translate ---
 // API này nhận một danh sách văn bản và một ngôn ngữ mục tiêu (targetLang),
 // sau đó gọi đến API dịch (không chính thức) của Google.
-// PHIÊN BẢN 5.0: Sửa lỗi tốc độ, chạy song song (parallel) các lô
+// PHIÊN BẢN 6.0: Quay lại gọi tuần tự (sequential) để tăng độ ổn định
+// Lỗi song song (v5.0) là quá nhanh, bị API của Google chặn.
 
 export default async function handler(request, response) {
     // Chỉ chấp nhận phương thức POST
@@ -55,57 +56,42 @@ export default async function handler(request, response) {
                 batches.push(currentBatch); 
             }
 
-            // 5. GỌI API SONG SONG (Parallel)
-            // Tạo một mảng các promise (lời hứa)
-            const batchPromises = batches.map(batch => {
-                if (batch.length === 0) return Promise.resolve(null); // Trả về promise rỗng
-                
+            // 5. GỌI API TUẦN TỰ (Sequential)
+            // Lặp qua từng lô một để tránh bị rate-limit
+            for (const batch of batches) {
+                if (batch.length === 0) continue;
+
                 const queryParams = batch.map(text => `q=${encodeURIComponent(text)}`).join('&');
                 const url = `${baseURL}&${queryParams}`;
                 
-                return fetch(url, { method: 'GET' })
-                    .then(res => {
-                        if (!res.ok) {
-                            // Nếu lỗi, ném lỗi để Promise.allSettled bắt
-                            throw new Error(`API status ${res.status}`);
-                        }
-                        return res.json(); // Trả về dữ liệu json
-                    })
-                    .then(transData => {
-                        // Xử lý dữ liệu json
-                        if (transData && transData[0]) {
-                            return transData[0].map(segment => (segment && segment[0]) ? segment[0] : '');
-                        }
-                        return batch.map(() => ''); // Trả về mảng rỗng nếu dữ liệu không hợp lệ
-                    })
-                    .catch(err => {
-                        console.warn(`Lỗi 1 lô dịch: ${err.message}`);
-                        return null; // Trả về null nếu lô bị lỗi
-                    });
-            });
-
-            // Chờ tất cả các promise hoàn thành (kể cả lỗi)
-            const results = await Promise.allSettled(batchPromises);
-
-            // 6. Ánh xạ (map) bản dịch về văn bản gốc
-            let textIndex = 0;
-            results.forEach((result, batchIndex) => {
-                if (result.status === 'fulfilled' && result.value) {
-                    // Nếu lô thành công (result.value là mảng các bản dịch)
-                    const batchTranslations = result.value;
-                    const originalBatch = batches[batchIndex];
+                let batchTranslations = [];
+                try {
+                    const transResponse = await fetch(url, { method: 'GET' });
                     
-                    batchTranslations.forEach((translatedText, i) => {
-                        const originalText = originalBatch[i];
-                        originalToTranslated.set(originalText, translatedText);
-                    });
-                } else {
-                    // Nếu lô thất bại (status === 'rejected' hoặc value === null)
-                    // Chúng ta không cần làm gì, vì map sẽ không có key
-                    // và logic ở bước 7 sẽ tự động gán "(Lỗi dịch)"
-                    console.warn(`Lô dịch thứ ${batchIndex} thất bại`);
+                    if (!transResponse.ok) {
+                        console.warn(`Lỗi 1 lô dịch (status ${transResponse.status}), batch:`, batch[0]);
+                        // Gán mảng rỗng, sẽ bị xử lý là (Lỗi dịch) ở bước 7
+                        batchTranslations = batch.map(() => undefined); 
+                    } else {
+                        const transData = await transResponse.json();
+                        if (transData && transData[0]) {
+                            batchTranslations = transData[0].map(segment => (segment && segment[0]) ? segment[0] : '');
+                        } else {
+                            // Dữ liệu trả về không hợp lệ
+                            batchTranslations = batch.map(() => undefined);
+                        }
+                    }
+                } catch (err) {
+                    console.warn(`Lỗi fetch 1 lô dịch: ${err.message}`);
+                    batchTranslations = batch.map(() => undefined);
                 }
-            });
+                
+                // 6. Ánh xạ (map) bản dịch về văn bản gốc
+                batchTranslations.forEach((translatedText, i) => {
+                    const originalText = batch[i];
+                    originalToTranslated.set(originalText, translatedText);
+                });
+            }
         }
 
         // 7. Xây dựng mảng kết quả cuối cùng theo đúng thứ tự của 'texts'
