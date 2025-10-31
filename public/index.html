@@ -3,156 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Công Cụ Phân Tích YouTube & Tạo Từ Khoá</title>
+    <title>Bộ Công Cụ YouTube - No1Ideas</title>
     <!-- Tải Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Tùy chỉnh font chữ Inter */
         body {
             font-family: "Inter", sans-serif;
-        }
-        /* Tùy chỉnh thanh cuộn */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-        
-        /* --- CSS CHO POPOVER --- */
-        .popover {
-            display: none;
-            position: absolute;
-            z-index: 50;
-            width: 320px; 
-            max-height: 400px;
-            overflow-y: auto;
-            word-wrap: break-word;
-        }
-        /* Hiển thị popover khi hover .result-btn */
-        .result-btn:hover + .popover,
-        .popover:hover {
-            display: block;
-        }
-        /* Nút xem thêm/thu gọn mô tả */
-        .toggle-desc {
-            color: #2563eb; /* text-blue-600 */
-            font-weight: 500;
-            cursor: pointer;
-            margin-left: 4px;
-        }
-        .toggle-desc:hover {
-            text-decoration: underline;
-        }
-        .desc-full {
-            display: none; /* Ẩn mô tả đầy đủ ban đầu */
-        }
-
-        /* --- CSS CHO NÚT COPY --- */
-        .copy-btn {
             background-color: #f3f4f6; /* bg-gray-100 */
-            color: #374151; /* text-gray-700 */
-            border: 1px solid #d1d5db; /* border-gray-300 */
-            padding: 2px 8px;
-            border-radius: 6px;
+        }
+        /* --- CSS CHO TRANG CHỦ (HUB) --- */
+        .hub-container {
+            display: flex; /* Mặc định hiển thị trang chủ */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+        .tool-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            padding: 24px;
+            width: 320px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        .tool-card-icon { font-size: 48px; line-height: 1; }
+        .tool-card h2 { font-size: 1.25rem; font-weight: 700; margin-top: 16px; color: #1e40af; } /* text-blue-800 */
+        .tool-card p { font-size: 0.875rem; color: #4b5563; } /* text-gray-600 */
+
+        /* --- CSS CHO CÁC CÔNG CỤ (ẨN) --- */
+        .tool-page {
+            display: none; /* Ẩn các công cụ ban đầu */
+        }
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem; /* mb-6 */
+        }
+        .back-to-hub {
+            display: flex;
+            align-items: center;
+            gap: 4px;
             font-size: 0.875rem; /* text-sm */
             font-weight: 500; /* medium */
-            transition: all 0.2s;
+            color: #3b82f6; /* text-blue-500 */
             cursor: pointer;
-            flex-shrink: 0; /* Ngăn nút bị co lại */
+            text-decoration: none;
         }
-        .copy-btn:hover {
-            background-color: #e5e7eb; /* bg-gray-200 */
+        .back-to-hub:hover { text-decoration: underline; }
+        
+        /* --- CSS CHO CÔNG CỤ TỪ KHOÁ (Lấy từ code cũ) --- */
+        #keyword-tool { /* CSS cũ của bạn */ }
+        #keyword-tool ::-webkit-scrollbar { width: 6px; }
+        #keyword-tool ::-webkit-scrollbar-track { background: #f1f1f1; }
+        #keyword-tool ::-webkit-scrollbar-thumb { background: #888; border-radius: 3px; }
+        #keyword-tool .popover {
+            display: none; position: absolute; z-index: 50; width: 320px; 
+            max-height: 400px; overflow-y: auto; word-wrap: break-word;
         }
-        .copy-btn:disabled {
-            background-color: #d1fae5; /* bg-green-100 */
-            color: #065f46; /* text-green-800 */
-            cursor: not-allowed;
+        #keyword-tool .result-btn:hover + .popover,
+        #keyword-tool .popover:hover { display: block; }
+        #keyword-tool .toggle-desc { color: #2563eb; font-weight: 500; cursor: pointer; margin-left: 4px; }
+        #keyword-tool .toggle-desc:hover { text-decoration: underline; }
+        #keyword-tool .desc-full { display: none; }
+        #keyword-tool .copy-btn {
+            background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; 
+            padding: 2px 8px; border-radius: 6px; font-size: 0.875rem; 
+            font-weight: 500; transition: all 0.2s; cursor: pointer; flex-shrink: 0;
         }
-        /* Nút copy nhỏ hơn cho popover */
-        .copy-btn-popover {
-            padding: 1px 6px;
-            font-size: 0.75rem; /* text-xs */
+        #keyword-tool .copy-btn:hover { background-color: #e5e7eb; }
+        #keyword-tool .copy-btn:disabled { background-color: #d1fae5; color: #065f46; cursor: not-allowed; }
+        #keyword-tool .copy-btn-popover { padding: 1px 6px; font-size: 0.75rem; }
+        #keyword-tool .loader {
+            border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%;
+            width: 20px; height: 20px; animation: spin 1s linear infinite;
         }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Hiệu ứng loading */
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
+        /* --- CSS CHO CÔNG CỤ COMMENT (Lấy từ code mới) --- */
+        #comment-tool {
+            --red:#d32f2f; --bg:#f6f7fb; --muted:#666; --card:#fafafa; --border:#e9e9ef;
+            background:#fff; padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06)
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        #comment-tool .row{ display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap }
+        #comment-tool .row .field{ flex:1; min-width:260px }
+        #comment-tool input[type="text"]{
+            width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:10px; font-size:15px; outline:none;
+        }
+        #comment-tool button{ padding:12px 18px; font-size:15px; background:#ff0000; color:#fff; border:none;
+            border-radius:10px; cursor:pointer; transition:.2s }
+        #comment-tool button:hover{ background:#c00000 }
+        #comment-tool button:disabled{ background:#cfcfcf; cursor:not-allowed }
+        #comment-tool .hint{ font-size:12px; color:#888 }
+        #comment-tool .sort-bar{ display:none; gap:10px; align-items:center; flex-wrap:wrap; margin:12px 0 6px }
+        #comment-tool .sort-title{ font-weight:700; color:#444 }
+        #comment-tool .sort-btn{ border:1px solid #e5e7eb; background:#fff; color:#333; padding:8px 12px;
+            border-radius:10px; cursor:pointer; font-size:14px }
+        #comment-tool .sort-btn.active{ border-color:var(--red); color:var(--red); font-weight:800 }
+        #comment-tool .sort-hint{ margin-left:auto; color:#888; font-size:12px }
+        #comment-tool #status-comment{ text-align:center; font-size:14px; color:#777; margin:8px 0 0 }
+        #comment-tool #results-comment{ margin-top:4px }
+        #comment-tool .comment-thread{ border-bottom:1px solid var(--border); padding:16px 0 }
+        #comment-tool .comment-thread:last-child{ border-bottom:none }
+        #comment-tool .thread-row{ display:grid; grid-template-columns: 1fr 300px; gap:16px; align-items:start }
+        @media (max-width: 980px){ #comment-tool .thread-row{ grid-template-columns:1fr } }
+        #comment-tool .left-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px }
+        @media (max-width: 720px){ #comment-tool .left-grid{ grid-template-columns:1fr } }
+        #comment-tool .left-col{ border:1px solid var(--border); border-radius:12px; background:var(--card); padding:12px }
+        #comment-tool .left-col h3{ margin:0 0 10px; font-size:14px; color:#555; font-weight:800 }
+        #comment-tool .comment{ display:flex; align-items:flex-start; gap:12px }
+        #comment-tool .comment + .comment{ margin-top:10px }
+        #comment-tool .comment-author-img{ width:40px; height:40px; border-radius:50% }
+        #comment-tool .comment-content{ flex:1 }
+        #comment-tool .comment-author{ font-weight:800; margin-bottom:5px }
+        #comment-tool .replies-container{ margin-left:52px; margin-top:12px; border-left:2px solid #e0e0e0; padding-left:12px }
+        #comment-tool .reply .comment-author-img{ width:30px; height:30px }
+        #comment-tool .reply{ margin-top:8px }
+        #comment-tool .thread-right{ border:1px solid var(--border); border-radius:12px; padding:12px; background:var(--card) }
+        #comment-tool .metrics-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px }
+        #comment-tool .metric{ text-align:center; padding:10px 8px; border-radius:10px; background:#fff; border:1px solid #f0f0f0 }
+        #comment-tool .metric-label{ font-size:12px; color:var(--muted); margin-bottom:4px }
+        #comment-tool .metric-value{ font-weight:800; font-size:16px; word-break:break-word }
+        #comment-tool .loader-comment {
+            width: 20px; height: 20px; border-radius: 50%;
+            border: 3px solid #f3f3f3; border-top: 3px solid #ff0000;
+            animation: spin 1s linear infinite; display: inline-block; margin-right: 8px; vertical-align: middle;
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body>
 
-    <div class="container mx-auto p-4 max-w-7xl">
-        <h1 class="text-3xl font-bold text-center text-blue-600 mb-6">Công Cụ Phân Tích YouTube & Tạo Từ Khoá Chủ Đề</h1>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            <!-- CỘT BÊN TRÁI -->
-            <div class="bg-white p-5 rounded-lg shadow-lg">
-                <h2 class="text-xl font-semibold mb-4">Danh Sách Link YouTube (Tối đa 15)</h2>
-                <div id="video-inputs" class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
-                    <!-- 15 hàng sẽ được tạo bằng JS -->
-                </div>
-                <button id="search-button" class="mt-5 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                    </svg>
-                    <span>Tìm kiếm Thông Tin Video</span>
-                </button>
+    <!-- TRANG CHỦ (HUB) -->
+    <div id="hub-page" class="hub-container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Bộ Công Cụ YouTube</h1>
+        <div class="flex flex-wrap justify-center gap-6">
+            
+            <!-- Card 1: Công cụ Từ Khoá -->
+            <div id="card-keyword" class="tool-card">
+                <div class="tool-card-icon">🔑</div>
+                <h2>Công Cụ Từ Khoá</h2>
+                <p>Phân tích video & tạo bộ từ khoá SEO</p>
             </div>
-
-            <!-- CỘT BÊN PHẢI -->
-            <div class="bg-white p-5 rounded-lg shadow-lg">
-                <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
-                <button id="generate-keywords-button" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478-.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478-.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46-.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" />
-                    </svg>
-                    <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
-                </button>
-
-                <div id="keyword-results" class="mt-5 space-y-4 max-h-[550px] overflow-y-auto pr-2">
-                    <!-- Kết quả Gemini sẽ hiển thị ở đây -->
-                    <p class="text-gray-500 text-center">Kết quả tạo từ khoá sẽ xuất hiện ở đây sau khi bạn nhấn nút.</p>
-                </div>
+            
+            <!-- Card 2: Công cụ Comment -->
+            <div id="card-comment" class="tool-card">
+                <div class="tool-card-icon">📝</div>
+                <h2>Trình Lấy Comment</h2>
+                <p>Tải, dịch, và sắp xếp bình luận video</p>
             </div>
 
         </div>
     </div>
 
+    <!-- CÔNG CỤ 1: TỪ KHOÁ (ẨN) -->
+    <div id="keyword-tool" class="tool-page container mx-auto p-4 max-w-7xl">
+        <div class="page-header">
+            <h1 class="text-3xl font-bold text-center text-blue-600">Công Cụ Phân Tích YouTube & Tạo Từ Khoá Chủ Đề</h1>
+            <a href="#" class="back-to-hub">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                Quay lại
+            </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- CỘT BÊN TRÁI -->
+            <div class="bg-white p-5 rounded-lg shadow-lg">
+                <h2 class="text-xl font-semibold mb-4">Danh Sách Link YouTube (Tối đa 15)</h2>
+                <div id="video-inputs" class="space-y-3 max-h-[600px] overflow-y-auto pr-2"></div>
+                <button id="search-button-keyword" class="mt-5 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                    <span>Tìm kiếm Thông Tin Video</span>
+                </button>
+            </div>
+            <!-- CỘT BÊN PHẢI -->
+            <div class="bg-white p-5 rounded-lg shadow-lg">
+                <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
+                <button id="generate-keywords-button" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478-.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478-.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46-.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" /></svg>
+                    <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
+                </button>
+                <div id="keyword-results" class="mt-5 space-y-4 max-h-[550px] overflow-y-auto pr-2">
+                    <p class="text-gray-500 text-center">Kết quả tạo từ khoá sẽ xuất hiện ở đây sau khi bạn nhấn nút.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CÔNG CỤ 2: COMMENT (ẨN) -->
+    <div id="comment-tool" class="tool-page container mx-auto p-4 max-w-7xl">
+        <div class="page-header">
+            <h1 class="text-3xl font-bold text-center text-red-600">Trình Lấy Comment YouTube</h1>
+            <a href="#" class="back-to-hub">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                Quay lại
+            </a>
+        </div>
+        <!-- Hàng nhập URL video -->
+        <div class="row">
+            <div class="field"><input id="video-url-comment" type="text" placeholder="Dán link video YouTube vào đây..."></div>
+            <button id="search-button-comment">Tìm kiếm</button>
+        </div>
+        
+        <!-- Thanh sắp xếp -->
+        <div class="sort-bar" id="sort-bar-comment">
+            <span class="sort-title">Sắp xếp theo:</span>
+            <button class="sort-btn" id="sort-like">Like ↓</button>
+            <button class="sort-btn" id="sort-replies">Cmt cấp 2 ↓</button>
+            <button class="sort-btn" id="sort-date">Ngày ↓</button>
+            <span class="sort-hint">Bấm lại nút để đảo chiều ↑/↓</span>
+        </div>
+
+        <div id="status-comment"></div>
+        <div id="results-comment"></div>
+    </div>
+
+
+    <!-- ================= SCRIPT CHÍNH ================= -->
     <script>
-        // SỬA LỖI TẢI TRANG: Đợi DOM tải xong mới chạy script
         document.addEventListener('DOMContentLoaded', () => {
 
+            // --- LOGIC CHUYỂN TRANG (HUB) ---
+            const hubPage = document.getElementById('hub-page');
+            const keywordToolPage = document.getElementById('keyword-tool');
+            const commentToolPage = document.getElementById('comment-tool');
+            
+            const cardKeyword = document.getElementById('card-keyword');
+            const cardComment = document.getElementById('card-comment');
+            const backButtons = document.querySelectorAll('.back-to-hub');
+
+            function showPage(pageToShow) {
+                // Ẩn tất cả
+                hubPage.style.display = 'none';
+                keywordToolPage.style.display = 'none';
+                commentToolPage.style.display = 'none';
+                // Hiển thị trang được chọn
+                pageToShow.style.display = 'block';
+            }
+
+            cardKeyword.addEventListener('click', () => showPage(keywordToolPage));
+            cardComment.addEventListener('click', () => showPage(commentToolPage));
+            backButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showPage(hubPage);
+                });
+            });
+
+            // --- BẮT ĐẦU: SCRIPT CÔNG CỤ 1 (TỪ KHOÁ) ---
             const videoInputsContainer = document.getElementById('video-inputs');
-            const searchButton = document.getElementById('search-button');
+            const searchButtonKeyword = document.getElementById('search-button-keyword');
             const generateKeywordsButton = document.getElementById('generate-keywords-button');
             const keywordResultsContainer = document.getElementById('keyword-results');
 
-            // KHÔNG CÒN API KEY Ở ĐÂY NỮA
             const NUM_INPUTS = 15;
-            
-            // Nơi lưu trữ dữ liệu video sau khi fetch
             let videoDataStore = new Array(NUM_INPUTS).fill(null);
-
-            // --- KHỞI TẠO GIAO DIỆN ---
 
             function createInputRows() {
                 for (let i = 0; i < NUM_INPUTS; i++) {
@@ -161,24 +272,18 @@
                     row.innerHTML = `
                         <span class="font-semibold text-gray-500 w-6 text-right">${i + 1}.</span>
                         <input type="text" data-index="${i}" class="video-url-input flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Dán link YouTube...">
-                        
-                        <!-- Nút Thông tin / Kết quả -->
                         <button data-index="${i}" class="info-btn w-28 bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition duration-300 hover:bg-gray-400">
                             Thông tin
                         </button>
-
-                        <!-- Popover (cấu trúc mới với nút copy) -->
                         <div class="popover bg-white border border-gray-300 rounded-lg shadow-xl p-4 right-0 top-10">
                             <p class="popover-placeholder text-gray-600">Chưa có dữ liệu. Vui lòng nhấn "Tìm kiếm".</p>
                             <div class="popover-content hidden space-y-3">
-                                <!-- Tiêu đề -->
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
                                         <h4 class="font-bold text-base text-gray-900 popover-title flex-1 break-words"></h4>
                                         <button class="copy-btn copy-btn-popover ml-2" data-copy-type="title">Copy</button>
                                     </div>
                                 </div>
-                                <!-- Mô tả -->
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
                                         <h5 class="text-sm font-semibold text-gray-800">Mô tả:</h5>
@@ -190,25 +295,19 @@
                                         <button class="toggle-desc hidden">Xem thêm</button>
                                     </p>
                                 </div>
-                                <!-- Từ khóa -->
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
                                         <h5 class="text-sm font-semibold text-gray-800">Từ khoá:</h5>
                                         <button class="copy-btn copy-btn-popover" data-copy-type="tags">Copy</button>
                                     </div>
-                                    <div class="flex flex-wrap gap-1 popover-tags">
-                                        <!-- Tags sẽ được chèn vào đây -->
-                                    </div>
+                                    <div class="flex flex-wrap gap-1 popover-tags"></div>
                                 </div>
-                                <!-- Hashtag -->
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
                                         <h5 class="text-sm font-semibold text-gray-800">Hashtags:</h5>
                                         <button class="copy-btn copy-btn-popover" data-copy-type="hashtags">Copy</button>
                                     </div>
-                                    <div class="flex flex-wrap gap-1 popover-hashtags">
-                                        <!-- Hashtags sẽ được chèn vào đây -->
-                                    </div>
+                                    <div class="flex flex-wrap gap-1 popover-hashtags"></div>
                                 </div>
                             </div>
                         </div>
@@ -217,21 +316,17 @@
                 }
             }
 
-            // --- LOGIC XỬ LÝ SỰ KIỆN ---
-
-            // 1. Sự kiện click nút "Tìm kiếm"
-            searchButton.addEventListener('click', async () => {
-                setLoading(searchButton, true, "Đang tìm kiếm...");
+            searchButtonKeyword.addEventListener('click', async () => {
+                setLoading(searchButtonKeyword, true, "Đang tìm kiếm...");
                 const inputs = document.querySelectorAll('.video-url-input');
                 const infoButtons = document.querySelectorAll('.info-btn');
                 const popovers = document.querySelectorAll('.popover');
                 
-                videoDataStore = new Array(NUM_INPUTS).fill(null); // Reset kho dữ liệu
+                videoDataStore = new Array(NUM_INPUTS).fill(null);
                 let fetchPromises = [];
 
-                // Reset tất cả nút về trạng thái "Thông tin"
                 infoButtons.forEach((button, index) => {
-                    updateInfoButton(button, null); // null = trạng thái ban đầu
+                    updateInfoButton(button, null);
                     updatePopover(popovers[index], null);
                 });
 
@@ -242,45 +337,36 @@
                     const popover = popovers[index];
                     
                     if (videoId) {
-                        // Thêm promise vào mảng
                         fetchPromises.push(
                             fetchYouTubeVideoInfo(videoId)
                                 .then(data => {
-                                    videoDataStore[index] = data; // Lưu dữ liệu
-                                    updatePopover(popover, data); // Cập nhật popover
-                                    updateInfoButton(button, true); // Cập nhật nút (true = thành công)
+                                    videoDataStore[index] = data;
+                                    updatePopover(popover, data);
+                                    updateInfoButton(button, true);
                                 })
                                 .catch(error => {
-                                    console.error(`Lỗi khi fetch video ${videoId}:`, error);
                                     const errorData = { error: 'Không thể tải dữ liệu' };
                                     videoDataStore[index] = errorData;
                                     updatePopover(popover, errorData);
-                                    updateInfoButton(button, false); // Cập nhật nút (false = thất bại)
+                                    updateInfoButton(button, false);
                                 })
                         );
                     } else if (url !== "") { 
-                        // Link không hợp lệ
                         const errorData = { error: 'Link không hợp lệ' };
                         videoDataStore[index] = errorData;
                         updatePopover(popover, errorData);
-                        updateInfoButton(button, false); // Cập nhật nút (false = thất bại)
-                    } else {
-                        // Ô trống, không làm gì
+                        updateInfoButton(button, false);
                     }
                 });
 
-                // Chờ tất cả các API call hoàn tất
-                await Promise.allSettled(fetchPromises); // Dùng allSettled để đảm bảo chạy hết
-
-                setLoading(searchButton, false, "Tìm kiếm Thông Tin Video");
+                await Promise.allSettled(fetchPromises);
+                setLoading(searchButtonKeyword, false, "Tìm kiếm Thông Tin Video");
             });
 
-            // 2. Sự kiện click nút "Tạo Bộ Từ Khoá"
             generateKeywordsButton.addEventListener('click', async () => {
                 setLoading(generateKeywordsButton, true, "Đang tạo...");
                 keywordResultsContainer.innerHTML = '<div class="flex justify-center items-center p-10"><div class="loader"></div><span class="ml-3">Đang liên hệ với Gemini...</span></div>';
 
-                // Tổng hợp dữ liệu từ videoDataStore
                 let combinedText = "";
                 videoDataStore.forEach(data => {
                     if (data && !data.error) {
@@ -300,9 +386,7 @@
                 }
 
                 try {
-                    // Gọi Gemini API (qua backend)
                     const result = await callGeminiApi(combinedText);
-                    // Hiển thị kết quả
                     displayKeywordResults(result);
                 } catch (error) {
                     console.error("Lỗi khi gọi Gemini API:", error);
@@ -312,90 +396,60 @@
                 }
             });
 
-            // --- HÀM HỖ TRỢ ---
-
-            // Trích xuất Video ID từ URL YouTube
             function getYoutubeId(url) {
                 const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
                 const match = url.match(regex);
                 return match ? match[1] : null;
             }
 
-            // Gọi API YouTube Data v3 (qua backend)
             async function fetchYouTubeVideoInfo(videoId) {
-                // API key đã được giấu trên backend
                 const response = await fetch('/api/youtube', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ videoId: videoId })
                 });
-
                 if (!response.ok) {
                     let errorMessage = `Lỗi máy chủ: ${response.status}`;
-                    try {
-                        const errorData = await response.json();
-                        errorMessage = errorData.message || JSON.stringify(errorData);
-                    } catch (e) {
-                        errorMessage = await response.text();
-                    }
+                    try { const errorData = await response.json(); errorMessage = errorData.message || JSON.stringify(errorData); }
+                    catch (e) { errorMessage = await response.text(); }
                     throw new Error(errorMessage);
                 }
-                return response.json(); // Nhận dữ liệu đã xử lý từ backend
+                return response.json();
             }
 
-            // Cập nhật trạng thái nút "Thông tin" / "Kết quả"
             function updateInfoButton(buttonElement, isSuccess) {
-                // Xóa các lớp cũ
-                buttonElement.classList.remove('bg-gray-300', 'text-gray-700', 'hover:bg-gray-400');
-                buttonElement.classList.remove('bg-indigo-500', 'text-white', 'hover:bg-indigo-600', 'result-btn');
-                buttonElement.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-600');
-
+                buttonElement.classList.remove('bg-gray-300', 'text-gray-700', 'hover:bg-gray-400', 'bg-indigo-500', 'text-white', 'hover:bg-indigo-600', 'result-btn', 'bg-red-500', 'hover:bg-red-600');
                 if (isSuccess === true) {
-                    // Thành công
                     buttonElement.textContent = 'Kết quả';
                     buttonElement.classList.add('bg-indigo-500', 'text-white', 'hover:bg-indigo-600', 'result-btn');
                 } else if (isSuccess === false) {
-                    // Thất bại
                     buttonElement.textContent = 'Lỗi';
                     buttonElement.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600');
                 } else {
-                    // Trạng thái ban đầu (null)
                     buttonElement.textContent = 'Thông tin';
                     buttonElement.classList.add('bg-gray-300', 'text-gray-700', 'hover:bg-gray-400');
                 }
             }
 
-
-            // Cập nhật nội dung popover (đã nâng cấp)
             function updatePopover(popoverElement, data) {
                 const placeholder = popoverElement.querySelector('.popover-placeholder');
                 const contentDiv = popoverElement.querySelector('.popover-content');
-
                 if (data && !data.error) {
-                    // Có dữ liệu
                     placeholder.classList.add('hidden');
                     contentDiv.classList.remove('hidden');
-
                     const { title, description, tags } = data;
-
-                    // 1. Tiêu đề
                     contentDiv.querySelector('.popover-title').textContent = title;
-
-                    // 2. Mô tả (với logic đóng/mở)
                     const descP = contentDiv.querySelector('.popover-description');
                     const descShort = descP.querySelector('.desc-short');
                     const descFull = descP.querySelector('.desc-full');
                     const toggleBtn = descP.querySelector('.toggle-desc');
-
                     if (description.length > 120) {
                         descShort.textContent = description.substring(0, 120) + '...';
                         descFull.textContent = description;
                         toggleBtn.classList.remove('hidden');
-                        
-                        // Reset trạng thái (quan trọng)
                         descFull.style.display = 'none';
                         toggleBtn.textContent = 'Xem thêm';
-                        toggleBtn.onclick = () => { // Gán sự kiện
+                        toggleBtn.onclick = () => {
                             const isHidden = descFull.style.display === 'none';
                             descFull.style.display = isHidden ? 'inline' : 'none';
                             toggleBtn.textContent = isHidden ? 'Thu gọn' : 'Xem thêm';
@@ -405,10 +459,8 @@
                         descFull.textContent = '';
                         toggleBtn.classList.add('hidden');
                     }
-
-                    // 3. Từ khóa (Tags)
                     const tagsContainer = contentDiv.querySelector('.popover-tags');
-                    tagsContainer.innerHTML = ''; // Xóa tags cũ
+                    tagsContainer.innerHTML = '';
                     if (tags.length > 0) {
                         tags.forEach(tag => {
                             const tagEl = document.createElement('span');
@@ -419,13 +471,10 @@
                     } else {
                         tagsContainer.innerHTML = '<i class="text-gray-500 text-xs">Không có tags</i>';
                     }
-
-                    // 4. Hashtags (Trích xuất từ mô tả)
                     const hashtagsContainer = contentDiv.querySelector('.popover-hashtags');
                     hashtagsContainer.innerHTML = '';
                     const hashtagRegex = /#[\w\d]+/g;
                     const foundHashtags = description.match(hashtagRegex) || [];
-                    
                     if (foundHashtags.length > 0) {
                         foundHashtags.forEach(tag => {
                             const tagEl = document.createElement('span');
@@ -436,20 +485,15 @@
                     } else {
                         hashtagsContainer.innerHTML = '<i class="text-gray-500 text-xs">Không có hashtags</i>';
                     }
-
-                    // 5. GÁN SỰ KIỆN CHO CÁC NÚT COPY MỚI
                     const copyTitleBtn = contentDiv.querySelector('[data-copy-type="title"]');
                     const copyDescBtn = contentDiv.querySelector('[data-copy-type="desc"]');
                     const copyTagsBtn = contentDiv.querySelector('[data-copy-type="tags"]');
                     const copyHashtagsBtn = contentDiv.querySelector('[data-copy-type="hashtags"]');
-
                     copyTitleBtn.onclick = () => copyToClipboard(title, copyTitleBtn);
                     copyDescBtn.onclick = () => copyToClipboard(description, copyDescBtn);
                     copyTagsBtn.onclick = () => copyToClipboard(tags.join(', '), copyTagsBtn);
                     copyHashtagsBtn.onclick = () => copyToClipboard(foundHashtags.join(' '), copyHashtagsBtn);
-
                 } else {
-                    // Lỗi hoặc rỗng
                     placeholder.classList.remove('hidden');
                     contentDiv.classList.add('hidden');
                     if (data && data.error) {
@@ -462,84 +506,56 @@
                 }
             }
 
-            // Cập nhật trạng thái loading cho nút
             function setLoading(button, isLoading, loadingText) {
                 if (!button.dataset.originalContent) {
                     button.dataset.originalContent = button.innerHTML;
                 }
                 const originalContent = button.dataset.originalContent;
-
                 if (isLoading) {
                     button.disabled = true;
-                    button.innerHTML = `
-                        <div class="loader"></div>
-                        <span>${loadingText}</span>
-                    `;
+                    button.innerHTML = `<div class="loader"></div><span>${loadingText}</span>`;
                 } else {
                     button.disabled = false;
-                    // Khôi phục nội dung gốc dựa trên text
                     button.innerHTML = originalContent.replace(/<span>(.*?)<\/span>/, `<span>${loadingText}</span>`);
                 }
             }
 
-            // --- LOGIC GEMINI API ---
-
-            // Gọi API Gemini (qua backend)
             async function callGeminiApi(promptText) {
-                // API key đã được giấu trên backend
                 const response = await fetch('/api/gemini', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: promptText })
                 });
-                
                 if (!response.ok) {
                     let errorMessage = `Lỗi máy chủ: ${response.status}`;
-                    try {
-                        const errorData = await response.json();
-                        errorMessage = errorData.message || JSON.stringify(errorData);
-                    } catch (e) {
-                        errorMessage = await response.text();
-                    }
+                    try { const errorData = await response.json(); errorMessage = errorData.message || JSON.stringify(errorData); }
+                    catch (e) { errorMessage = await response.text(); }
                     throw new Error(errorMessage);
                 }
-                
-                const result = await response.json(); 
-                return result; 
+                const result = await response.json();
+                return result;
             }
 
-            // Hiển thị kết quả từ Gemini (đã nâng cấp với nút Copy)
             function displayKeywordResults(data) {
-                keywordResultsContainer.innerHTML = ''; // Xóa nội dung cũ
-
-                // Hàm trợ giúp để tạo một khối kết quả (có nút copy)
+                keywordResultsContainer.innerHTML = '';
                 const createSection = (title, content, copyText) => {
                     const section = document.createElement('div');
                     section.className = 'border border-gray-200 rounded-lg p-4 bg-gray-50';
-                    
-                    // Tiêu đề và nút copy
                     const header = document.createElement('div');
                     header.className = 'flex justify-between items-center mb-3';
-                    
                     const titleEl = document.createElement('h3');
                     titleEl.className = 'text-lg font-semibold text-gray-800';
                     titleEl.textContent = title;
                     header.appendChild(titleEl);
-
-                    // Nút Copy
                     const copyButton = document.createElement('button');
                     copyButton.className = 'copy-btn';
                     copyButton.textContent = 'Copy';
-                    // Lưu văn bản cần copy vào dataset
-                    copyButton.dataset.copyText = copyText || ''; 
+                    copyButton.dataset.copyText = copyText || '';
                     copyButton.addEventListener('click', () => {
                         copyToClipboard(copyButton.dataset.copyText, copyButton);
                     });
                     header.appendChild(copyButton);
-                    
                     section.appendChild(header);
-
-                    // Nội dung
                     if (Array.isArray(content) && content.length > 0) {
                         const list = document.createElement('div');
                         list.className = 'flex flex-wrap gap-2';
@@ -552,20 +568,17 @@
                         section.appendChild(list);
                     } else if (typeof content === 'string' && content) {
                         const contentEl = document.createElement('p');
-                        contentEl.className = 'text-gray-700 whitespace-pre-wrap'; // Giữ nguyên định dạng xuống dòng
+                        contentEl.className = 'text-gray-700 whitespace-pre-wrap';
                         contentEl.textContent = content;
                         section.appendChild(contentEl);
                     } else {
-                         const contentEl = document.createElement('p');
+                        const contentEl = document.createElement('p');
                         contentEl.className = 'text-gray-500 italic';
                         contentEl.textContent = (content && content.length === 0) ? 'Không có' : 'N/A';
                         section.appendChild(contentEl);
                     }
                     keywordResultsContainer.appendChild(section);
                 };
-
-                // Tạo các khối cho từng phần dữ liệu
-                // Thứ tự theo yêu cầu của bạn
                 createSection('Bộ Từ Khoá Chính', data.boTuKhoaChinh, data.boTuKhoaChinh.join(', '));
                 createSection('Từ Khoá Bổ Trợ', data.tuKhoaBoTro, data.tuKhoaBoTro.join(', '));
                 createSection('Từ Khoá Liên Quan', data.tuKhoaLienQuan, data.tuKhoaLienQuan.join(', '));
@@ -575,13 +588,10 @@
                 createSection('Mô Tả Chủ Đề (Danh sách phát)', data.moTaChuDe, data.moTaChuDe);
             }
 
-            // Hàm Copy to Clipboard (dùng execCommand cho an toàn)
             function copyToClipboard(text, buttonElement) {
                 const textArea = document.createElement('textarea');
                 textArea.value = text;
-                textArea.style.position = 'fixed'; // Ngăn cuộn trang
-                textArea.style.top = '-9999px';
-                textArea.style.left = '-9999px';
+                textArea.style.position = 'fixed'; textArea.style.top = '-9999px'; textArea.style.left = '-9999px';
                 document.body.appendChild(textArea);
                 textArea.select();
                 try {
@@ -599,9 +609,231 @@
                 document.body.removeChild(textArea);
             }
 
-            // --- KHỞI ĐỘNG ỨNG DỤNG ---
             createInputRows();
-        
+            // --- KẾT THÚC: SCRIPT CÔNG CỤ 1 (TỪ KHOÁ) ---
+
+
+            // --- BẮT ĐẦU: SCRIPT CÔNG CỤ 2 (COMMENT) ---
+            const btnSearchComment = document.getElementById('search-button-comment');
+            const inputUrlComment = document.getElementById('video-url-comment');
+            const divResultsComment = document.getElementById('results-comment');
+            const divStatusComment = document.getElementById('status-comment');
+            const divSortBarComment = document.getElementById('sort-bar-comment');
+            const btnSortLike = document.getElementById('sort-like');
+            const btnSortReplies = document.getElementById('sort-replies');
+            const btnSortDate = document.getElementById('sort-date');
+
+            let allThreads = [];
+            let sortKey = 'date';
+            let sortDir = 'desc';
+
+            async function translateBatchToVi(texts) {
+                if (!texts || !texts.length) return [];
+                try {
+                    const response = await fetch('/api/translate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ texts: texts })
+                    });
+                    if (!response.ok) throw new Error('Dịch lỗi (máy chủ)');
+                    const data = await response.json();
+                    return data.translations || texts.map(() => '(Dịch lỗi)');
+                } catch (e) {
+                    console.warn('Translate API call failed:', e);
+                    return texts.map(() => '(Dịch lỗi)');
+                }
+            }
+
+            function attachSortHandlers() {
+                function activate(btn) { [btnSortLike, btnSortReplies, btnSortDate].forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+                function toggleDir(btn, label) { sortDir = (sortDir === 'desc') ? 'asc' : 'desc'; btn.textContent = `${label} ${sortDir === 'desc' ? '↓' : '↑'}`; }
+
+                btnSortLike.addEventListener('click', () => {
+                    if (sortKey !== 'like') { sortKey = 'like'; sortDir = 'desc'; btnSortLike.textContent = 'Like ↓'; }
+                    else toggleDir(btnSortLike, 'Like');
+                    activate(btnSortLike); renderThreads();
+                });
+                btnSortReplies.addEventListener('click', () => {
+                    if (sortKey !== 'replies') { sortKey = 'replies'; sortDir = 'desc'; btnSortReplies.textContent = 'Cmt cấp 2 ↓'; }
+                    else toggleDir(btnSortReplies, 'Cmt cấp 2');
+                    activate(btnSortReplies); renderThreads();
+                });
+                btnSortDate.addEventListener('click', () => {
+                    if (sortKey !== 'date') { sortKey = 'date'; sortDir = 'desc'; btnSortDate.textContent = 'Ngày ↓'; }
+                    else toggleDir(btnSortDate, 'Ngày');
+                    activate(btnSortDate); renderThreads();
+                });
+                btnSortDate.classList.add('active');
+            }
+
+            btnSearchComment.addEventListener('click', async () => {
+                const videoURL = inputUrlComment.value.trim();
+                if (!videoURL) { alert('Vui lòng nhập link video YouTube.'); return; }
+                const videoId = getYoutubeId(videoURL); // Dùng lại hàm getYoutubeId
+                if (!videoId) { alert('Link video không hợp lệ. Vui lòng kiểm tra lại.'); return; }
+
+                btnSearchComment.disabled = true;
+                btnSearchComment.innerHTML = '<span class="loader-comment"></span>Đang tải...';
+                divResultsComment.innerHTML = '';
+                divStatusComment.textContent = 'Đang lấy dữ liệu, vui lòng chờ...';
+                allThreads = [];
+                divSortBarComment.style.display = 'none';
+
+                try {
+                    await fetchAllComments(videoId);
+                    if (allThreads.length) {
+                        divStatusComment.textContent = `Đã tải xong ${allThreads.length} bình luận cấp 1! Đang dịch...`;
+                        if (!btnSortLike.hasAttribute('data-inited')) {
+                            attachSortHandlers(); btnSortLike.setAttribute('data-inited', '1');
+                        }
+                        divSortBarComment.style.display = 'flex';
+                        await renderThreads(); // Chờ dịch và render
+                        divStatusComment.textContent = `Đã tải và dịch xong ${allThreads.length} bình luận.`;
+                    } else {
+                        divStatusComment.textContent = 'Không tìm thấy bình luận nào hoặc video đã tắt bình luận.';
+                    }
+                } catch (e) {
+                    console.error('Lỗi:', e);
+                    divStatusComment.textContent = `Đã xảy ra lỗi: ${e.message}`;
+                } finally {
+                    btnSearchComment.disabled = false;
+                    btnSearchComment.textContent = 'Tìm kiếm';
+                }
+            });
+
+            async function fetchAllComments(videoId, pageToken = '') {
+                // Gọi backend /api/youtube-comments
+                const response = await fetch('/api/youtube-comments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ videoId: videoId, pageToken: pageToken })
+                });
+
+                const data = await response.json();
+                if (data.error) throw new Error(data.message || 'Lỗi không xác định từ backend');
+                
+                if (data.items) collectThreads(data.items);
+                if (data.nextPageToken) {
+                    divStatusComment.textContent = `Đã tải ${allThreads.length} comments... Đang tải thêm...`;
+                    await fetchAllComments(videoId, data.nextPageToken);
+                }
+            }
+
+            function collectThreads(items) {
+                items.forEach(item => {
+                    const top = item.snippet.topLevelComment?.snippet || {};
+                    const likeCount = Number(top.likeCount || 0);
+                    const totalReplies = Number(item.snippet.totalReplyCount || 0);
+                    const publishedAtISO = top.publishedAt || null;
+                    const publishedDate = publishedAtISO ? new Date(publishedAtISO) : null;
+                    const originals = [];
+                    originals.push(top.textOriginal || '');
+                    (item.replies?.comments || []).forEach(r => originals.push(r.snippet?.textOriginal || ''));
+                    allThreads.push({
+                        raw: item,
+                        likeCount, totalReplies,
+                        publishedAtISO, publishedDate,
+                        originals, translations: null
+                    });
+                });
+            }
+
+            async function renderThreads() {
+                const arr = [...allThreads];
+                arr.sort((a, b) => {
+                    let va, vb;
+                    if (sortKey === 'like') { va = a.likeCount; vb = b.likeCount; }
+                    else if (sortKey === 'replies') { va = a.totalReplies; vb = b.totalReplies; }
+                    else { va = a.publishedDate ? a.publishedDate.getTime() : 0; vb = b.publishedDate ? b.publishedDate.getTime() : 0; }
+                    return (sortDir === 'desc') ? (vb - va) : (va - vb);
+                });
+
+                divResultsComment.innerHTML = ''; // Xóa kết quả cũ
+                
+                // Chỉ dịch và render 50 cái đầu tiên để tăng tốc độ
+                // Bạn có thể thay đổi logic này (ví dụ: lazy load)
+                const itemsToRender = arr; // Render tất cả
+                let translatedCount = 0;
+
+                for (const obj of itemsToRender) {
+                    if (!obj.translations) {
+                        try {
+                            obj.translations = await translateBatchToVi(obj.originals);
+                            translatedCount++;
+                            if(translatedCount % 10 === 0) { // Cập nhật status sau mỗi 10 lượt dịch
+                                divStatusComment.textContent = `Đang dịch... (${translatedCount}/${itemsToRender.length})`;
+                            }
+                        }
+                        catch (e) {
+                            console.warn('Dịch lỗi:', e);
+                            obj.translations = obj.originals.map(() => '(Chưa dịch)');
+                        }
+                    }
+                    divResultsComment.appendChild(createThreadDOM(obj));
+                }
+                divStatusComment.textContent = `Đã hiển thị ${itemsToRender.length} bình luận.`;
+            }
+
+            function createThreadDOM(threadObj) {
+                const { raw, likeCount, totalReplies, publishedAtISO, publishedDate, translations } = threadObj;
+                const top = raw.snippet.topLevelComment.snippet;
+                const threadDiv = document.createElement('div'); threadDiv.className = 'comment-thread';
+                const rowDiv = document.createElement('div'); rowDiv.className = 'thread-row';
+                const leftWrap = document.createElement('div'); leftWrap.className = 'left-grid';
+                const colOriginal = document.createElement('div'); colOriginal.className = 'left-col';
+                colOriginal.innerHTML = `<h3>Nguyên bản</h3>`;
+                colOriginal.appendChild(createCommentElement(top, false, null, false));
+                if (raw.replies) {
+                    const rep = document.createElement('div'); rep.className = 'replies-container';
+                    raw.replies.comments.forEach(r => rep.appendChild(createCommentElement(r.snippet, true, null, false)));
+                    colOriginal.appendChild(rep);
+                }
+                const colTranslated = document.createElement('div'); colTranslated.className = 'left-col';
+                colTranslated.innerHTML = `<h3>Bản dịch (vi)</h3>`;
+                colTranslated.appendChild(createCommentElement(top, false, (translations?.[0] ?? '(Chưa dịch)'), true));
+                if (raw.replies) {
+                    const repVi = document.createElement('div'); repVi.className = 'replies-container';
+                    raw.replies.comments.forEach((r, idx) => repVi.appendChild(createCommentElement(r.snippet, true, (translations?.[idx + 1] ?? '(Chưa dịch)'), true)));
+                    colTranslated.appendChild(repVi);
+                }
+                leftWrap.appendChild(colOriginal);
+                leftWrap.appendChild(colTranslated);
+                const rightDiv = document.createElement('div'); rightDiv.className = 'thread-right';
+                const metrics = document.createElement('div'); metrics.className = 'metrics-grid';
+                const likeBox = document.createElement('div'); likeBox.className = 'metric';
+                likeBox.innerHTML = `<div class="metric-label">Like (cấp 1)</div><div class="metric-value">${likeCount.toLocaleString('vi-VN')}</div>`;
+                const replyBox = document.createElement('div'); replyBox.className = 'metric';
+                replyBox.innerHTML = `<div class="metric-label">Cmt cấp 2</div><div class="metric-value">${totalReplies.toLocaleString('vi-VN')}</div>`;
+                const dateBox = document.createElement('div'); dateBox.className = 'metric';
+                const dateText = publishedDate ? publishedDate.toLocaleString('vi-VN', { hour12: false }) : '—';
+                dateBox.innerHTML = `<div class="metric-label">Ngày</div><div class="metric-value" title="${publishedAtISO || ''}">${dateText}</div>`;
+                metrics.appendChild(likeBox); metrics.appendChild(replyBox); metrics.appendChild(dateBox);
+                rightDiv.appendChild(metrics);
+                rowDiv.appendChild(leftWrap);
+                rowDiv.appendChild(rightDiv);
+                threadDiv.appendChild(rowDiv);
+                return threadDiv;
+            }
+
+            function createCommentElement(snippet, isReply = false, overrideText = null, forcePlain = false) {
+                const wrap = document.createElement('div'); wrap.className = isReply ? 'comment reply' : 'comment';
+                const avatar = document.createElement('img');
+                avatar.className = 'comment-author-img'; avatar.src = snippet.authorProfileImageUrl; avatar.alt = 'Avatar';
+                const content = document.createElement('div'); content.className = 'comment-content';
+                const author = document.createElement('div'); author.className = 'comment-author';
+                author.textContent = snippet.authorDisplayName || '(Không rõ)';
+                const text = document.createElement('div');
+                if (overrideText !== null) { text.textContent = overrideText; }
+                else {
+                    if (forcePlain) text.textContent = snippet.textOriginal || '';
+                    else text.innerHTML = snippet.textDisplay || '';
+                }
+                content.appendChild(author); content.appendChild(text);
+                wrap.appendChild(avatar); wrap.appendChild(content);
+                return wrap;
+            }
+            // --- KẾT THÚC: SCRIPT CÔNG CỤ 2 (COMMENT) ---
+
         }); // Kết thúc DOMContentLoaded
     </script>
 </body>
