@@ -1,5 +1,5 @@
 // Đây là "Người gác cổng" cho Gemini (file /api/gemini.js)
-// ĐÃ CẬP NHẬT HƯỚNG DẪN HỆ THỐNG (SYSTEM PROMPT)
+// ĐÃ CẬP NHẬT HƯỚNG DẪN HỆ THỐNG (SYSTEM PROMPT) - BẢN NÂNG CẤP SEO CHUYÊN SÂU
 
 export default async function handler(request, response) {
     if (request.method !== 'POST') {
@@ -23,20 +23,25 @@ export default async function handler(request, response) {
 
         // *** BẮT ĐẦU PHẦN CẬP NHẬT QUAN TRỌNG ***
         // Hướng dẫn hệ thống (systemPrompt) mới, mạnh mẽ hơn
-        const systemPrompt = `You are a world-class YouTube SEO strategist and keyword research specialist.
-Your task is to analyze video data (titles, descriptions, tags) and generate a new, high-quality SEO set for a YouTube channel or playlist.
+        const systemPrompt = `You are a world-class YouTube SEO strategist and data analyst.
+Your task is to analyze video data (titles, descriptions, tags) and generate a new, high-performance, "SEO-standard" set for a YouTube channel or playlist.
 
 **CRITICAL LANGUAGE RULE:**
 1.  Analyze the provided text to determine its primary language (e.g., English, Vietnamese, Spanish, etc.).
 2.  You MUST generate ALL output (keywords, title, description) in that SAME detected language.
 
-**KEYWORD QUALITY INSTRUCTIONS:**
-* Generate keywords that people are *actually searching for*.
-* Focus on keywords that show strong user **search intent** (e.g., "how to build X", "best X for Y", "X review", "DIY X tutorial").
-* Include a healthy mix of broad keywords (short-tail) and specific, multi-word keywords (long-tail).
-* The "boTuKhoaChinh" (Main Keywords) should be the most important search terms.
-* The "tuKhoaBoTro" (Supplementary) should be terms that add context (e.g., "cement craft", "aquascaping").
-* The "tuKhoaLienQuan" (Related) should be about related topics (e.g., "indoor waterfall", "small garden ideas").
+**CRITICAL SEO STRATEGY (4-Step Process):**
+1.  **EXTRACT CORE THEMES:** First, analyze all provided video titles and descriptions. Identify and list the *specific*, recurring core themes, entities, and keywords.
+    * *Bad analysis (Too Broad):* "DIY projects", "aquarium"
+    * *Good analysis (Specific):* "DIY cement aquarium", "waterfall fish tank", "aquarium diorama build", "No1Ideas channel", "building unique fish tanks".
+2.  **PRIORITIZE SPECIFICITY (BÁM SÁT):** Your generated content MUST be *directly* based on these extracted core themes. **DO NOT** use generic, broad keywords (like "DIY craft ideas") unless they are part of a *specific* long-tail keyword from your analysis.
+3.  **GENERATE "SEO-STANDARD" KEYWORDS:**
+    * `"boTuKhoaChinh"` (Main): Must be high-intent, long-tail keywords (4+ words) that directly match what users would search for, based on the *extracted themes* (e.g., "how to build a cement aquarium", "DIY waterfall fish tank tutorial", "unique fish tank setup ideas").
+    * `"tuKhoaBoTro"` (Supplementary): Must be terms that add specific context to the main keywords (e.g., "cement craft techniques", "aquascaping for cement tanks", "aquarium diorama materials").
+    * `"tuKhoaLienQuan"` (Related): Must be about *closely* related topics that someone interested in the main theme would also search for (e.g., "DIY aquarium filter system", "how to make a concrete planter", "miniature waterfall craft").
+4.  **GENERATE "SEO-STANDARD" TITLE & DESCRIPTION:**
+    * `"tieuDeChuDe"` (Title): Must be a compelling playlist title that *naturally incorporates* at least ONE of the main extracted keywords.
+    * `"moTaChuDe"` (Description): Must be an SEO-optimized paragraph (2-3 sentences) that *naturally weaves in* several of the main, supplementary, and related keywords. It must clearly explain the value of the playlist based on the provided videos.
 
 **SCHEMA INSTRUCTIONS:**
 You must return a JSON object matching the schema.
@@ -59,7 +64,7 @@ The *keys* in the schema (like 'boTuKhoaChinh') are just identifiers. **DO NOT**
          };
 
         // Tạo userQuery
-        const userQuery = `Here is the combined data from the videos:\n\n${prompt}\n\Analyze this data and generate a high-quality, actionable keyword set, title, and description for the common theme. Remember all instructions.`;
+        const userQuery = `Here is the combined data from the videos:\n\n${prompt}\n\Analyze this data and generate a high-quality, actionable keyword set, title, and description for the common theme. Remember all instructions, especially the 4-step SEO strategy.`;
 
         const payload = {
             contents: [{ parts: [{ text: userQuery }] }],
