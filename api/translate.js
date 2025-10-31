@@ -1,10 +1,10 @@
 // --- CHỨC NĂNG BACKEND: /api/translate ---
 // API này nhận một danh sách văn bản và một ngôn ngữ mục tiêu (targetLang),
 // sau đó gọi đến API dịch (không chính thức) của Google.
-// PHIÊN BẢN 4.1: Sửa lỗi dịch, siết chặt logic chia lô (batching)
+// PHIÊN BẢN 5.0: Sửa lỗi tốc độ, chạy song song (parallel) các lô
 
 export default async function handler(request, response) {
-    // Chỉ chấp nhận phương thức POST (vì frontend gửi POST)
+    // Chỉ chấp nhận phương thức POST
     if (request.method !== 'POST') {
         return response.status(405).json({ message: 'Method Not Allowed' });
     }
@@ -22,13 +22,11 @@ export default async function handler(request, response) {
 
         // 3. Chuẩn bị dữ liệu dịch
         const originalToTranslated = new Map();
-        // Chỉ dịch các văn bản không rỗng và duy nhất
         const uniqueNonEmptyTexts = [...new Set(texts.filter(t => t && t.trim().length > 0))];
 
         if (uniqueNonEmptyTexts.length > 0) {
             
-            // 4. CHIA LÔ (BATCHING) - Logic v4.1 (An toàn hơn)
-            // URL GET có giới hạn. Giới hạn 2000 ký tự và 20 bình luận/lô cho an toàn.
+            // 4. CHIA LÔ (BATCHING) - Logic v4.1 (An toàn)
             const MAX_URL_LENGTH = 2000;
             const MAX_BATCH_ITEMS = 20;
             
@@ -39,84 +37,90 @@ export default async function handler(request, response) {
             const baseLength = baseURL.length;
 
             for (const text of uniqueNonEmptyTexts) {
-                // + 3 cho '&q='
-                const textParamLength = encodeURIComponent(text).length + 3; 
+                const textParamLength = encodeURIComponent(text).length + 3; // +3 cho '&q='
                 
-                // Kiểm tra xem việc thêm text này có vượt giới hạn không
                 if (
                     (baseLength + currentParamsLength + textParamLength > MAX_URL_LENGTH && currentBatch.length > 0) || 
                     currentBatch.length >= MAX_BATCH_ITEMS
                 ) {
-                    batches.push(currentBatch); // Đẩy lô cũ vào
-                    currentBatch = [text];     // Bắt đầu lô mới
+                    batches.push(currentBatch); 
+                    currentBatch = [text];     
                     currentParamsLength = textParamLength;
                 } else {
                     currentBatch.push(text);
                     currentParamsLength += textParamLength;
                 }
             }
-            // Đẩy lô cuối cùng vào nếu nó không rỗng
             if (currentBatch.length > 0) {
                 batches.push(currentBatch); 
             }
 
-            const allTranslatedSegments = [];
-
-            // 5. Gọi API cho từng lô
-            for (const batch of batches) {
-                if (batch.length === 0) continue;
-
-                // Xây dựng URL cho lô này
+            // 5. GỌI API SONG SONG (Parallel)
+            // Tạo một mảng các promise (lời hứa)
+            const batchPromises = batches.map(batch => {
+                if (batch.length === 0) return Promise.resolve(null); // Trả về promise rỗng
+                
                 const queryParams = batch.map(text => `q=${encodeURIComponent(text)}`).join('&');
                 const url = `${baseURL}&${queryParams}`;
-
-                const transResponse = await fetch(url, { method: 'GET' }); // Dùng GET
-
-                if (!transResponse.ok) {
-                    // Nếu lô này lỗi, ghi lại và thêm kết quả rỗng
-                    console.warn(`Google Translate API error! Status: ${transResponse.status} for batch:`, batch[0]);
-                    allTranslatedSegments.push(...batch.map(() => '')); // Thêm chuỗi rỗng
-                    continue; // Bỏ qua lô này và tiếp tục lô tiếp theo
-                }
-
-                const transData = await transResponse.json();
                 
-                // Xử lý phản hồi
-                if (transData && transData[0]) {
-                    const batchTranslations = transData[0].map(segment => 
-                        (segment && segment[0]) ? segment[0] : ''
-                    );
-                    allTranslatedSegments.push(...batchTranslations);
-                } else {
-                    // Nếu lô thất bại (dữ liệu rỗng), thêm chuỗi rỗng
-                    allTranslatedSegments.push(...batch.map(() => ''));
-                }
-            }
-            
+                return fetch(url, { method: 'GET' })
+                    .then(res => {
+                        if (!res.ok) {
+                            // Nếu lỗi, ném lỗi để Promise.allSettled bắt
+                            throw new Error(`API status ${res.status}`);
+                        }
+                        return res.json(); // Trả về dữ liệu json
+                    })
+                    .then(transData => {
+                        // Xử lý dữ liệu json
+                        if (transData && transData[0]) {
+                            return transData[0].map(segment => (segment && segment[0]) ? segment[0] : '');
+                        }
+                        return batch.map(() => ''); // Trả về mảng rỗng nếu dữ liệu không hợp lệ
+                    })
+                    .catch(err => {
+                        console.warn(`Lỗi 1 lô dịch: ${err.message}`);
+                        return null; // Trả về null nếu lô bị lỗi
+                    });
+            });
+
+            // Chờ tất cả các promise hoàn thành (kể cả lỗi)
+            const results = await Promise.allSettled(batchPromises);
+
             // 6. Ánh xạ (map) bản dịch về văn bản gốc
-            if (allTranslatedSegments.length === uniqueNonEmptyTexts.length) {
-                uniqueNonEmptyTexts.forEach((original, index) => {
-                    originalToTranslated.set(original, allTranslatedSegments[index]);
-                });
-            } else {
-                // Fallback phòng trường hợp API trả về không như mong đợi
-                console.warn(`Translation mismatch: input ${uniqueNonEmptyTexts.length}, output ${allTranslatedSegments.length}`);
-            }
+            let textIndex = 0;
+            results.forEach((result, batchIndex) => {
+                if (result.status === 'fulfilled' && result.value) {
+                    // Nếu lô thành công (result.value là mảng các bản dịch)
+                    const batchTranslations = result.value;
+                    const originalBatch = batches[batchIndex];
+                    
+                    batchTranslations.forEach((translatedText, i) => {
+                        const originalText = originalBatch[i];
+                        originalToTranslated.set(originalText, translatedText);
+                    });
+                } else {
+                    // Nếu lô thất bại (status === 'rejected' hoặc value === null)
+                    // Chúng ta không cần làm gì, vì map sẽ không có key
+                    // và logic ở bước 7 sẽ tự động gán "(Lỗi dịch)"
+                    console.warn(`Lô dịch thứ ${batchIndex} thất bại`);
+                }
+            });
         }
 
         // 7. Xây dựng mảng kết quả cuối cùng theo đúng thứ tự của 'texts'
         const finalTranslations = texts.map(originalText => {
-            if (!originalText || originalText.trim().length === 0) return ''; // Trả về chuỗi rỗng nếu đầu vào là rỗng
-            // Lấy bản dịch, nếu nó là chuỗi rỗng (do lỗi) thì trả về (Lỗi dịch)
+            if (!originalText || originalText.trim().length === 0) return '';
             const translation = originalToTranslated.get(originalText.trim());
-            return translation || '(Lỗi dịch)';
+            // Nếu dịch thành công (kể cả ra chuỗi rỗng) thì dùng, nếu không (undefined) thì báo lỗi
+            return (translation !== undefined) ? translation : '(Lỗi dịch)';
         });
 
         // Trả về kết quả thành công
         return response.status(200).json({ translations: finalTranslations });
 
     } catch (error) {
-        console.error("Lỗi trong /api/translate:", error);
+        console.error("Lỗi nghiêm trọng trong /api/translate:", error);
         return response.status(500).json({ message: error.message || 'Lỗi máy chủ không xác định' });
     }
 }
