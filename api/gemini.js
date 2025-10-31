@@ -1,4 +1,5 @@
 // Đây là "Người gác cổng" cho Gemini (file /api/gemini.js)
+// ĐÃ CẬP NHẬT HƯỚNG DẪN HỆ THỐNG (SYSTEM PROMPT)
 
 export default async function handler(request, response) {
     if (request.method !== 'POST') {
@@ -12,8 +13,6 @@ export default async function handler(request, response) {
         }
 
         // 1. LẤY API KEY GEMINI BÍ MẬT
-        // (Chúng ta sẽ cài đặt biến này trên Vercel sau)
-        // LƯU Ý: Đây là key Gemini bạn tự tạo, không phải key trong Canvas.
         const GEMINI_API_KEY = process.env.MY_GEMINI_API_KEY;
 
         if (!GEMINI_API_KEY) {
@@ -22,24 +21,41 @@ export default async function handler(request, response) {
         
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${GEMINI_API_KEY}`;
 
-        // Lấy lại system prompt và schema từ code gốc của bạn
-        const systemPrompt = `You are a YouTube SEO expert... (v.v... toàn bộ system prompt của bạn)`;
+        // *** BẮT ĐẦU PHẦN CẬP NHẬT QUAN TRỌNG ***
+        // Hướng dẫn hệ thống (systemPrompt) mới, mạnh mẽ hơn
+        const systemPrompt = `You are a YouTube SEO expert.
+Your task is to analyze video data (titles, descriptions, tags) and generate a new SEO set.
+
+**CRITICAL LANGUAGE RULE:**
+1.  Analyze the provided text to determine its primary language (e.g., English, Vietnamese, Spanish, etc.).
+2.  You MUST generate ALL output (keywords, title, description) in that SAME detected language.
+
+**SCHEMA INSTRUCTIONS:**
+You must return a JSON object matching the schema.
+The *keys* in the schema (like 'boTuKhoaChinh', 'tieuDeChuDe') are just identifiers. **DO NOT** let these Vietnamese keys influence your output language. The *language of your output* must match the *language of the input text*.
+For example: If the input text is English, you MUST output English keywords, an English title, and an English description.
+`;
+        // *** KẾT THÚC PHẦN CẬP NHẬT ***
+
         const responseSchema = {
              "type": "OBJECT",
              "properties": {
-                 "boTuKhoaChinh": { "type": "ARRAY", "items": { "type": "STRING" } },
-                 "tuKhoaBoTro": { "type": "ARRAY", "items": { "type": "STRING" } },
-                 "tuKhoaLienQuan": { "type": "ARRAY", "items": { "type": "STRING" } },
-                 "tuKhoaThuongHieu": { "type": "ARRAY", "items": { "type": "STRING" } },
-                 "hashtags": { "type": "ARRAY", "items": { "type": "STRING" } },
-                 "tieuDeChuDe": { "type": "STRING" },
-                 "moTaChuDe": { "type": "STRING" }
+                 "boTuKhoaChinh": { "type": "ARRAY", "items": { "type": "STRING" }, "description": "Main keywords for the topic" },
+                 "tuKhoaBoTro": { "type": "ARRAY", "items": { "type": "STRING" }, "description": "Supplementary keywords" },
+                 "tuKhoaLienQuan": { "type": "ARRAY", "items": { "type": "STRING" }, "description": "Related keywords" },
+                 "tuKhoaThuongHieu": { "type": "ARRAY", "items": { "type": "STRING" }, "description": "Brand keywords (if any)" },
+                 "hashtags": { "type": "ARRAY", "items": { "type": "STRING" }, "description": "List of relevant hashtags" },
+                 "tieuDeChuDe": { "type": "STRING", "description": "A compelling title for the topic/playlist" },
+                 "moTaChuDe": { "type": "STRING", "description": "A detailed, keyword-rich description" }
              },
              "required": ["boTuKhoaChinh", "tuKhoaBoTro", "tuKhoaLienQuan", "tuKhoaThuongHieu", "hashtags", "tieuDeChuDe", "moTaChuDe"]
          };
 
+        // Tạo userQuery
+        const userQuery = `Here is the combined data from the videos:\n\n${prompt}\n\Analyze this data and generate the keyword set, title, and description for the common theme. Remember the critical language rule.`;
+
         const payload = {
-            contents: [{ parts: [{ text: `Here is the combined data from the videos:\n\n${prompt}\n\Analyze this data...` }] }],
+            contents: [{ parts: [{ text: userQuery }] }],
             systemInstruction: { parts: [{ text: systemPrompt }] },
             generationConfig: {
                 responseMimeType: "application/json",
@@ -74,3 +90,4 @@ export default async function handler(request, response) {
         return response.status(500).json({ message: error.message || 'Lỗi máy chủ không xác định' });
     }
 }
+
