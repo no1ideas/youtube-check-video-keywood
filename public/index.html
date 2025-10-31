@@ -100,6 +100,29 @@
         .comment-btn { padding:12px 18px; font-size:15px; background:#ff0000; color:#fff; border:none; border-radius:10px; cursor:pointer; transition:.2s }
         .comment-btn:hover { background:#c00000 }
         .comment-btn:disabled { background:#cfcfcf; cursor:not-allowed }
+        
+        /* Nút chọn ngôn ngữ MỚI */
+        .lang-select-btn {
+            padding: 12px 14px; font-size: 15px; background: #fff; color: #333;
+            border: 1px solid #ddd; border-radius: 10px; cursor: pointer;
+            transition: .2s; position: relative; white-space: nowrap;
+        }
+        .lang-select-btn:hover { background: #f9f9f9; }
+        .lang-select-btn span { color: #1d4ed8; font-weight: 600; }
+        .lang-dropdown {
+            display: none; position: absolute; bottom: 100%; /* Hiển thị bên trên nút */
+            left: 0; right: 0; background: #fff; border: 1px solid #ddd;
+            border-radius: 10px; padding: 8px; max-height: 200px;
+            overflow-y: auto; z-index: 10; box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 8px;
+        }
+        .lang-dropdown.show { display: block; }
+        .lang-option {
+            padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px;
+        }
+        .lang-option:hover { background-color: #f3f4f6; }
+        .lang-option.selected { background-color: #dbeafe; color: #1d4ed8; font-weight: 600; }
+
         .sort-bar { display:none; gap:10px; align-items:center; flex-wrap:wrap; margin:12px 0 6px }
         .sort-title { font-weight:700; color:#444 }
         .sort-btn { border:1px solid #e5e7eb; background:#fff; color:#333; padding:8px 12px; border-radius:10px; cursor:pointer; font-size:14px }
@@ -158,7 +181,7 @@
             <!-- Card 2: Công cụ Comment -->
             <div id="hub-card-comments" class="hub-card" data-page="page-comments">
                 <h2>📝 Trình Lấy Comment</h2>
-                <p>Lấy toàn bộ bình luận từ video, tự động dịch sang tiếng Việt và sắp xếp theo lượt thích.</p>
+                <p>Lấy toàn bộ bình luận từ video, tự động dịch và sắp xếp theo lượt thích.</p>
             </div>
         </div>
     </div>
@@ -215,6 +238,18 @@
             <!-- Hàng nhập URL video -->
             <div class="comment-row">
                 <div class="field"><input id="comment-video-url" class="comment-input" type="text" placeholder="Dán link video YouTube vào đây..."></div>
+                
+                <!-- Nút chọn ngôn ngữ MỚI -->
+                <div class="relative">
+                    <button id="lang-select-btn" class="lang-select-btn" type="button">
+                        Dịch sang: <span>Tiếng Việt</span>
+                        <svg class="inline-block w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="lang-dropdown" class="lang-dropdown">
+                        <!-- Các ngôn ngữ sẽ được thêm bằng JS -->
+                    </div>
+                </div>
+
                 <button id="comment-search-button" class="comment-btn">Tìm kiếm</button>
             </div>
             <!-- Thanh sắp xếp -->
@@ -337,85 +372,89 @@
             }
 
             // --- LOGIC XỬ LÝ SỰ KIỆN ---
-            searchButton.addEventListener('click', async () => {
-                setLoading(searchButton, true, "Đang tìm kiếm...");
-                const inputs = document.querySelectorAll('.video-url-input');
-                const infoButtons = document.querySelectorAll('.info-btn');
-                const popovers = document.querySelectorAll('.popover');
-                
-                videoDataStore = new Array(NUM_INPUTS).fill(null); // Reset
-                let fetchPromises = [];
-
-                infoButtons.forEach((button, index) => {
-                    updateInfoButton(button, null);
-                    updatePopover(popovers[index], null);
-                });
-
-                inputs.forEach((input, index) => {
-                    const url = input.value.trim();
-                    const videoId = getYoutubeId(url);
-                    const button = infoButtons[index];
-                    const popover = popovers[index];
+            if(searchButton) { // Chỉ gán sự kiện nếu nút tồn tại
+                searchButton.addEventListener('click', async () => {
+                    setLoading(searchButton, true, "Đang tìm kiếm...");
+                    const inputs = document.querySelectorAll('.video-url-input');
+                    const infoButtons = document.querySelectorAll('.info-btn');
+                    const popovers = document.querySelectorAll('.popover');
                     
-                    if (videoId) {
-                        fetchPromises.push(
-                            fetchYouTubeVideoInfo(videoId)
-                                .then(data => {
-                                    videoDataStore[index] = data;
-                                    updatePopover(popover, data);
-                                    updateInfoButton(button, true);
-                                })
-                                .catch(error => {
-                                    console.error(`Lỗi khi fetch video ${videoId}:`, error);
-                                    const errorData = { error: 'Không thể tải dữ liệu' };
-                                    videoDataStore[index] = errorData;
-                                    updatePopover(popover, errorData);
-                                    updateInfoButton(button, false);
-                                })
-                        );
-                    } else if (url !== "") { 
-                        const errorData = { error: 'Link không hợp lệ' };
-                        videoDataStore[index] = errorData;
-                        updatePopover(popover, errorData);
-                        updateInfoButton(button, false);
-                    }
-                });
-                await Promise.allSettled(fetchPromises);
-                setLoading(searchButton, false, "Tìm kiếm Thông Tin Video");
-            });
+                    videoDataStore = new Array(NUM_INPUTS).fill(null); // Reset
+                    let fetchPromises = [];
 
-            generateKeywordsButton.addEventListener('click', async () => {
-                setLoading(generateKeywordsButton, true, "Đang tạo...");
-                keywordResultsContainer.innerHTML = '<div class="flex justify-center items-center p-10"><div class="loader"></div><span class="ml-3">Đang liên hệ với Gemini...</span></div>';
+                    infoButtons.forEach((button, index) => {
+                        updateInfoButton(button, null);
+                        updatePopover(popovers[index], null);
+                    });
 
-                let combinedText = "";
-                videoDataStore.forEach(data => {
-                    if (data && !data.error) {
-                        combinedText += `Tiêu đề: ${data.title}\n`;
-                        combinedText += `Mô tả: ${data.description}\n`;
-                        if (data.tags && data.tags.length > 0) {
-                            combinedText += `Tags: ${data.tags.join(', ')}\n`;
+                    inputs.forEach((input, index) => {
+                        const url = input.value.trim();
+                        const videoId = getYoutubeId(url);
+                        const button = infoButtons[index];
+                        const popover = popovers[index];
+                        
+                        if (videoId) {
+                            fetchPromises.push(
+                                fetchYouTubeVideoInfo(videoId)
+                                    .then(data => {
+                                        videoDataStore[index] = data;
+                                        updatePopover(popover, data);
+                                        updateInfoButton(button, true);
+                                    })
+                                    .catch(error => {
+                                        console.error(`Lỗi khi fetch video ${videoId}:`, error);
+                                        const errorData = { error: 'Không thể tải dữ liệu' };
+                                        videoDataStore[index] = errorData;
+                                        updatePopover(popover, errorData);
+                                        updateInfoButton(button, false);
+                                    })
+                            );
+                        } else if (url !== "") { 
+                            const errorData = { error: 'Link không hợp lệ' };
+                            videoDataStore[index] = errorData;
+                            updatePopover(popover, errorData);
+                            updateInfoButton(button, false);
                         }
-                        combinedText += "---\n";
+                    });
+                    await Promise.allSettled(fetchPromises);
+                    setLoading(searchButton, false, "Tìm kiếm Thông Tin Video");
+                });
+            }
+
+            if(generateKeywordsButton) { // Chỉ gán sự kiện nếu nút tồn tại
+                generateKeywordsButton.addEventListener('click', async () => {
+                    setLoading(generateKeywordsButton, true, "Đang tạo...");
+                    keywordResultsContainer.innerHTML = '<div class="flex justify-center items-center p-10"><div class="loader"></div><span class="ml-3">Đang liên hệ với Gemini...</span></div>';
+
+                    let combinedText = "";
+                    videoDataStore.forEach(data => {
+                        if (data && !data.error) {
+                            combinedText += `Tiêu đề: ${data.title}\n`;
+                            combinedText += `Mô tả: ${data.description}\n`;
+                            if (data.tags && data.tags.length > 0) {
+                                combinedText += `Tags: ${data.tags.join(', ')}\n`;
+                            }
+                            combinedText += "---\n";
+                        }
+                    });
+
+                    if (combinedText.trim() === "") {
+                        keywordResultsContainer.innerHTML = '<p class="text-red-500 text-center">Không có dữ liệu video để phân tích. Vui lòng "Tìm kiếm" video trước.</p>';
+                        setLoading(generateKeywordsButton, false, "Tạo Bộ Từ Khoá Của Chủ Đề");
+                        return;
+                    }
+
+                    try {
+                        const result = await callGeminiApi(combinedText);
+                        displayKeywordResults(result);
+                    } catch (error) {
+                        console.error("Lỗi khi gọi Gemini API:", error);
+                        keywordResultsContainer.innerHTML = `<p class="text-red-500 text-center"><strong>Đã xảy ra lỗi:</strong> ${error.message}</p>`;
+                    } finally {
+                        setLoading(generateKeywordsButton, false, "Tạo Bộ Từ Khoá Của Chủ Đề");
                     }
                 });
-
-                if (combinedText.trim() === "") {
-                    keywordResultsContainer.innerHTML = '<p class="text-red-500 text-center">Không có dữ liệu video để phân tích. Vui lòng "Tìm kiếm" video trước.</p>';
-                    setLoading(generateKeywordsButton, false, "Tạo Bộ Từ Khoá Của Chủ Đề");
-                    return;
-                }
-
-                try {
-                    const result = await callGeminiApi(combinedText);
-                    displayKeywordResults(result);
-                } catch (error) {
-                    console.error("Lỗi khi gọi Gemini API:", error);
-                    keywordResultsContainer.innerHTML = `<p class="text-red-500 text-center"><strong>Đã xảy ra lỗi:</strong> ${error.message}</p>`;
-                } finally {
-                    setLoading(generateKeywordsButton, false, "Tạo Bộ Từ Khoá Của Chủ Đề");
-                }
-            });
+            }
 
             // --- HÀM HỖ TRỢ (Keywords Tool) ---
             function getYoutubeId(url) {
@@ -462,7 +501,7 @@
                     contentDiv.classList.remove('hidden');
 
                     const { title, description, tags } = data;
-                    const hashtagRegex = /#[\w\d]+/g;
+                    const hashtagRegex = /#[\w\d_]+/g; // Sửa lại regex cho hashtag
                     const foundHashtags = description.match(hashtagRegex) || [];
 
                     // 1. Tiêu đề
@@ -497,7 +536,7 @@
                     const tagsContainer = contentDiv.querySelector('.popover-tags');
                     tagsContainer.innerHTML = '';
                     contentDiv.querySelector('[data-type="tags"]').dataset.copyText = tags.join(', ');
-                    if (tags.length > 0) {
+                    if (tags && tags.length > 0) {
                         tags.forEach(tag => {
                             const tagEl = document.createElement('span');
                             tagEl.className = 'bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs';
@@ -664,6 +703,70 @@
             const btnSortLike = document.getElementById('sort-like');
             const btnSortReplies = document.getElementById('sort-replies');
             const btnSortDate = document.getElementById('sort-date');
+            
+            // --- CÁC BIẾN CHO NÚT NGÔN NGỮ ---
+            const langSelectBtn = document.getElementById('lang-select-btn');
+            const langDropdown = document.getElementById('lang-dropdown');
+            const langBtnText = langSelectBtn.querySelector('span');
+            let targetLang = 'vi'; // Ngôn ngữ mặc định
+            let targetLangName = 'Tiếng Việt';
+
+            const languages = [
+                { code: 'vi', name: 'Tiếng Việt' },
+                { code: 'en', name: 'Tiếng Anh' },
+                { code: 'es', name: 'Tiếng Tây Ban Nha' },
+                { code: 'fr', name: 'Tiếng Pháp' },
+                { code: 'de', name: 'Tiếng Đức' },
+                { code: 'ja', name: 'Tiếng Nhật' },
+                { code: 'ko', name: 'Tiếng Hàn' },
+                { code: 'zh-CN', name: 'Tiếng Trung (Giản thể)' },
+                { code: 'ru', name: 'Tiếng Nga' },
+                { code: 'pt', name: 'Tiếng Bồ Đào Nha' }
+            ];
+
+            // --- Khởi tạo danh sách ngôn ngữ ---
+            function initLanguageDropdown() {
+                langDropdown.innerHTML = '';
+                languages.forEach(lang => {
+                    const option = document.createElement('div');
+                    option.className = 'lang-option';
+                    option.textContent = lang.name;
+                    option.dataset.code = lang.code;
+                    option.dataset.name = lang.name;
+                    if (lang.code === targetLang) {
+                        option.classList.add('selected');
+                    }
+                    option.addEventListener('click', () => {
+                        // Cập nhật state
+                        targetLang = lang.code;
+                        targetLangName = lang.name;
+                        
+                        // Cập nhật UI
+                        langBtnText.textContent = lang.name;
+                        langDropdown.querySelectorAll('.lang-option').forEach(opt => opt.classList.remove('selected'));
+                        option.classList.add('selected');
+                        langDropdown.classList.remove('show');
+                    });
+                    langDropdown.appendChild(option);
+                });
+            }
+
+            // --- Gán sự kiện cho nút ngôn ngữ ---
+            if(langSelectBtn) {
+                initLanguageDropdown();
+
+                langSelectBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    langDropdown.classList.toggle('show');
+                });
+                
+                // Đóng dropdown khi click ra ngoài
+                document.addEventListener('click', (e) => {
+                    if (!langSelectBtn.contains(e.target) && !langDropdown.contains(e.target)) {
+                        langDropdown.classList.remove('show');
+                    }
+                });
+            }
 
             // ===== State =====
             let allThreads = [];
@@ -671,19 +774,21 @@
             let sortDir = 'desc'; // 'asc' | 'desc'
             let allCommentTexts = []; // Mảng chứa toàn bộ văn bản gốc
             let allTranslations = []; // Mảng chứa toàn bộ văn bản dịch
+            let currentTranslationHeader = 'Bản dịch (vi)'; // Biến lưu tiêu đề cột dịch
 
             // ===== Translation (Backend) =====
-            async function translateBatchToVi(texts) {
-                // Tối ưu: Nếu không có gì để dịch, trả về mảng rỗng
+            async function translateBatchToVi(texts, langCode) {
                 if (!texts || texts.length === 0) return [];
-
-                statusDiv.textContent = `Đang dịch ${texts.length} bình luận... (chỉ 1 lần)`;
+                
+                // Cập nhật tiêu đề cột dịch
+                currentTranslationHeader = `Bản dịch (${langCode})`;
+                statusDiv.textContent = `Đang dịch ${texts.length} bình luận sang ${langCode}... (chỉ 1 lần)`;
                 
                 try {
                     const response = await fetch('/api/translate', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ texts })
+                        body: JSON.stringify({ texts: texts, targetLang: langCode }) // Gửi ngôn ngữ đã chọn
                     });
                     
                     if (!response.ok) {
@@ -697,7 +802,6 @@
                 } catch (e) {
                     console.error('Lỗi gọi backend dịch:', e);
                     statusDiv.textContent = `Lỗi dịch: ${e.message}`;
-                    // Fallback: trả về mảng chưa dịch
                     return texts.map(() => '(Lỗi dịch)');
                 }
             }
@@ -706,6 +810,8 @@
             function attachSortHandlers() {
                 function activate(btn) { [btnSortLike, btnSortReplies, btnSortDate].forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
                 function toggleDir(btn, label) { sortDir = (sortDir === 'desc') ? 'asc' : 'desc'; btn.textContent = `${label} ${sortDir === 'desc' ? '↓' : '↑'}`; }
+
+                if (btnSortLike.hasAttribute('data-inited')) return; // Đã gán rồi
 
                 btnSortLike.addEventListener('click', () => {
                     if (sortKey !== 'like') { sortKey = 'like'; sortDir = 'desc'; btnSortLike.textContent = 'Like ↓'; } 
@@ -722,50 +828,52 @@
                     else toggleDir(btnSortDate, 'Ngày');
                     activate(btnSortDate); renderThreads();
                 });
-                if (!btnSortLike.hasAttribute('data-inited')) {
-                    btnSortDate.classList.add('active'); // Kích hoạt mặc định
-                    btnSortLike.setAttribute('data-inited', '1');
-                }
+                
+                btnSortDate.classList.add('active'); // Kích hoạt mặc định
+                btnSortLike.setAttribute('data-inited', '1');
             }
 
             // ===== Search flow =====
-            searchButton.addEventListener('click', async () => {
-                const videoURL = videoUrlInput.value.trim();
-                if (!videoURL) { alert('Vui lòng nhập link video YouTube.'); return; }
-                const videoId = getYoutubeId(videoURL);
-                if (!videoId) { alert('Link video không hợp lệ. Vui lòng kiểm tra lại.'); return; }
+            if(searchButton) { // Chỉ gán sự kiện nếu nút tồn tại
+                searchButton.addEventListener('click', async () => {
+                    const videoURL = videoUrlInput.value.trim();
+                    if (!videoURL) { alert('Vui lòng nhập link video YouTube.'); return; }
+                    const videoId = getYoutubeId(videoURL);
+                    if (!videoId) { alert('Link video không hợp lệ. Vui lòng kiểm tra lại.'); return; }
 
-                // Reset
-                searchButton.disabled = true; searchButton.innerHTML = '<div class="loader"></div>';
-                resultsDiv.innerHTML = ''; statusDiv.textContent = 'Đang lấy dữ liệu, vui lòng chờ...';
-                allThreads = []; allCommentTexts = []; allTranslations = [];
-                sortBar.style.display = 'none';
+                    // Reset
+                    searchButton.disabled = true; searchButton.innerHTML = '<div class="loader"></div>';
+                    resultsDiv.innerHTML = ''; statusDiv.textContent = 'Đang lấy dữ liệu, vui lòng chờ...';
+                    allThreads = []; allCommentTexts = []; allTranslations = [];
+                    sortBar.style.display = 'none';
 
-                try {
-                    // 1. Lấy tất cả bình luận
-                    await fetchAllComments(videoId);
-                    
-                    if (allThreads.length === 0) {
-                        statusDiv.textContent = 'Không tìm thấy bình luận nào hoặc video đã tắt bình luận.';
-                        return;
+                    try {
+                        // 1. Lấy tất cả bình luận
+                        await fetchAllComments(videoId);
+                        
+                        if (allThreads.length === 0) {
+                            statusDiv.textContent = 'Không tìm thấy bình luận nào hoặc video đã tắt bình luận.';
+                            searchButton.disabled = false; searchButton.textContent = 'Tìm kiếm'; // Phục hồi nút
+                            return;
+                        }
+                        
+                        // 2. TỐI ƯU: Dịch tất cả 1 lần (sử dụng targetLang)
+                        allTranslations = await translateBatchToVi(allCommentTexts, targetLang);
+
+                        // 3. Hiển thị
+                        statusDiv.textContent = `Đã tải và dịch xong ${allThreads.length} luồng bình luận!`;
+                        attachSortHandlers();
+                        sortBar.style.display = 'flex';
+                        renderThreads(); // Render lần đầu (đã dịch)
+                        
+                    } catch (e) {
+                        console.error('Lỗi:', e);
+                        statusDiv.textContent = `Đã xảy ra lỗi: ${e.message}`;
+                    } finally {
+                        searchButton.disabled = false; searchButton.textContent = 'Tìm kiếm';
                     }
-                    
-                    // 2. TỐI ƯU: Dịch tất cả 1 lần
-                    allTranslations = await translateBatchToVi(allCommentTexts);
-
-                    // 3. Hiển thị
-                    statusDiv.textContent = `Đã tải và dịch xong ${allThreads.length} luồng bình luận!`;
-                    attachSortHandlers();
-                    sortBar.style.display = 'flex';
-                    renderThreads(); // Render lần đầu (đã dịch)
-                    
-                } catch (e) {
-                    console.error('Lỗi:', e);
-                    statusDiv.textContent = `Đã xảy ra lỗi: ${e.message}`;
-                } finally {
-                    searchButton.disabled = false; searchButton.textContent = 'Tìm kiếm';
-                }
-            });
+                });
+            }
 
             function getYoutubeId(url) {
                 const re = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
@@ -784,8 +892,16 @@
                 });
 
                 if (!response.ok) {
-                    const err = await response.json();
-                    throw new Error(err.message || 'Lỗi khi gọi API YouTube');
+                    const errText = await response.text(); // Lấy lỗi text
+                    console.error("Lỗi fetchAllComments:", errText);
+                    let errMessage = 'Lỗi không xác định';
+                    try {
+                        const errJson = JSON.parse(errText); // Thử parse JSON
+                        errMessage = errJson.message || errText;
+                    } catch(e) {
+                        errMessage = errText; // Nếu không phải JSON, dùng text
+                    }
+                    throw new Error(errMessage);
                 }
 
                 const data = await response.json();
@@ -874,7 +990,8 @@
 
                 // Cột Dịch (lấy từ mảng đã dịch)
                 const colTranslated = document.createElement('div'); colTranslated.className = 'left-col';
-                colTranslated.innerHTML = `<h3>Bản dịch (vi)</h3>`;
+                // Cập nhật tiêu đề cột dịch
+                colTranslated.innerHTML = `<h3>${currentTranslationHeader}</h3>`; 
                 
                 // Lấy bản dịch cho top-level comment
                 let translationIndex = translationIndexStart;
@@ -922,7 +1039,7 @@
                 avatar.className = 'comment-author-img'; 
                 avatar.src = snippet.authorProfileImageUrl; 
                 avatar.alt = 'Avatar';
-                avatar.onerror = () => { avatar.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; }; // Ảnh placeholder nếu lỗi
+                avatar.onerror = () => { avatar.src = 'https://placehold.co/40x40/eee/ccc?text=?'; }; // Ảnh placeholder nếu lỗi
                 
                 const content = document.createElement('div'); content.className = 'comment-content';
                 const author = document.createElement('div'); author.className = 'comment-author';
