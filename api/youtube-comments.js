@@ -15,15 +15,14 @@ export default async function handler(request, response) {
         }
 
         // Lấy API Key YouTube từ Biến Môi Trường (an toàn)
-        // Đây là key bạn đã cài đặt trên Vercel (MY_YOUTUBE_API_KEY)
         const YOUTUBE_API_KEY = process.env.MY_YOUTUBE_API_KEY;
 
         if (!YOUTUBE_API_KEY) {
             return response.status(500).json({ error: true, message: 'YouTube API key không được cấu hình trên máy chủ' });
         }
         
-        // Xây dựng URL API
-        let apiUrl = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${encodeURIComponent(videoId)}&key=${YOUTUBE_API_KEY}&maxResults=100&textFormat=plain`;
+        // === SỬA LỖI: Đổi 'plain' thành 'plainText' ===
+        let apiUrl = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${encodeURIComponent(videoId)}&key=${YOUTUBE_API_KEY}&maxResults=100&textFormat=plainText`;
         
         if (pageToken) {
             apiUrl += `&pageToken=${encodeURIComponent(pageToken)}`;
