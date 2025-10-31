@@ -314,8 +314,17 @@
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `Lỗi máy chủ: ${response.status}`);
+                    // *** ĐÃ SỬA LỖI JSON ***
+                    // Thử đọc lỗi dưới dạng JSON, nếu thất bại, đọc dưới dạng text
+                    let errorMessage = `Lỗi máy chủ: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || JSON.stringify(errorData);
+                    } catch (e) {
+                        // Lỗi không phải JSON
+                        errorMessage = await response.text();
+                    }
+                    throw new Error(errorMessage);
                 }
                 return response.json(); // Nhận dữ liệu đã xử lý từ backend
             }
@@ -460,9 +469,20 @@
                 });
                 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `Lỗi máy chủ: ${response.status}`);
+                    // *** ĐÃ SỬA LỖI JSON ***
+                    // Thử đọc lỗi dưới dạng JSON, nếu thất bại, đọc dưới dạng text
+                    let errorMessage = `Lỗi máy chủ: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || JSON.stringify(errorData);
+                    } catch (e) {
+                        // Lỗi không phải JSON (giống như "A server error...")
+                        errorMessage = await response.text();
+                    }
+                    throw new Error(errorMessage);
                 }
+                
+                // Nếu response.ok, chúng ta mong đợi JSON
                 const result = await response.json(); // Nhận JSON từ backend
                 return result; 
             }
