@@ -1,7 +1,7 @@
 // --- CHỨC NĂNG BACKEND: /api/translate ---
 // API này nhận một danh sách văn bản và một ngôn ngữ mục tiêu (targetLang),
 // sau đó gọi đến API dịch (không chính thức) của Google.
-// PHIÊN BẢN 2.0: Tối ưu hóa, dùng POST và xử lý lỗi tốt hơn.
+// PHIÊN BẢN 3.0: Sửa lỗi dịch, gửi nhiều 'q' thay vì join('\n')
 
 export default async function handler(request, response) {
     // Chỉ chấp nhận phương thức POST
@@ -33,8 +33,11 @@ export default async function handler(request, response) {
             
             // Dùng form-urlencoded cho POST
             const form = new URLSearchParams();
-            // Nối các chuỗi bằng newline, API gtx có thể xử lý
-            form.append('q', uniqueNonEmptyTexts.join('\n')); 
+            // *** SỬA LỖI: Gửi từng 'q' riêng lẻ thay vì join('\n') ***
+            // API này hỗ trợ nhiều tham số 'q'
+            uniqueNonEmptyTexts.forEach(text => {
+                form.append('q', text);
+            });
 
             const transResponse = await fetch(url, {
                 method: 'POST',
@@ -50,28 +53,26 @@ export default async function handler(request, response) {
 
             const transData = await transResponse.json();
             
-            // 5. Xử lý phản hồi
-            let translatedSegments = [];
+            // 5. Xử lý phản hồi (Logic mới)
+            let splitTranslated = [];
             if (transData && transData[0]) {
-                // gtx trả về các mảng lồng nhau, chúng ta lấy [0][0] của mỗi phần
-                translatedSegments = transData[0].map(segment => segment[0]);
+                // Khi gửi nhiều 'q', transData[0] là một mảng các kết quả
+                // Mỗi kết quả là một mảng [[['dịch', 'gốc', ...]]]
+                splitTranslated = transData[0].map(segment => 
+                    (segment && segment[0] && segment[0][0]) ? segment[0][0] : ''
+                );
             }
             
-            // Nối tất cả các đoạn dịch lại (vì gtx có thể tự ngắt câu)
-            const combinedTranslated = translatedSegments.join('');
-            // Tách lại bằng newline, khớp với đầu vào
-            const splitTranslated = combinedTranslated.split('\n');
-
             // 6. Ánh xạ (map) bản dịch về văn bản gốc
             if (splitTranslated.length === uniqueNonEmptyTexts.length) {
                 uniqueNonEmptyTexts.forEach((original, index) => {
                     originalToTranslated.set(original, splitTranslated[index]);
                 });
             } else {
-                // Fallback phòng trường hợp API gộp các câu
-                console.warn(`Translation split mismatch: input ${uniqueNonEmptyTexts.length}, output ${splitTranslated.length}`);
+                // Fallback phòng trường hợp API trả về không như mong đợi
+                console.warn(`Translation mismatch: input ${uniqueNonEmptyTexts.length}, output ${splitTranslated.length}`);
                 if (splitTranslated.length > 0) {
-                     originalToTranslated.set(uniqueNonEmptyTexts[0], splitTranslated[0]);
+                     originalToTranslated.set(uniqueNonEmptyTexts[0], splitTranslated[0]); // Chỉ dịch cái đầu tiên
                 }
             }
         }
@@ -79,6 +80,7 @@ export default async function handler(request, response) {
         // 7. Xây dựng mảng kết quả cuối cùng theo đúng thứ tự của 'texts'
         const finalTranslations = texts.map(originalText => {
             if (!originalText || originalText.trim().length === 0) return ''; // Trả về chuỗi rỗng nếu đầu vào là rỗng
+            // Phải trim() văn bản gốc khi tìm kiếm trong Map
             return originalToTranslated.get(originalText.trim()) || '(Lỗi dịch)';
         });
 
