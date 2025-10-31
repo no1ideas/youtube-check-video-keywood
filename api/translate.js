@@ -1,10 +1,10 @@
 // --- CHỨC NĂNG BACKEND: /api/translate ---
 // API này nhận một danh sách văn bản và một ngôn ngữ mục tiêu (targetLang),
 // sau đó gọi đến API dịch (không chính thức) của Google.
-// PHIÊN BẢN 3.0: Sửa lỗi dịch, gửi nhiều 'q' thay vì join('\n')
+// PHIÊN BẢN 4.0: Sửa lỗi dịch, chuyển sang GET và chia lô (batching)
 
 export default async function handler(request, response) {
-    // Chỉ chấp nhận phương thức POST
+    // Chỉ chấp nhận phương thức POST (vì frontend gửi POST)
     if (request.method !== 'POST') {
         return response.status(405).json({ message: 'Method Not Allowed' });
     }
@@ -21,66 +21,81 @@ export default async function handler(request, response) {
         const langCode = targetLang || 'vi'; 
 
         // 3. Chuẩn bị dữ liệu dịch
-        // Chỉ dịch các văn bản không rỗng và duy nhất để tiết kiệm tài nguyên
         const originalToTranslated = new Map();
+        // Chỉ dịch các văn bản không rỗng và duy nhất
         const uniqueNonEmptyTexts = [...new Set(texts.filter(t => t && t.trim().length > 0))];
 
-        // Nếu không có gì để dịch, trả về mảng rỗng
         if (uniqueNonEmptyTexts.length > 0) {
             
-            // 4. Gọi API Dịch (dùng POST cho an toàn)
-            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${langCode}&dt=t`;
-            
-            // Dùng form-urlencoded cho POST
-            const form = new URLSearchParams();
-            // *** SỬA LỖI: Gửi từng 'q' riêng lẻ thay vì join('\n') ***
-            // API này hỗ trợ nhiều tham số 'q'
-            uniqueNonEmptyTexts.forEach(text => {
-                form.append('q', text);
-            });
+            // 4. CHIA LÔ (BATCHING)
+            // URL GET có giới hạn. Chúng ta sẽ giới hạn mỗi URL khoảng 4000 ký tự.
+            const batches = [];
+            let currentBatch = [];
+            let currentLength = 0;
+            const baseURL = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${langCode}&dt=t`;
 
-            const transResponse = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                },
-                body: form.toString()
-            });
-
-            if (!transResponse.ok) {
-                throw new Error(`Google Translate API error! Status: ${transResponse.status}`);
+            for (const text of uniqueNonEmptyTexts) {
+                // + 3 cho '&q='
+                const textLength = encodeURIComponent(text).length + 3; 
+                
+                // Nếu thêm text này vào sẽ vượt quá 4000,
+                // hoặc nếu lô hiện tại đã có 25 bình luận (một giới hạn an toàn khác)
+                if ((currentLength + textLength > 4000 && currentBatch.length > 0) || currentBatch.length >= 25) {
+                    batches.push(currentBatch); // Đẩy lô cũ vào
+                    currentBatch = [text];     // Bắt đầu lô mới
+                    currentLength = textLength;
+                } else {
+                    currentBatch.push(text);
+                    currentLength += textLength;
+                }
             }
+            batches.push(currentBatch); // Đẩy lô cuối cùng
 
-            const transData = await transResponse.json();
-            
-            // 5. Xử lý phản hồi (Logic mới)
-            let splitTranslated = [];
-            if (transData && transData[0]) {
-                // Khi gửi nhiều 'q', transData[0] là một mảng các kết quả
-                // Mỗi kết quả là một mảng [[['dịch', 'gốc', ...]]]
-                splitTranslated = transData[0].map(segment => 
-                    (segment && segment[0] && segment[0][0]) ? segment[0][0] : ''
-                );
+            const allTranslatedSegments = [];
+
+            // 5. Gọi API cho từng lô
+            for (const batch of batches) {
+                if (batch.length === 0) continue;
+
+                // Xây dựng URL cho lô này
+                const queryParams = batch.map(text => `q=${encodeURIComponent(text)}`).join('&');
+                const url = `${baseURL}&${queryParams}`;
+
+                const transResponse = await fetch(url, { method: 'GET' }); // Dùng GET
+
+                if (!transResponse.ok) {
+                    throw new Error(`Google Translate API error! Status: ${transResponse.status}`);
+                }
+
+                const transData = await transResponse.json();
+                
+                // Xử lý phản hồi (Logic của v3.0, nhưng cho GET)
+                if (transData && transData[0]) {
+                    // Khi gửi nhiều 'q' qua GET, transData[0] là một mảng các kết quả
+                    const batchTranslations = transData[0].map(segment => 
+                        (segment && segment[0]) ? segment[0] : ''
+                    );
+                    allTranslatedSegments.push(...batchTranslations);
+                } else {
+                    // Nếu lô thất bại, thêm chuỗi rỗng
+                    allTranslatedSegments.push(...batch.map(() => ''));
+                }
             }
             
             // 6. Ánh xạ (map) bản dịch về văn bản gốc
-            if (splitTranslated.length === uniqueNonEmptyTexts.length) {
+            if (allTranslatedSegments.length === uniqueNonEmptyTexts.length) {
                 uniqueNonEmptyTexts.forEach((original, index) => {
-                    originalToTranslated.set(original, splitTranslated[index]);
+                    originalToTranslated.set(original, allTranslatedSegments[index]);
                 });
             } else {
                 // Fallback phòng trường hợp API trả về không như mong đợi
-                console.warn(`Translation mismatch: input ${uniqueNonEmptyTexts.length}, output ${splitTranslated.length}`);
-                if (splitTranslated.length > 0) {
-                     originalToTranslated.set(uniqueNonEmptyTexts[0], splitTranslated[0]); // Chỉ dịch cái đầu tiên
-                }
+                console.warn(`Translation mismatch: input ${uniqueNonEmptyTexts.length}, output ${allTranslatedSegments.length}`);
             }
         }
 
         // 7. Xây dựng mảng kết quả cuối cùng theo đúng thứ tự của 'texts'
         const finalTranslations = texts.map(originalText => {
             if (!originalText || originalText.trim().length === 0) return ''; // Trả về chuỗi rỗng nếu đầu vào là rỗng
-            // Phải trim() văn bản gốc khi tìm kiếm trong Map
             return originalToTranslated.get(originalText.trim()) || '(Lỗi dịch)';
         });
 
