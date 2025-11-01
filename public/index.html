@@ -884,7 +884,12 @@
                 metrics.appendChild(likeBox); metrics.appendChild(replyBox); metrics.appendChild(dateBox);
                 
                 rowDiv.appendChild(colOriginal);
-S(rowDiv);
+                // *** DÒNG BỊ LỖI LÀ DÒNG NÀY ***
+                // Tôi đã gõ 'S(rowDiv);' thay vì 'rowDiv.appendChild(rightDiv);'
+                // Sửa lại:
+                rowDiv.appendChild(rightDiv);
+                
+                threadDiv.appendChild(rowDiv);
                 return threadDiv;
             }
 
