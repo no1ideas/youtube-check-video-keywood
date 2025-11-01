@@ -92,7 +92,7 @@
         .popover-copy-btn:disabled { background-color: #d1fae5; color: #065f46; cursor: not-allowed; }
 
         /* --- CSS CHO CÔNG CỤ COMMENT --- */
-        .comment-tool-container { width:100%; max-width:1120px; background:#fff; padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06) }
+        .comment-tool-container { width:100%; max-width:900px; background:#fff; padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06) }
         .comment-tool-container h1 { margin:0 0 18px; text-align:center; color:#d32f2f; font-weight:800; }
         .comment-row { display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap }
         .comment-row .field { flex:1; min-width:260px }
@@ -113,27 +113,7 @@
         .comment-btn:hover { background:#c00000 }
         .comment-btn:disabled { background:#cfcfcf; cursor:not-allowed }
         
-        /* Nút chọn ngôn ngữ MỚI */
-        .lang-select-btn {
-            padding: 12px 14px; font-size: 15px; background: #fff; color: #333;
-            border: 1px solid #ddd; border-radius: 10px; cursor: pointer;
-            transition: .2s; position: relative; white-space: nowrap;
-        }
-        .lang-select-btn:hover { background: #f9f9f9; }
-        .lang-select-btn span { color: #1d4ed8; font-weight: 600; }
-        .lang-dropdown {
-            display: none; position: absolute; bottom: 100%; /* Hiển thị bên trên nút */
-            left: 0; right: 0; background: #fff; border: 1px solid #ddd;
-            border-radius: 10px; padding: 8px; max-height: 200px;
-            overflow-y: auto; z-index: 10; box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 8px;
-        }
-        .lang-dropdown.show { display: block; }
-        .lang-option {
-            padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px;
-        }
-        .lang-option:hover { background-color: #f3f4f6; }
-        .lang-option.selected { background-color: #dbeafe; color: #1d4ed8; font-weight: 600; }
+        /* ĐÃ XÓA NÚT CHỌN NGÔN NGỮ */
 
         .sort-bar { display:none; gap:10px; align-items:center; flex-wrap:wrap; margin:12px 0 6px }
         .sort-title { font-weight:700; color:#444 }
@@ -144,8 +124,9 @@
         #comment-results { margin-top:4px }
         .comment-thread { border-bottom:1px solid #e9e9ef; padding:16px 0 }
         .comment-thread:last-child { border-bottom:none }
+        
+        /* BỐ CỤC MỚI (1 CỘT + 3 CHỈ SỐ) */
         .thread-row { display:grid; grid-template-columns: 1fr 300px; gap:16px; align-items:start }
-        .left-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px }
         .left-col { border:1px solid #e9e9ef; border-radius:12px; background:#fafafa; padding:12px }
         .left-col h3 { margin:0 0 10px; font-size:14px; color:#555; font-weight:800 }
         .comment { display:flex; align-items:flex-start; gap:12px }
@@ -162,7 +143,7 @@
         .metric-label { font-size:12px; color:#666; margin-bottom:4px }
         .metric-value { font-weight:800; font-size:16px; word-break:break-word }
         @media (max-width: 980px){ .thread-row{ grid-template-columns:1fr } .thread-right { margin-top: 16px; } }
-        @media (max-width: 720px){ .left-grid{ grid-template-columns:1fr } }
+        /* ĐÃ XÓA CSS CHO CỘT BÊN TRÁI 2 CỘT */
 
         /* Hiệu ứng loading chung */
         .loader {
@@ -193,7 +174,7 @@
             <!-- Card 2: Công cụ Comment -->
             <div id="hub-card-comments" class="hub-card" data-page="page-comments">
                 <h2>📝 Trình Lấy Comment</h2>
-                <p>Lấy toàn bộ bình luận từ video, tự động dịch và sắp xếp theo lượt thích.</p>
+                <p>Lấy toàn bộ bình luận từ video (không dịch) và sắp xếp theo lượt thích.</p>
             </div>
         </div>
     </div>
@@ -226,7 +207,7 @@
                 <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
                 <button id="keywords-generate-button" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478.46-.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322.478-.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478.46-.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" />
                     </svg>
                     <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
                 </button>
@@ -245,22 +226,14 @@
             </svg>
             Quay lại
         </button>
-        <div class="comment-tool-container">
+        <!-- Thay đổi max-width để rộng hơn một chút -->
+        <div class="comment-tool-container mx-auto" style="max-width: 900px;">
             <h1>📝 Trình Lấy Comment YouTube</h1>
             <!-- Hàng nhập URL video -->
             <div class="comment-row">
                 <div class="field"><input id="comment-video-url" class="comment-input" type="text" placeholder="Dán link video YouTube vào đây..."></div>
                 
-                <!-- Nút chọn ngôn ngữ MỚI -->
-                <div class="relative">
-                    <button id="lang-select-btn" class="lang-select-btn" type="button">
-                        Dịch sang: <span>Tiếng Việt</span>
-                        <svg class="inline-block w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div id="lang-dropdown" class="lang-dropdown">
-                        <!-- Các ngôn ngữ sẽ được thêm bằng JS -->
-                    </div>
-                </div>
+                <!-- ĐÃ XÓA NÚT CHỌN NGÔN NGỮ -->
 
                 <button id="comment-search-button" class="comment-btn">Tìm kiếm</button>
             </div>
@@ -716,110 +689,16 @@
             const btnSortReplies = document.getElementById('sort-replies');
             const btnSortDate = document.getElementById('sort-date');
             
-            // --- CÁC BIẾN CHO NÚT NGÔN NGỮ ---
-            const langSelectBtn = document.getElementById('lang-select-btn');
-            const langDropdown = document.getElementById('lang-dropdown');
-            const langBtnText = langSelectBtn.querySelector('span');
-            let targetLang = 'vi'; // Ngôn ngữ mặc định
-            let targetLangName = 'Tiếng Việt';
-
-            const languages = [
-                { code: 'vi', name: 'Tiếng Việt' },
-                { code: 'en', name: 'Tiếng Anh' },
-                { code: 'es', name: 'Tiếng Tây Ban Nha' },
-                { code: 'fr', name: 'Tiếng Pháp' },
-                { code: 'de', name: 'Tiếng Đức' },
-                { code: 'ja', name: 'Tiếng Nhật' },
-                { code: 'ko', name: 'Tiếng Hàn' },
-                { code: 'zh-CN', name: 'Tiếng Trung (Giản thể)' },
-                { code: 'ru', name: 'Tiếng Nga' },
-                { code: 'pt', name: 'Tiếng Bồ Đào Nha' }
-            ];
-
-            // --- Khởi tạo danh sách ngôn ngữ ---
-            function initLanguageDropdown() {
-                if(!langDropdown) return;
-                langDropdown.innerHTML = '';
-                languages.forEach(lang => {
-                    const option = document.createElement('div');
-                    option.className = 'lang-option';
-                    option.textContent = lang.name;
-                    option.dataset.code = lang.code;
-                    option.dataset.name = lang.name;
-                    if (lang.code === targetLang) {
-                        option.classList.add('selected');
-                    }
-                    option.addEventListener('click', () => {
-                        // Cập nhật state
-                        targetLang = lang.code;
-                        targetLangName = lang.name;
-                        
-                        // Cập nhật UI
-                        langBtnText.textContent = lang.name;
-                        langDropdown.querySelectorAll('.lang-option').forEach(opt => opt.classList.remove('selected'));
-                        option.classList.add('selected');
-                        langDropdown.classList.remove('show');
-                    });
-                    langDropdown.appendChild(option);
-                });
-            }
-
-            // --- Gán sự kiện cho nút ngôn ngữ ---
-            if(langSelectBtn) {
-                initLanguageDropdown();
-
-                langSelectBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    langDropdown.classList.toggle('show');
-                });
-                
-                // Đóng dropdown khi click ra ngoài
-                document.addEventListener('click', (e) => {
-                    if (langSelectBtn && !langSelectBtn.contains(e.target) && langDropdown && !langDropdown.contains(e.target)) {
-                        langDropdown.classList.remove('show');
-                    }
-                });
-            }
+            // ĐÃ XÓA CÁC BIẾN LIÊN QUAN ĐẾN DỊCH
 
             // ===== State =====
             let allThreads = [];
             let sortKey = 'date'; // 'like' | 'replies' | 'date'
             let sortDir = 'desc'; // 'asc' | 'desc'
-            let allCommentTexts = []; // Mảng chứa toàn bộ văn bản gốc
-            let allTranslations = []; // Mảng chứa toàn bộ văn bản dịch
-            let currentTranslationHeader = 'Bản dịch (vi)'; // Biến lưu tiêu đề cột dịch
+            
+            // ĐÃ XÓA CÁC MẢNG DỊCH
 
-            // ===== Translation (Backend) =====
-            async function translateBatchToVi(texts, langCode) {
-                if (!texts || texts.length === 0) return [];
-                
-                // Cập nhật tiêu đề cột dịch
-                // Lấy tên ngôn ngữ từ mã code
-                const langName = languages.find(l => l.code === langCode)?.name || langCode;
-                currentTranslationHeader = `Bản dịch (${langName})`;
-                statusDiv.textContent = `Đang dịch ${texts.length} bình luận sang ${langName}... (chỉ 1 lần)`;
-                
-                try {
-                    const response = await fetch('/api/translate', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ texts: texts, targetLang: langCode }) // Gửi ngôn ngữ đã chọn
-                    });
-                    
-                    if (!response.ok) {
-                        const err = await response.json();
-                        throw new Error(err.message || 'Lỗi dịch');
-                    }
-                    
-                    const data = await response.json();
-                    return data.translations || texts.map(() => '(Chưa dịch)');
-
-                } catch (e) {
-                    console.error('Lỗi gọi backend dịch:', e);
-                    statusDiv.textContent = `Lỗi dịch: ${e.message}`;
-                    return texts.map(() => '(Lỗi dịch)');
-                }
-            }
+            // ĐÃ XÓA HÀM translateBatchToVi
 
             // ===== Sort handlers =====
             function attachSortHandlers() {
@@ -860,7 +739,7 @@
                     searchButton.disabled = true; 
                     searchButton.innerHTML = '<div class="loader" style="width: 20px; height: 20px; border-width: 3px;"></div>'; // Loader nhỏ hơn
                     resultsDiv.innerHTML = ''; statusDiv.textContent = 'Đang lấy dữ liệu, vui lòng chờ...';
-                    allThreads = []; allCommentTexts = []; allTranslations = [];
+                    allThreads = [];
                     sortBar.style.display = 'none';
 
                     try {
@@ -873,14 +752,13 @@
                             return;
                         }
                         
-                        // 2. TỐI ƯU: Dịch tất cả 1 lần (sử dụng targetLang)
-                        allTranslations = await translateBatchToVi(allCommentTexts, targetLang);
+                        // 2. ĐÃ XÓA BƯỚC DỊCH
 
                         // 3. Hiển thị
-                        statusDiv.textContent = `Đã tải và dịch xong ${allThreads.length} luồng bình luận!`;
+                        statusDiv.textContent = `Đã tải xong ${allThreads.length} luồng bình luận!`;
                         attachSortHandlers();
                         sortBar.style.display = 'flex';
-                        renderThreads(); // Render lần đầu (đã dịch)
+                        renderThreads(); // Render lần đầu (không cần dịch)
                         
                     } catch (e) {
                         console.error('Lỗi:', e);
@@ -932,7 +810,7 @@
                 }
             }
 
-            // TỐI ƯU: Tách biệt việc Thu thập (Collect) và Dịch (Translate)
+            // ĐÃ XÓA LOGIC THU THẬP VĂN BẢN DỊCH
             function collectThreads(items) {
                 items.forEach(item => {
                     const top = item.snippet.topLevelComment?.snippet || {};
@@ -944,18 +822,8 @@
                     const threadObj = {
                         raw: item,
                         likeCount, totalReplies,
-                        publishedAtISO, publishedDate,
-                        translationIndexStart: allCommentTexts.length // Vị trí bắt đầu của bản dịch
+                        publishedAtISO, publishedDate
                     };
-
-                    // Thu thập văn bản gốc (top level)
-                    allCommentTexts.push(top.textOriginal || '');
-                    
-                    // Thu thập văn bản gốc (replies)
-                    (item.replies?.comments || []).forEach(r => {
-                        allCommentTexts.push(r.snippet?.textOriginal || '');
-                    });
-                    
                     allThreads.push(threadObj);
                 });
             }
@@ -983,18 +851,15 @@
                 }
             }
 
-            // ===== DOM builders =====
+            // ===== DOM builders (ĐÃ XÓA CỘT DỊCH) =====
             function createThreadDOM(threadObj) {
-                const { raw, likeCount, totalReplies, publishedAtISO, publishedDate, translationIndexStart } = threadObj;
+                const { raw, likeCount, totalReplies, publishedAtISO, publishedDate } = threadObj;
                 const top = raw.snippet.topLevelComment.snippet;
 
                 const threadDiv = document.createElement('div'); threadDiv.className = 'comment-thread';
                 const rowDiv = document.createElement('div'); rowDiv.className = 'thread-row';
 
-                // Trái: 2 cột (Nguyên bản | Dịch)
-                const leftWrap = document.createElement('div'); leftWrap.className = 'left-grid';
-
-                // Cột Nguyên bản
+                // Trái: 1 cột (Nguyên bản)
                 const colOriginal = document.createElement('div'); colOriginal.className = 'left-col';
                 colOriginal.innerHTML = `<h3>Nguyên bản</h3>`;
                 colOriginal.appendChild(createCommentElement(top, false, null)); // textDisplay gốc
@@ -1003,30 +868,6 @@
                     raw.replies.comments.forEach(r => rep.appendChild(createCommentElement(r.snippet, true, null)) );
                     colOriginal.appendChild(rep);
                 }
-
-                // Cột Dịch (lấy từ mảng đã dịch)
-                const colTranslated = document.createElement('div'); colTranslated.className = 'left-col';
-                // Cập nhật tiêu đề cột dịch
-                colTranslated.innerHTML = `<h3>${currentTranslationHeader}</h3>`; 
-                
-                // Lấy bản dịch cho top-level comment
-                let translationIndex = translationIndexStart;
-                const topLevelTranslation = allTranslations[translationIndex] || '(Chưa dịch)';
-                colTranslated.appendChild(createCommentElement(top, false, topLevelTranslation));
-                translationIndex++; // Tăng chỉ số
-                
-                if (raw.replies) {
-                    const repVi = document.createElement('div'); repVi.className = 'replies-container';
-                    raw.replies.comments.forEach(r => {
-                        const replyTranslation = allTranslations[translationIndex] || '(Chưa dịch)';
-                        repVi.appendChild(createCommentElement(r.snippet, true, replyTranslation));
-                        translationIndex++; // Tăng chỉ số cho mỗi reply
-                    });
-                    colTranslated.appendChild(repVi);
-                }
-
-                leftWrap.appendChild(colOriginal);
-                leftWrap.appendChild(colTranslated);
 
                 // Phải: 3 chỉ số
                 const rightDiv = document.createElement('div'); rightDiv.className = 'thread-right';
@@ -1041,15 +882,13 @@
                 dateBox.innerHTML = `<div class="metric-label">Ngày</div><div class="metric-value" title="${publishedAtISO || ''}">${dateText}</div>`;
 
                 metrics.appendChild(likeBox); metrics.appendChild(replyBox); metrics.appendChild(dateBox);
-                rightDiv.appendChild(metrics);
-
-                rowDiv.appendChild(leftWrap);
-                rowDiv.appendChild(rightDiv);
-                threadDiv.appendChild(rowDiv);
+                
+                rowDiv.appendChild(colOriginal);
+S(rowDiv);
                 return threadDiv;
             }
 
-            function createCommentElement(snippet, isReply = false, overrideText = null) {
+            function createCommentElement(snippet, isReply = false) { // Đã xóa overrideText
                 const wrap = document.createElement('div'); wrap.className = isReply ? 'comment reply' : 'comment';
                 const avatar = document.createElement('img');
                 avatar.className = 'comment-author-img'; 
@@ -1065,11 +904,8 @@
                 text.style.whiteSpace = 'pre-wrap'; // Giữ xuống dòng
                 text.style.wordBreak = 'break-word'; // Ngắt từ
                 
-                if (overrideText !== null) { 
-                    text.textContent = overrideText; // Hiển thị text thuần (đã dịch)
-                } else { 
-                    text.innerHTML = snippet.textDisplay || snippet.textOriginal; // Hiển thị HTML gốc
-                }
+                // Luôn hiển thị HTML gốc
+                text.innerHTML = snippet.textDisplay || snippet.textOriginal; 
 
                 content.appendChild(author); content.appendChild(text);
                 wrap.appendChild(avatar); wrap.appendChild(content);
