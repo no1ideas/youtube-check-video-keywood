@@ -7,67 +7,41 @@
     <!-- Tải Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Tùy chỉnh font chữ Inter */
+        /* ... CSS chung ... */
         body {
             font-family: "Inter", sans-serif;
-            background-color: #f3f4f6; /* bg-gray-100 */
+            background-color: #f3f4f6;
         }
-        /* Tùy chỉnh thanh cuộn */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #888; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
-        
-        /* Ẩn/Hiện các trang */
         .page { display: none; }
         .page.active { display: block; }
-        #page-hub { display: block; } /* Trang chủ luôn hiển thị ban đầu */
-
-        /* Trang chủ (Hub) */
+        #page-hub { display: block; }
         .hub-card {
-            background-color: #ffffff;
-            border-radius: 0.75rem; /* 12px */
+            background-color: #ffffff; border-radius: 0.75rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-            padding: 2rem; /* 32px */
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            padding: 2rem; text-align: center; transition: all 0.3s ease; cursor: pointer;
         }
         .hub-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
         }
         .hub-card h2 {
-            font-size: 1.5rem; /* 24px */
-            font-weight: 700;
-            color: #1d4ed8; /* text-blue-700 */
-            margin-bottom: 0.75rem; /* 12px */
+            font-size: 1.5rem; font-weight: 700; color: #1d4ed8;
+            margin-bottom: 0.75rem;
         }
-        .hub-card p {
-            font-size: 1rem; /* 16px */
-            color: #4b5563; /* text-gray-600 */
-        }
-
-        /* Nút quay lại chung */
+        .hub-card p { font-size: 1rem; color: #4b5563; }
         .back-button {
-            display: inline-flex;
-            align-items: center;
-            font-size: 0.875rem; /* 14px */
-            font-weight: 600;
-            color: #4b5563; /* text-gray-600 */
-            background-color: #ffffff;
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid #d1d5db; /* border-gray-300 */
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 16px;
+            display: inline-flex; align-items: center; font-size: 0.875rem;
+            font-weight: 600; color: #4b5563; background-color: #ffffff;
+            padding: 8px 16px; border-radius: 8px; border: 1px solid #d1d5db;
+            cursor: pointer; transition: all 0.2s; margin-bottom: 16px;
         }
-        .back-button:hover {
-            background-color: #f9fafb; /* bg-gray-50 */
-        }
+        .back-button:hover { background-color: #f9fafb; }
         
-        /* --- CSS CHO CÔNG CỤ TỪ KHÓA (Tái sử dụng) --- */
+        /* --- CSS CHO CÔNG CỤ TỪ KHÓA --- */
         .popover {
             display: none; position: absolute; z-index: 50; width: 320px;
             max-height: 400px; overflow-y: auto; word-wrap: break-word;
@@ -98,26 +72,33 @@
         .comment-row .field { flex:1; min-width:260px }
         .comment-input[type="text"] { width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:10px; font-size:15px; outline:none; }
         .comment-btn { 
-            padding:12px 18px; 
-            font-size:15px; 
-            background:#ff0000; 
-            color:#fff; 
-            border:none; 
-            border-radius:10px; 
-            cursor:pointer; 
-            transition:.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding:12px 18px; font-size:15px; background:#ff0000; 
+            color:#fff; border:none; border-radius:10px; cursor:pointer; 
+            transition:.2s; display: flex; align-items: center; justify-content: center;
         }
         .comment-btn:hover { background:#c00000 }
         .comment-btn:disabled { background:#cfcfcf; cursor:not-allowed }
         
-        .sort-bar { display:none; gap:10px; align-items:center; flex-wrap:wrap; margin:12px 0 6px }
-        .sort-title { font-weight:700; color:#444 }
-        .sort-btn { border:1px solid #e5e7eb; background:#fff; color:#333; padding:8px 12px; border-radius:10px; cursor:pointer; font-size:14px }
+        .sort-bar { 
+            display:none; gap:10px; align-items:center; 
+            flex-wrap:wrap; margin:12px 0 6px;
+        }
+        .sort-title { font-weight:700; color:#444; flex-shrink: 0; }
+        .sort-btn { 
+            border:1px solid #e5e7eb; background:#fff; color:#333; 
+            padding:8px 12px; border-radius:10px; cursor:pointer; font-size:14px;
+            flex-shrink: 0;
+        }
         .sort-btn.active { border-color:#d32f2f; color:#d32f2f; font-weight:800 }
-        .sort-hint { margin-left:auto; color:#888; font-size:12px }
+        
+        /* BỘ LỌC THỜI GIAN (MỚI) */
+        .time-filter-select {
+            border:1px solid #e5e7eb; background:#fff; color:#333; 
+            padding: 8px 12px; border-radius:10px; font-size:14px;
+            margin-right: 10px; /* Thêm khoảng cách với "Sắp xếp theo" */
+        }
+
+        .sort-hint { margin-left:auto; color:#888; font-size:12px; flex-shrink: 0; }
         #comment-status { text-align:center; font-size:14px; color:#777; margin:8px 0 0 }
         #comment-results { margin-top:4px }
         .comment-thread { border-bottom:1px solid #e9e9ef; padding:16px 0 }
@@ -139,10 +120,8 @@
         .metric { text-align:center; padding:10px 8px; border-radius:10px; background:#fff; border:1px solid #f0f0f0 }
         .metric-label { font-size:12px; color:#666; margin-bottom:4px }
         .metric-value { 
-            font-weight:800; 
-            font-size:16px; 
-            word-break:normal; /* ĐÃ SỬA: Ngăn ngắt từ xấu xí */
-            line-height: 1.3; /* Thêm khoảng cách dòng */
+            font-weight:800; font-size:16px; 
+            word-break:normal; line-height: 1.3;
         }
         @media (max-width: 980px){ .thread-row{ grid-template-columns:1fr } .thread-right { margin-top: 16px; } }
 
@@ -227,43 +206,48 @@
             </svg>
             Quay lại
         </button>
-        <!-- Thay đổi max-width để rộng hơn một chút -->
         <div class="comment-tool-container mx-auto" style="max-width: 900px;">
             <h1>📝 Trình Lấy Comment YouTube</h1>
             <!-- Hàng nhập URL video -->
             <div class="comment-row">
                 <div class="field"><input id="comment-video-url" class="comment-input" type="text" placeholder="Dán link video YouTube vào đây..."></div>
-                
-                <!-- ĐÃ XÓA NÚT CHỌN NGÔN NGỮ -->
-
                 <button id="comment-search-button" class="comment-btn">Tìm kiếm</button>
             </div>
-            <!-- Thanh sắp xếp -->
+            
+            <!-- Thanh sắp xếp VÀ LỌC (ĐÃ CẬP NHẬT) -->
             <div class="sort-bar" id="comment-sort-bar">
-                <span class="sort-title">Sắp xếp theo:</span>
-                <button class="sort-btn" id="sort-like">Like ↓</button>
-                <button class="sort-btn" id="sort-replies">Cmt cấp 2 ↓</button>
-                <button class="sort-btn" id="sort-date">Ngày ↓</button>
+                <!-- BỘ LỌC THỜI GIAN (MỚI) -->
+                <div>
+                    <span class="sort-title">Lọc theo:</span>
+                    <select id="comment-time-filter" class="time-filter-select">
+                        <option value="all">Tất cả thời gian</option>
+                        <option value="today">Hôm nay</option>
+                        <option value="yesterday">Hôm qua</option>
+                        <option value="30days">30 ngày qua</option>
+                        <option value="90days">90 ngày qua</option>
+                        <!-- Các năm sẽ được thêm bằng JS -->
+                    </select>
+                </div>
+                
+                <!-- SẮP XẾP -->
+                <div>
+                    <span class="sort-title">Sắp xếp theo:</span>
+                    <button class="sort-btn" id="sort-like">Like ↓</button>
+                    <button class="sort-btn" id="sort-replies">Cmt cấp 2 ↓</button>
+                    <button class="sort-btn" id="sort-date">Ngày ↓</button>
+                </div>
                 <span class="sort-hint">Bấm lại nút để đảo chiều ↑/↓</span>
             </div>
+            
             <div id="comment-status"></div>
             <div id="comment-results"></div>
         </div>
     </div>
 
-    <!--
-        TOÀN BỘ JAVASCRIPT ĐÃ BỊ XÓA KHỎI ĐÂY
-        VÀ ĐƯỢC CHUYỂN SANG CÁC TỆP .js RIÊNG BIỆT
-    -->
-
-    <!-- TẢI CÁC TỆP JS MỚI -->
-    <!-- Tải tệp Utils (Hàm dùng chung) -->
+    <!-- Tải các tệp JS -->
     <script src="js/utils.js"></script>
-    <!-- Tải tệp Công Cụ Từ Khoá -->
     <script src="js/keywordsTool.js"></script>
-    <!-- Tải tệp Công Cụ Comment -->
     <script src="js/commentsTool.js"></script>
-    <!-- Tải tệp Main (Chạy chính) -->
     <script src="js/main.js"></script>
     
 </body>
