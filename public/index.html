@@ -883,11 +883,23 @@
                 const replyBox = document.createElement('div'); replyBox.className = 'metric';
                 replyBox.innerHTML = `<div class="metric-label">Cmt cấp 2</div><div class="metric-value">${totalReplies.toLocaleString('vi-VN')}</div>`;
                 const dateBox = document.createElement('div'); dateBox.className = 'metric';
-                const dateText = publishedDate ? publishedDate.toLocaleString('vi-VN', { hour12: false }) : '—';
+                
+                // ĐỊNH DẠNG LẠI NGÀY GIỜ CHO ĐẸP
+                let dateText = '—';
+                if (publishedDate) {
+                    const time = publishedDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+                    const date = publishedDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    // Hiển thị Giờ ở trên, Ngày ở dưới
+                    dateText = `${time}<br><span style="font-size: 13px; font-weight: 500;">${date}</span>`;
+                }
+                
                 dateBox.innerHTML = `<div class="metric-label">Ngày</div><div class="metric-value" title="${publishedAtISO || ''}">${dateText}</div>`;
 
                 metrics.appendChild(likeBox); metrics.appendChild(replyBox); metrics.appendChild(dateBox);
                 
+                // *** DÒNG BỊ THIẾU LÀ DÒNG NÀY ***
+                rightDiv.appendChild(metrics); // Thêm dòng này để đặt lưới metrics vào cột bên phải
+
                 rowDiv.appendChild(colOriginal);
                 // *** DÒNG BỊ LỖI LÀ DÒNG NÀY ***
                 // Tôi đã gõ 'S(rowDiv);' thay vì 'rowDiv.appendChild(rightDiv);'
@@ -925,4 +937,5 @@
     </script>
 </body>
 </html>
+
 
