@@ -12,18 +12,21 @@ function initCommentsTool() {
     const btnSortReplies = document.getElementById('sort-replies');
     const btnSortDate = document.getElementById('sort-date');
     const timeFilterSelect = document.getElementById('comment-time-filter');
-    const orderFilterSelect = document.getElementById('comment-order-filter'); // BỘ LỌC MỚI
+    
+    // ĐÃ XÓA orderFilterSelect
 
     // Kiểm tra xem các element có tồn tại không
     if (!searchButton) return;
     
+    // --- GIỚI HẠN COMMENT (MỚI) ---
+    const MAX_COMMENTS = 500;
+
     // ===== State (Trạng thái) =====
     let allThreads = []; // Nơi lưu trữ tất cả bình luận gốc
     let sortKey = 'like'; // Sắp xếp mặc định
     let sortDir = 'desc'; // 'asc' | 'desc'
     let timeFilter = 'all'; // State mới cho bộ lọc thời gian
-    let currentMaxLimit = 500; // Giới hạn mặc định (sẽ thay đổi)
-
+    
     // ===== Sort handlers (Xử lý Sắp xếp) =====
     function attachSortHandlers() {
         function activate(btn) { [btnSortLike, btnSortReplies, btnSortDate].forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
@@ -90,10 +93,8 @@ function initCommentsTool() {
             const videoId = window.getYoutubeId(videoURL); // Dùng hàm từ utils.js
             if (!videoId) { alert('Link video không hợp lệ. Vui lòng kiểm tra lại.'); return; }
 
-            const selectedOrder = orderFilterSelect.value; // Lấy giá trị bộ lọc (time / relevance)
-            
-            // CẬP NHẬT GIỚI HẠN DỰA TRÊN BỘ LỌC
-            currentMaxLimit = (selectedOrder === 'time') ? 500 : 100;
+            // ĐÃ SỬA LỖI: Đặt currentMaxLimit ở đây
+            const currentMaxLimit = MAX_COMMENTS;
 
             // Reset
             window.setLoading(searchButton, true, ""); // Dùng hàm từ utils.js
@@ -113,7 +114,9 @@ function initCommentsTool() {
 
             try {
                 // 1. Lấy tất cả bình luận (gửi kèm 'order' và 'maxComments')
-                await fetchAllComments(videoId, selectedOrder, null);
+                // GỌI HÀM VỚI 'relevance' ĐƯỢC HARD-CODE
+                // ĐÃ SỬA LỖI: Truyền currentMaxLimit vào
+                await fetchAllComments(videoId, 'relevance', null, currentMaxLimit); 
                 
                 if (allThreads.length === 0) {
                     statusDiv.textContent = 'Không tìm thấy bình luận nào hoặc video đã tắt bình luận.';
@@ -139,7 +142,7 @@ function initCommentsTool() {
     }
 
     // ===== Fetch comments (paginate) =====
-    async function fetchAllComments(videoId, order, pageToken = '') {
+    async function fetchAllComments(videoId, order, pageToken = '', maxLimit) {
         statusDiv.textContent = `Đang tải bình luận... (đã tải ${allThreads.length} luồng)`;
         
         // Gọi backend /api/youtube-comments
@@ -149,7 +152,7 @@ function initCommentsTool() {
             body: JSON.stringify({ 
                 videoId: videoId, 
                 pageToken: pageToken,
-                order: order // Gửi 'order' (time/relevance) lên backend
+                order: order // Gửi 'order' (relevance) lên backend
             })
         });
 
@@ -173,38 +176,40 @@ function initCommentsTool() {
         const totalTopLevelComments = data.videoTotalComments || null;
 
         if (data.items) {
-            collectThreads(data.items);
+            // ĐÃ SỬA LỖI: Truyền maxLimit vào
+            collectThreads(data.items, maxLimit); 
         }
         
         // --- LOGIC DỪNG MỚI (ĐÃ SỬA LỖI) ---
         
         // 1. Kiểm tra xem đã đạt giới hạn chưa
-        if (allThreads.length >= currentMaxLimit) {
-            console.log(`Đã đạt giới hạn ${currentMaxLimit} comment, dừng quét.`);
+        if (allThreads.length >= maxLimit) {
+            console.log(`Đã đạt giới hạn ${maxLimit} comment, dừng quét.`);
             return; // Dừng đệ quy
         }
 
         // 2. Kiểm tra xem video có ít comment hơn giới hạn VÀ đã hết trang
-        if (totalTopLevelComments && totalTopLevelComments <= currentMaxLimit && !data.nextPageToken) {
-             console.log(`Video có ${totalTopLevelComments} comment (ít hơn ${currentMaxLimit}), đã quét hết.`);
+        if (totalTopLevelComments && totalTopLevelComments <= maxLimit && !data.nextPageToken) {
+             console.log(`Video có ${totalTopLevelComments} comment (ít hơn ${maxLimit}), đã quét hết.`);
             return; // Dừng đt
         }
 
         // 3. Đệ quy nếu có trang tiếp theo
         if (data.nextPageToken) {
             // Kiểm tra lại lần nữa TRƯỚC KHI gọi
-            if (allThreads.length < currentMaxLimit) {
-                await fetchAllComments(videoId, order, data.nextPageToken);
+            if (allThreads.length < maxLimit) {
+                await fetchAllComments(videoId, order, data.nextPageToken, maxLimit);
             } else {
-                 console.log(`Đã đạt giới hạn ${currentMaxLimit} comment TRƯỚC KHI gọi trang tiếp theo, dừng.`);
+                 console.log(`Đã đạt giới hạn ${maxLimit} comment TRƯỚC KHI gọi trang tiếp theo, dừng.`);
             }
         }
     }
 
-    function collectThreads(items) {
+    // ĐÃ SỬA LỖI: Nhận maxLimit
+    function collectThreads(items, maxLimit) {
         items.forEach(item => {
             // Kiểm tra giới hạn TRƯỚC KHI THÊM
-            if (allThreads.length >= currentMaxLimit) return;
+            if (allThreads.length >= maxLimit) return;
 
             const top = item.snippet.topLevelComment?.snippet || {};
             const likeCount = Number(top.likeCount || 0);
@@ -286,6 +291,9 @@ function initCommentsTool() {
         
         // Cập nhật status
         let totalFetched = allThreads.length;
+        // ĐÃ SỬA LỖI: Dùng hằng số MAX_COMMENTS
+        const currentMaxLimit = MAX_COMMENTS; 
+        
         let statusText = `Hiển thị ${arr.length} / ${totalFetched} luồng bình luận.`;
         if (totalFetched >= currentMaxLimit) {
              statusText = `Hiển thị ${arr.length} / ${totalFetched} bình luận (đã đạt giới hạn ${currentMaxLimit}).`;
