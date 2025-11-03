@@ -1,1 +1,129 @@
 
+
+    if (!url) return { searchTerm: null, searchType: null };
+    
+    // 1. /channel/UC... (ID Kênh)
+    const channelMatch = url.match(/youtube\.com\/channel\/(UC[^/?&]+)/);
+    if (channelMatch) {
+        return { searchTerm: channelMatch[1], searchType: 'id' };
+    }
+    
+    // 2. @handle (Tên định danh)
+    const handleMatch = url.match(/youtube\.com\/@([^/?&]+)/);
+    if (handleMatch) {
+        return { searchTerm: handleMatch[1], searchType: 'forHandle' };
+    }
+
+    // 3. /c/legacyname (Tên người dùng cũ)
+    const legacyMatch = url.match(/youtube\.com\/c\/([^/?&]+)/);
+    if (legacyMatch) {
+        return { searchTerm: decodeURIComponent(legacyMatch[1]), searchType: 'forUsername' };
+    }
+    
+    // 4. /user/username (Tên người dùng cũ hơn)
+    const userMatch = url.match(/youtube\.com\/user\/([^/?&]+)/);
+    if (userMatch) {
+         return { searchTerm: decodeURIComponent(userMatch[1]), searchType: 'forUsername' };
+    }
+
+    return { searchTerm: null, searchType: null };
+}
+
+
+export default async function handler(request, response) {
+    // Chỉ chấp nhận phương thức POST
+    if (request.method !== 'POST') {
+        return response.status(405).json({ message: 'Method Not Allowed' });
+    }
+
+    try {
+        // Lấy action và các payload khác từ body
+        const { action, url, playlistId, pageToken, videoIds } = request.body;
+
+        // Lấy API Key từ BIẾN MÔI TRƯỜNG (an toàn)
+        const YOUTUBE_API_KEY = process.env.MY_YOUTUBE_API_KEY;
+        if (!YOUTUBE_API_KEY) {
+            throw new Error("API Key của YouTube chưa được cấu hình trên server.");
+        }
+
+        let apiUrl = '';
+        let apiResponseData;
+
+        // Phân luồng dựa trên 'action'
+        switch (action) {
+            // --- ACTION: LẤY CHANNEL ID ---
+            case 'getChannelId': {
+                // SỬ DỤNG HÀM MỚI
+                const { searchTerm, searchType } = parseChannelUrl(url); 
+                
+                if (!searchTerm) {
+                    throw new Error('Định dạng URL không hợp lệ. Hãy thử /channel/UC..., @handle, hoặc /c/...');
+                }
+                
+                apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=id&${searchType}=${encodeURIComponent(searchTerm)}&key=${YOUTUBE_API_KEY}`;
+                
+                const channelResponse = await fetch(apiUrl);
+                const channelData = await channelResponse.json();
+                
+                if (!channelResponse.ok) {
+                    throw new Error(channelData.error.message || 'Lỗi khi gọi API Kênh');
+                }
+                if (channelData.items && channelData.items.length > 0) {
+                    apiResponseData = { channelId: channelData.items[0].id };
+                } else {
+                    throw new Error(`Không tìm thấy kênh với tên: ${searchTerm}`);
+                }
+                break;
+            }
+            
+            // --- ACTION: LẤY DANH SÁCH VIDEO ---
+            case 'getVideosFromPlaylist': {
+                if (!playlistId) throw new Error('Không có playlistId');
+                
+                apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${playlistId}&maxResults=50&key=${YOUTUBE_API_KEY}`;
+                if (pageToken) {
+                    apiUrl += `&pageToken=${encodeURIComponent(pageToken)}`;
+                }
+
+                const playlistResponse = await fetch(apiUrl);
+                const playlistData = await playlistResponse.json();
+
+                if (!playlistResponse.ok) {
+                    throw new Error(playlistData.error.message || 'Lỗi khi tải danh sách video');
+                }
+                apiResponseData = playlistData; // Trả về toàn bộ data (items, nextPageToken)
+                break;
+            }
+            
+            // --- ACTION: LẤY CHI TIẾT VIDEO (LƯỢT XEM, TAGS) ---
+            case 'getVideoDetails': {
+                if (!videoIds || !Array.isArray(videoIds) || videoIds.length === 0) {
+                    throw new Error('Không có videoIds');
+                }
+                
+                const idsString = videoIds.join(',');
+                apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet,contentDetails&id=${idsString}&key=${YOUTUBE_API_KEY}`;
+                
+                const videosResponse = await fetch(apiUrl);
+                const videosData = await videosResponse.json();
+                
+                if (!videosResponse.ok) {
+                    throw new Error(videosData.error.message || 'Lỗi khi lấy chi tiết video');
+                }
+                apiResponseData = videosData; // Trả về toàn bộ data (items)
+                break;
+            }
+
+            default:
+                throw new Error('Action không hợp lệ');
+        }
+
+        // Trả dữ liệu về cho frontend
+        return response.status(200).json(apiResponseData);
+
+    } catch (error) {
+        console.error('Lỗi trong /api/channel-analyzer:', error);
+        return response.status(500).json({ message: error.message || 'Lỗi không xác định' });
+    }
+}
+
