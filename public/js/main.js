@@ -1,8 +1,15 @@
+// ==================================================================
+// === SCRIPT CHÍNH (main.js) ===
+// === Điều khiển chuyển trang và khởi động các công cụ ===
+// ==================================================================
 
-// SCRIPT CHUNG: QUẢN LÝ CHUYỂN TRANG
 document.addEventListener('DOMContentLoaded', () => {
     const pages = document.querySelectorAll('.page');
     
+    /**
+     * Hàm ẩn tất cả các trang và hiển thị trang được yêu cầu
+     * @param {string} pageId - ID của trang cần hiển thị (ví dụ: 'page-hub', 'page-keywords')
+     */
     function showPage(pageId) {
         pages.forEach(page => {
             page.classList.remove('active');
@@ -11,6 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (newPage) {
             newPage.classList.add('active');
             window.scrollTo(0, 0); // Cuộn lên đầu trang
+        } else {
+            console.error(`Không tìm thấy trang với ID: ${pageId}`);
+            // Mặc định quay về trang chủ nếu không tìm thấy
+            document.getElementById('page-hub').classList.add('active');
         }
     }
 
@@ -29,16 +40,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // --- KHỞI CHẠY CÁC SCRIPT CHO TỪNG CÔNG CỤ ---
-    // (Các hàm này được định nghĩa trong các tệp JS riêng)
-    try {
+    // Kiểm tra xem các hàm init có tồn tại không trước khi gọi
+    
+    if (typeof initKeywordsTool === 'function') {
         initKeywordsTool();
-    } catch (e) {
-        console.error("Lỗi khởi chạy Công Cụ Từ Khoá:", e);
+    } else {
+        console.error('Không tìm thấy hàm initKeywordsTool()');
     }
     
-    try {
+    if (typeof initCommentsTool === 'function') {
         initCommentsTool();
-    } catch (e) {
-        console.error("Lỗi khởi chạy Công Cụ Comment:", e);
+    } else {
+        console.error('Không tìm thấy hàm initCommentsTool()');
+    }
+
+    if (typeof initChannelAnalyzer === 'function') {
+        initChannelAnalyzer();
+    } else {
+        console.error('Không tìm thấy hàm initChannelAnalyzer()');
     }
 });
+
