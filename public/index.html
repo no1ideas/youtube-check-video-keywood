@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bộ Công Cụ YouTube (Từ Khoá & Comment)</title>
+    <title>Bộ Công Cụ YouTube (Từ Khoá, Comment & Phân Tích Kênh)</title>
     <!-- Tải Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- TẢI CHART.JS CHO CÔNG CỤ THỨ 3 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Tùy chỉnh font chữ Inter */
         body {
@@ -32,6 +34,10 @@
             text-align: center;
             transition: all 0.3s ease;
             cursor: pointer;
+            height: 100%; /* Cho các card cao bằng nhau */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .hub-card:hover {
             transform: translateY(-5px);
@@ -40,13 +46,17 @@
         .hub-card h2 {
             font-size: 1.5rem; /* 24px */
             font-weight: 700;
-            color: #1d4ed8; /* text-blue-700 */
             margin-bottom: 0.75rem; /* 12px */
         }
         .hub-card p {
             font-size: 1rem; /* 16px */
             color: #4b5563; /* text-gray-600 */
         }
+        /* Màu riêng cho card */
+        #hub-card-keywords h2 { color: #1d4ed8; } /* Blue */
+        #hub-card-comments h2 { color: #d946ef; } /* Fuchsia */
+        #hub-card-analyzer h2 { color: #059669; } /* Emerald */
+
 
         /* Nút quay lại chung */
         .back-button {
@@ -94,21 +104,13 @@
         /* --- CSS CHO CÔNG CỤ COMMENT --- */
         .comment-tool-container { width:100%; max-width:900px; background:#fff; padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06) }
         .comment-tool-container h1 { margin:0 0 18px; text-align:center; color:#d32f2f; font-weight:800; }
-        
-        /* Ghi chú MỚI */
-         .comment-tool-note {
-            text-align: center;
-            font-size: 0.875rem; /* 14px */
-            color: #6b7280; /* text-gray-500 */
-            margin-bottom: 18px;
+        .comment-tool-note {
+            text-align: center; font-size: 0.875rem; 
+            color: #6b7280; margin-bottom: 18px;
         }
-
         .comment-row { display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap }
         .comment-row .field { flex:1; min-width:260px }
         .comment-input[type="text"] { width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:10px; font-size:15px; outline:none; }
-        
-        /* ĐÃ XÓA BỘ LỌC CHẾ ĐỘ QUÉT */
-
         .comment-btn { 
             padding:12px 18px; font-size:15px; background:#ff0000; 
             color:#fff; border:none; border-radius:10px; cursor:pointer; 
@@ -117,7 +119,6 @@
         }
         .comment-btn:hover { background:#c00000 }
         .comment-btn:disabled { background:#cfcfcf; cursor:not-allowed }
-        
         .sort-bar { 
             display:none; gap:10px; align-items:center; 
             flex-wrap:wrap; margin:12px 0 6px;
@@ -129,20 +130,16 @@
             flex-shrink: 0;
         }
         .sort-btn.active { border-color:#d32f2f; color:#d32f2f; font-weight:800 }
-        
-        /* BỘ LỌC THỜI GIAN */
         .time-filter-select {
             border:1px solid #e5e7eb; background:#fff; color:#333; 
             padding: 8px 12px; border-radius:10px; font-size:14px;
             margin-right: 10px; 
         }
-
         .sort-hint { margin-left:auto; color:#888; font-size:12px; flex-shrink: 0; }
         #comment-status { text-align:center; font-size:14px; color:#777; margin:8px 0 0 }
         #comment-results { margin-top:4px }
         .comment-thread { border-bottom:1px solid #e9e9ef; padding:16px 0 }
         .comment-thread:last-child { border-bottom:none }
-        
         .thread-row { display:grid; grid-template-columns: 1fr 300px; gap:16px; align-items:start }
         .left-col { border:1px solid #e9e9ef; border-radius:12px; background:#fafafa; padding:12px }
         .left-col h3 { margin:0 0 10px; font-size:14px; color:#555; font-weight:800 }
@@ -165,6 +162,22 @@
         }
         @media (max-width: 980px){ .thread-row{ grid-template-columns:1fr } .thread-right { margin-top: 16px; } }
 
+        /* --- CSS CHO CÔNG CỤ PHÂN TÍCH KÊNH --- */
+        .analyzer-container { width:100%; max-width: 100%; background:#fff; padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06) }
+        .analyzer-container h1 { margin:0 0 18px; text-align:center; color:#059669; font-weight:800; }
+        .filter-container-wrapper { overflow-x: auto; scrollbar-width: none; }
+        .filter-container-wrapper::-webkit-scrollbar { display: none; }
+        .chart-container { position: relative; width: 100%; height: 300px; margin: auto; }
+        .copy-success-toast {
+            position: fixed; bottom: 20px; right: 20px;
+            background-color: #10B981; color: white;
+            padding: 12px 20px; border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
         /* Hiệu ứng loading chung */
         .loader {
             border: 4px solid #f3f3f3;
@@ -183,18 +196,24 @@
 <body class="bg-gray-100 text-gray-800">
 
     <!-- Trang chủ (Hub) -->
-    <div id="page-hub" class="page active container mx-auto p-4 max-w-4xl">
+    <div id="page-hub" class="page active container mx-auto p-4 max-w-7xl">
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Bộ Công Cụ YouTube</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Sửa grid thành 3 cột -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Card 1: Công cụ Từ khoá -->
             <div id="hub-card-keywords" class="hub-card" data-page="page-keywords">
-                <h2>🚀 Công Cụ Từ Khoá SEO</h2>
+                <h2 style="color: #1d4ed8;">🚀 Công Cụ Từ Khoá SEO</h2>
                 <p>Phân tích video và tạo bộ từ khoá, tiêu đề, mô tả chuẩn SEO cho chủ đề của bạn.</p>
             </div>
             <!-- Card 2: Công cụ Comment -->
             <div id="hub-card-comments" class="hub-card" data-page="page-comments">
-                <h2>📝 Trình Lấy Comment</h2>
+                <h2 style="color: #d946ef;">📝 Trình Lấy Comment</h2>
                 <p>Lấy toàn bộ bình luận từ video (không dịch) và sắp xếp theo lượt thích.</p>
+            </div>
+            <!-- Card 3: Công cụ Phân Tích Kênh (MỚI) -->
+            <div id="hub-card-analyzer" class="hub-card" data-page="page-analyzer">
+                <h2 style="color: #059669;">📊 Trình Phân Tích Kênh</h2>
+                <p>Tìm kiếm, lọc video và phân tích thói quen đăng bài của bất kỳ kênh YouTube nào.</p>
             </div>
         </div>
     </div>
@@ -227,7 +246,7 @@
                 <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
                 <button id="keywords-generate-button" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322-.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478-.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478.46-.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322-.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322-.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478-.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478.46-.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" />
                     </svg>
                     <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
                 </button>
@@ -248,18 +267,12 @@
         </button>
         <div class="comment-tool-container mx-auto" style="max-width: 900px;">
             <h1>📝 Trình Lấy Comment YouTube</h1>
-            <!-- GHI CHÚ MỚI -->
             <p class="comment-tool-note">Ứng dụng sẽ quét tối đa 500 comment có tương tác nhiều nhất (Top Comments) của video.</p>
-
-            <!-- Hàng nhập URL video (ĐÃ XÓA BỘ LỌC) -->
             <div class="comment-row">
                 <div class="field"><input id="comment-video-url" class="comment-input" type="text" placeholder="Dán link video YouTube vào đây..."></div>
                 <button id="comment-search-button" class="comment-btn">Tìm kiếm</button>
             </div>
-            
-            <!-- Thanh sắp xếp VÀ LỌC THỜI GIAN -->
             <div class="sort-bar" id="comment-sort-bar">
-                <!-- BỘ LỌC THỜI GIAN -->
                 <div>
                     <span class="sort-title">Lọc theo:</span>
                     <select id="comment-time-filter" class="time-filter-select">
@@ -268,11 +281,8 @@
                         <option value="yesterday">Hôm qua</option>
                         <option value="30days">30 ngày qua</option>
                         <option value="90days">90 ngày qua</option>
-                        <!-- Các năm sẽ được thêm bằng JS -->
                     </select>
                 </div>
-                
-                <!-- SẮP XẾP -->
                 <div>
                     <span class="sort-title">Sắp xếp theo:</span>
                     <button class="sort-btn" id="sort-like">Like ↓</button>
@@ -281,9 +291,169 @@
                 </div>
                 <span class="sort-hint">Bấm lại nút để đảo chiều ↑/↓</span>
             </div>
-            
             <div id="comment-status"></div>
             <div id="comment-results"></div>
+        </div>
+    </div>
+
+    <!-- Trang 3: Trình Phân Tích Kênh (MỚI) -->
+    <div id="page-analyzer" class="page container mx-auto p-4">
+        <button class="back-button" data-page="page-hub">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            Quay lại
+        </button>
+        
+        <div class="analyzer-container">
+            <h1>📊 Trình Tìm Kiếm & Phân Tích Video Kênh YouTube</h1>
+
+            <div class="flex flex-col sm:flex-row gap-2 mb-4">
+                <input type="text" id="analyzer-urlInput" class="flex-grow px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" placeholder="Dán link kênh (ví dụ: /channel/..., @handle, /c/...)">
+                <button id="analyzer-searchButton" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all active:transform active:scale-95 text-base">
+                    Tìm kiếm
+                </button>
+            </div>
+
+            <div id="analyzer-filterContainerWrapper" class="hidden filter-container-wrapper py-2 mb-4">
+                <div id="analyzer-filterContainer" class="bg-gray-50 rounded-lg flex items-center justify-start md:justify-between gap-4 p-4 flex-nowrap min-w-max">
+                    
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <label for="analyzer-yearFilter" class="text-gray-700 font-medium">Lọc theo năm:</label>
+                        <select id="analyzer-yearFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="0">Tất cả năm</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <label for="analyzer-viewsFilter" class="text-gray-700 font-medium">Lọc lượt xem:</label>
+                        <select id="analyzer-viewsFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="0">Tất cả (Mới nhất)</option>
+                            <option value="3">Top 3 xem nhiều nhất</option>
+                            <option value="5">Top 5 xem nhiều nhất</option>
+                            <option value="10">Top 10 xem nhiều nhất</option>
+                            <option value="15">Top 15 xem nhiều nhất</option>
+                            <option value="20">Top 20 xem nhiều nhất</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <label for="analyzer-videoTypeFilter" class="text-gray-700 font-medium">Lọc loại video:</label>
+                        <select id="analyzer-videoTypeFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">Tất cả</option>
+                            <option value="long">Video dài</option>
+                            <option value="short">Video ngắn</option>
+                            <option value="live">Phát trực tiếp</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <label for="analyzer-timezoneFilter" class="text-gray-700 font-medium">Múi giờ:</label>
+                        <select id="analyzer-timezoneFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <optgroup label="Múi giờ chung">
+                                <option value="local">Giờ địa phương</option>
+                                <option value="UTC">Giờ UTC/GMT</option>
+                            </optgroup>
+                            <optgroup label="Thị trường Lớn (Mỹ)">
+                                <option value="America/New_York">Mỹ (Miền Đông - ET)</option>
+                                <option value="America/Los_Angeles">Mỹ (Miền Tây - PT)</option>
+                            </optgroup>
+                            <optgroup label="Top 25 Quốc gia">
+                                <option value="Asia/Kolkata">Ấn Độ (Kolkata)</option>
+                                <option value="America/Sao_Paulo">Brazil (São Paulo)</option>
+                                <option value="Asia/Jakarta">Indonesia (Jakarta)</option>
+                                <option value="America/Mexico_City">Mexico (Mexico City)</option>
+                                <option value="Asia/Tokyo">Nhật Bản (Tokyo)</option>
+                                <option value="Asia/Karachi">Pakistan (Karachi)</option>
+                                <option value="Europe/Berlin">Đức (Berlin)</option>
+                                <option value="Asia/Ho_Chi_Minh">Việt Nam (TP. HCM)</option>
+                                <option value="Asia/Manila">Philippines (Manila)</option>
+                                <option value="Europe/Istanbul">Thổ Nhĩ Kỳ (Istanbul)</option>
+                                <option value="Europe/London">V.Q. Anh (London)</option>
+                                <option value="Europe/Paris">Pháp (Paris)</option>
+                                <option value="Africa/Cairo">Ai Cập (Cairo)</option>
+                                <option value="Asia/Bangkok">Thái Lan (Bangkok)</option>
+                                <option value="Asia/Seoul">Hàn Quốc (Seoul)</option>
+                                <option value="Europe/Rome">Ý (Rome)</option>
+                                <option value="Europe/Madrid">Tây Ban Nha (Madrid)</option>
+                                <option value="Asia/Dhaka">Bangladesh (Dhaka)</option>
+                                <option value="America/Argentina/Buenos_Aires">Argentina (Buenos Aires)</option>
+                                <option value="America/Toronto">Canada (Toronto)</option>
+                                <option value="Europe/Warsaw">Ba Lan (Warsaw)</option>
+                                <option value="Africa/Johannesburg">Nam Phi (Johannesburg)</option>
+                                <option value="Asia/Kuala_Lumpur">Malaysia (Kuala Lumpur)</option>
+                                <option value="Asia/Baghdad">Iraq (Baghdad)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <button id="analyzer-toggleKeywordsButton" class="flex-shrink-0 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition-all active:transform active:scale-95">
+                        Hiện Từ khóa
+                    </button>
+                </div>
+            </div>
+
+            <div id="analyzer-analysisButtonContainer" class="hidden mb-4 py-2">
+                <button id="analyzer-analysisButton" class="w-full px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75 transition-all active:transform active:scale-95 text-base">
+                    📊 Phân tích Kênh
+                </button>
+            </div>
+
+            <div id="analyzer-analysisResults" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h2 id="analyzer-analysisTitle" class="text-xl md:text-2xl font-bold text-center text-gray-800 mb-6">Phân Tích Thói Quen Đăng Video</h2>
+                
+                <div class="flex flex-wrap -mx-4">
+                    <div class="w-full lg:w-1/3 px-4 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow-md h-full">
+                            <h3 class="text-base font-bold text-center text-gray-700 mb-2">Phân tích Giờ công chiếu</h3>
+                            <div class="chart-container">
+                                <canvas id="analyzer-chartHour"></canvas>
+                            </div>
+                            <div id="analyzer-chartHourMeaning" class="mt-4 text-sm text-gray-700 bg-blue-50 p-3 rounded-md"></div>
+                            <div id="analyzer-chartHourRecommendation" class="mt-3 text-sm text-purple-700 bg-purple-50 p-3 rounded-md"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full lg:w-1/3 px-4 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow-md h-full">
+                            <h3 class="text-base font-bold text-center text-gray-700 mb-2">Phân tích Thứ trong tuần</h3>
+                            <div class="chart-container">
+                                <canvas id="analyzer-chartDayOfWeek"></canvas>
+                            </div>
+                            <div id="analyzer-chartDayOfWeekMeaning" class="mt-4 text-sm text-gray-700 bg-green-50 p-3 rounded-md"></div>
+                            <div id="analyzer-chartDayOfWeekRecommendation" class="mt-3 text-sm text-indigo-700 bg-indigo-50 p-3 rounded-md"></div>
+                        </div>
+                    </div>
+
+                    <div class="w-full lg:w-1/3 px-4 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow-md h-full">
+                            <h3 class="text-base font-bold text-center text-gray-700 mb-2">Phân tích Nhịp độ Đăng bài</h3>
+                            <div class="chart-container">
+                                <canvas id="analyzer-chartDayOfMonth"></canvas>
+                            </div>
+                            <div id="analyzer-chartDayOfMonthMeaning" class="mt-4 text-sm text-gray-700 bg-yellow-50 p-3 rounded-md"></div>
+                            <div id="analyzer-chartDayOfMonthRecommendation" class="mt-3 text-sm text-teal-700 bg-teal-50 p-3 rounded-md"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="analyzer-error" class="hidden my-4 p-4 bg-red-100 text-red-700 border border-red-300 rounded-lg"></div>
+            <div id="analyzer-status" class="hidden my-4 p-4 bg-blue-100 text-blue-700 border border-blue-300 rounded-lg flex items-center justify-center gap-3">
+                <svg class="loader h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span id="analyzer-statusText">Đang tải...</span>
+            </div>
+            
+            <div id="analyzer-copySuccess" class="copy-success-toast opacity-0 hidden">
+                Đã sao chép!
+            </div>
+
+            <div id="analyzer-results" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                <!-- Kết quả video của Analyzer sẽ hiển thị ở đây -->
+            </div>
         </div>
     </div>
 
@@ -291,6 +461,8 @@
     <script src="js/utils.js"></script>
     <script src="js/keywordsTool.js"></script>
     <script src="js/commentsTool.js"></script>
+    <!-- TỆP JS MỚI CHO CÔNG CỤ 3 -->
+    <script src="js/channelAnalyzer.js"></script> 
     <script src="js/main.js"></script>
     
 </body>
