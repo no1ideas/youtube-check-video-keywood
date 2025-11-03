@@ -11,12 +11,13 @@ function initCommentsTool() {
     const btnSortLike = document.getElementById('sort-like');
     const btnSortReplies = document.getElementById('sort-replies');
     const btnSortDate = document.getElementById('sort-date');
-    
-    // --- BỘ LỌC THỜI GIAN (MỚI) ---
     const timeFilterSelect = document.getElementById('comment-time-filter');
 
     // Kiểm tra xem các element có tồn tại không
     if (!searchButton) return;
+
+    // --- GIỚI HẠN COMMENT (MỚI) ---
+    const MAX_COMMENTS = 2000;
     
     // ===== State =====
     let allThreads = []; // Nơi lưu trữ tất cả bình luận gốc
@@ -51,7 +52,7 @@ function initCommentsTool() {
         btnSortLike.setAttribute('data-inited', '1');
     }
 
-    // --- BỘ LỌC THỜI GIAN (MỚI) ---
+    // --- BỘ LỌC THỜI GIAN ---
     function populateTimeFilter() {
         // Trích xuất các năm duy nhất từ bình luận
         const years = new Set(
@@ -76,7 +77,7 @@ function initCommentsTool() {
         });
     }
 
-    // Gán sự kiện cho bộ lọc thời gian (MỚI)
+    // Gán sự kiện cho bộ lọc thời gian
     timeFilterSelect.addEventListener('change', () => {
         timeFilter = timeFilterSelect.value; // Cập nhật state
         renderThreads(); // Render lại danh sách
@@ -116,7 +117,7 @@ function initCommentsTool() {
                     return;
                 }
                 
-                // 2. TẠO BỘ LỌC THỜI GIAN (MỚI)
+                // 2. TẠO BỘ LỌC THỜI GIAN
                 populateTimeFilter();
 
                 // 3. Hiển thị
@@ -163,6 +164,13 @@ function initCommentsTool() {
             collectThreads(data.items);
         }
         
+        // --- LOGIC DỪNG MỚI ---
+        // Đã đủ 2000 comment, dừng lại
+        if (allThreads.length >= MAX_COMMENTS) {
+            console.log(`Đã đạt giới hạn ${MAX_COMMENTS} comment, dừng quét.`);
+            return; // Dừng đệ quy
+        }
+
         // Đệ quy nếu có trang tiếp theo
         if (data.nextPageToken) {
             await fetchAllComments(videoId, data.nextPageToken);
@@ -171,6 +179,9 @@ function initCommentsTool() {
 
     function collectThreads(items) {
         items.forEach(item => {
+            // Kiểm tra giới hạn TRƯỚC KHI THÊM
+            if (allThreads.length >= MAX_COMMENTS) return;
+
             const top = item.snippet.topLevelComment?.snippet || {};
             const likeCount = Number(top.likeCount || 0);
             const totalReplies = Number(item.snippet.totalReplyCount || 0);
@@ -190,7 +201,7 @@ function initCommentsTool() {
     function renderThreads() {
         let arr = [...allThreads]; // Bắt đầu với tất cả
 
-        // --- BƯỚC 1: LỌC (MỚI) ---
+        // --- BƯỚC 1: LỌC ---
         if (timeFilter !== 'all') {
             const now = new Date();
             // Đặt giờ về 00:00:00 để so sánh ngày
@@ -250,10 +261,15 @@ function initCommentsTool() {
         }
         
         // Cập nhật status
-        statusDiv.textContent = `Đã tải xong! Hiển thị ${arr.length} / ${allThreads.length} luồng bình luận.`;
+        let totalFetched = allThreads.length;
+        let statusText = `Hiển thị ${arr.length} / ${totalFetched} luồng bình luận.`;
+        if (totalFetched >= MAX_COMMENTS) {
+             statusText = `Hiển thị ${arr.length} / ${totalFetched} bình luận (đã đạt giới hạn 2000).`;
+        }
+        statusDiv.textContent = statusText;
     }
 
-    // ===== DOM builders (Không đổi) =====
+    // ===== DOM builders (Đã sửa lỗi hiển thị ngày giờ) =====
     function createThreadDOM(threadObj) {
         const { raw, likeCount, totalReplies, publishedAtISO, publishedDate } = threadObj;
         const top = raw.snippet.topLevelComment.snippet;
@@ -283,17 +299,21 @@ function initCommentsTool() {
         
         let dateText = '—';
         if (publishedDate) {
+            // Định dạng Giờ:Phút
             const time = publishedDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+            // Định dạng Ngày/Tháng/Năm
             const date = publishedDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            // Gộp lại với thẻ <br>
             dateText = `${time}<br><span style="font-size: 13px; font-weight: 500;">${date}</span>`;
         }
         
         dateBox.innerHTML = `<div class="metric-label">Ngày</div><div class="metric-value" title="${publishedAtISO || ''}">${dateText}</div>`;
 
         metrics.appendChild(likeBox); metrics.appendChild(replyBox); metrics.appendChild(dateBox);
-        rightDiv.appendChild(metrics); 
+        rightDiv.appendChild(metrics); // ĐÂY LÀ DÒNG ĐÃ SỬA TỪ LỖI LẦN TRƯỚC
+        
         rowDiv.appendChild(colOriginal);
-        rowDiv.appendChild(rightDiv);
+        rowDiv.appendChild(rightDiv); // Sửa lỗi 'S is not defined'
         
         threadDiv.appendChild(rowDiv);
         return threadDiv;
@@ -321,5 +341,47 @@ function initCommentsTool() {
         wrap.appendChild(avatar); wrap.appendChild(content);
         return wrap;
     }
+    
+    // --- CÁC HÀM TIỆN ÍCH (DÙNG CHUNG) ---
+    // (Lấy từ utils.js để đảm bảo an toàn nếu người dùng chưa tạo file đó)
+
+    function getYoutubeId(url) {
+        // Dùng hàm getYoutubeId toàn cục từ utils.js nếu có
+        if (typeof window.getYoutubeId === 'function') {
+            return window.getYoutubeId(url);
+        }
+        // Fallback nếu utils.js chưa tải
+        const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+    }
+
+    function setLoading(button, isLoading, loadingText) {
+        // Dùng hàm setLoading toàn cục từ utils.js nếu có
+         if (typeof window.setLoading === 'function') {
+            window.setLoading(button, isLoading, loadingText || (isLoading ? '' : 'Tìm kiếm'));
+            return;
+        }
+        // Fallback
+        if (!button) return;
+        if (!button.dataset.originalContent) {
+            button.dataset.originalContent = button.innerHTML;
+        }
+        
+        if (isLoading) {
+            button.disabled = true;
+            button.innerHTML = `
+                <div class="loader" style="width: 20px; height: 20px; border-width: 3px;"></div>
+                ${loadingText ? `<span>${loadingText}</span>` : ''}
+            `;
+        } else {
+            button.disabled = false;
+            button.innerHTML = button.dataset.originalContent;
+            if(loadingText) {
+                 button.innerHTML = button.dataset.originalContent.replace(/<span>(.*?)<\/span>/, `<span>${loadingText}</span>`);
+            }
+        }
+    }
+
 } // Kết thúc initCommentsTool()
 
