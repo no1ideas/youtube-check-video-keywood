@@ -2,7 +2,7 @@
 // === SCRIPT CHO CÔNG CỤ COMMENT (Comments Tool) ===
 // ==================================================================
 function initCommentsTool() {
-    // ===== UI refs =====
+    // ===== Tham chiếu UI (Giao diện) =====
     const searchButton = document.getElementById('comment-search-button');
     const videoUrlInput = document.getElementById('comment-video-url');
     const resultsDiv = document.getElementById('comment-results');
@@ -12,20 +12,19 @@ function initCommentsTool() {
     const btnSortReplies = document.getElementById('sort-replies');
     const btnSortDate = document.getElementById('sort-date');
     const timeFilterSelect = document.getElementById('comment-time-filter');
+    const orderFilterSelect = document.getElementById('comment-order-filter'); // BỘ LỌC MỚI
 
     // Kiểm tra xem các element có tồn tại không
     if (!searchButton) return;
-
-    // --- GIỚI HẠN COMMENT (MỚI) ---
-    const MAX_COMMENTS = 2000;
     
-    // ===== State =====
+    // ===== State (Trạng thái) =====
     let allThreads = []; // Nơi lưu trữ tất cả bình luận gốc
-    let sortKey = 'date'; // 'like' | 'replies' | 'date'
+    let sortKey = 'like'; // Sắp xếp mặc định
     let sortDir = 'desc'; // 'asc' | 'desc'
     let timeFilter = 'all'; // State mới cho bộ lọc thời gian
+    let currentMaxLimit = 500; // Giới hạn mặc định (sẽ thay đổi)
 
-    // ===== Sort handlers =====
+    // ===== Sort handlers (Xử lý Sắp xếp) =====
     function attachSortHandlers() {
         function activate(btn) { [btnSortLike, btnSortReplies, btnSortDate].forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
         function toggleDir(btn, label) { sortDir = (sortDir === 'desc') ? 'asc' : 'desc'; btn.textContent = `${label} ${sortDir === 'desc' ? '↓' : '↑'}`; }
@@ -48,7 +47,7 @@ function initCommentsTool() {
             activate(btnSortDate); renderThreads(); // Render lại khi sắp xếp
         });
         
-        btnSortDate.classList.add('active'); // Kích hoạt mặc định
+        btnSortLike.classList.add('active'); // Kích hoạt mặc định là LIKE
         btnSortLike.setAttribute('data-inited', '1');
     }
 
@@ -83,16 +82,21 @@ function initCommentsTool() {
         renderThreads(); // Render lại danh sách
     });
     
-    // ===== Search flow =====
+    // ===== Search flow (Luồng tìm kiếm) =====
     if (searchButton) { 
         searchButton.addEventListener('click', async () => {
             const videoURL = videoUrlInput.value.trim();
             if (!videoURL) { alert('Vui lòng nhập link video YouTube.'); return; }
-            const videoId = getYoutubeId(videoURL); // Dùng hàm từ utils.js
+            const videoId = window.getYoutubeId(videoURL); // Dùng hàm từ utils.js
             if (!videoId) { alert('Link video không hợp lệ. Vui lòng kiểm tra lại.'); return; }
 
+            const selectedOrder = orderFilterSelect.value; // Lấy giá trị bộ lọc (time / relevance)
+            
+            // CẬP NHẬT GIỚI HẠN DỰA TRÊN BỘ LỌC
+            currentMaxLimit = (selectedOrder === 'time') ? 500 : 100;
+
             // Reset
-            setLoading(searchButton, true, ""); 
+            window.setLoading(searchButton, true, ""); // Dùng hàm từ utils.js
             resultsDiv.innerHTML = ''; statusDiv.textContent = 'Đang lấy dữ liệu, vui lòng chờ...';
             allThreads = [];
             sortBar.style.display = 'none';
@@ -108,12 +112,12 @@ function initCommentsTool() {
 
 
             try {
-                // 1. Lấy tất cả bình luận
-                await fetchAllComments(videoId);
+                // 1. Lấy tất cả bình luận (gửi kèm 'order' và 'maxComments')
+                await fetchAllComments(videoId, selectedOrder, null);
                 
                 if (allThreads.length === 0) {
                     statusDiv.textContent = 'Không tìm thấy bình luận nào hoặc video đã tắt bình luận.';
-                    setLoading(searchButton, false, "Tìm kiếm"); 
+                    window.setLoading(searchButton, false, "Tìm kiếm"); 
                     return;
                 }
                 
@@ -129,20 +133,24 @@ function initCommentsTool() {
                 console.error('Lỗi:', e);
                 statusDiv.textContent = `Đã xảy ra lỗi: ${e.message}`;
             } finally {
-                setLoading(searchButton, false, "Tìm kiếm"); 
+                window.setLoading(searchButton, false, "Tìm kiếm"); 
             }
         });
     }
 
     // ===== Fetch comments (paginate) =====
-    async function fetchAllComments(videoId, pageToken = '') {
+    async function fetchAllComments(videoId, order, pageToken = '') {
         statusDiv.textContent = `Đang tải bình luận... (đã tải ${allThreads.length} luồng)`;
         
         // Gọi backend /api/youtube-comments
         const response = await fetch('/api/youtube-comments', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ videoId: videoId, pageToken: pageToken })
+            body: JSON.stringify({ 
+                videoId: videoId, 
+                pageToken: pageToken,
+                order: order // Gửi 'order' (time/relevance) lên backend
+            })
         });
 
         if (!response.ok) {
@@ -160,27 +168,43 @@ function initCommentsTool() {
 
         const data = await response.json();
         
+        // --- LOGIC MỚI (video < giới hạn) ---
+        // Lấy tổng số comment cấp 1 từ API (chỉ ở lần gọi đầu tiên)
+        const totalTopLevelComments = data.videoTotalComments || null;
+
         if (data.items) {
             collectThreads(data.items);
         }
         
-        // --- LOGIC DỪNG MỚI ---
-        // Đã đủ 2000 comment, dừng lại
-        if (allThreads.length >= MAX_COMMENTS) {
-            console.log(`Đã đạt giới hạn ${MAX_COMMENTS} comment, dừng quét.`);
+        // --- LOGIC DỪNG MỚI (ĐÃ SỬA LỖI) ---
+        
+        // 1. Kiểm tra xem đã đạt giới hạn chưa
+        if (allThreads.length >= currentMaxLimit) {
+            console.log(`Đã đạt giới hạn ${currentMaxLimit} comment, dừng quét.`);
             return; // Dừng đệ quy
         }
 
-        // Đệ quy nếu có trang tiếp theo
+        // 2. Kiểm tra xem video có ít comment hơn giới hạn VÀ đã hết trang
+        if (totalTopLevelComments && totalTopLevelComments <= currentMaxLimit && !data.nextPageToken) {
+             console.log(`Video có ${totalTopLevelComments} comment (ít hơn ${currentMaxLimit}), đã quét hết.`);
+            return; // Dừng đt
+        }
+
+        // 3. Đệ quy nếu có trang tiếp theo
         if (data.nextPageToken) {
-            await fetchAllComments(videoId, data.nextPageToken);
+            // Kiểm tra lại lần nữa TRƯỚC KHI gọi
+            if (allThreads.length < currentMaxLimit) {
+                await fetchAllComments(videoId, order, data.nextPageToken);
+            } else {
+                 console.log(`Đã đạt giới hạn ${currentMaxLimit} comment TRƯỚC KHI gọi trang tiếp theo, dừng.`);
+            }
         }
     }
 
     function collectThreads(items) {
         items.forEach(item => {
             // Kiểm tra giới hạn TRƯỚC KHI THÊM
-            if (allThreads.length >= MAX_COMMENTS) return;
+            if (allThreads.length >= currentMaxLimit) return;
 
             const top = item.snippet.topLevelComment?.snippet || {};
             const likeCount = Number(top.likeCount || 0);
@@ -263,8 +287,8 @@ function initCommentsTool() {
         // Cập nhật status
         let totalFetched = allThreads.length;
         let statusText = `Hiển thị ${arr.length} / ${totalFetched} luồng bình luận.`;
-        if (totalFetched >= MAX_COMMENTS) {
-             statusText = `Hiển thị ${arr.length} / ${totalFetched} bình luận (đã đạt giới hạn 2000).`;
+        if (totalFetched >= currentMaxLimit) {
+             statusText = `Hiển thị ${arr.length} / ${totalFetched} bình luận (đã đạt giới hạn ${currentMaxLimit}).`;
         }
         statusDiv.textContent = statusText;
     }
@@ -310,7 +334,7 @@ function initCommentsTool() {
         dateBox.innerHTML = `<div class="metric-label">Ngày</div><div class="metric-value" title="${publishedAtISO || ''}">${dateText}</div>`;
 
         metrics.appendChild(likeBox); metrics.appendChild(replyBox); metrics.appendChild(dateBox);
-        rightDiv.appendChild(metrics); // ĐÂY LÀ DÒNG ĐÃ SỬA TỪ LỖI LẦN TRƯỚC
+        rightDiv.appendChild(metrics); // Sửa lỗi hiển thị metrics
         
         rowDiv.appendChild(colOriginal);
         rowDiv.appendChild(rightDiv); // Sửa lỗi 'S is not defined'
@@ -340,47 +364,6 @@ function initCommentsTool() {
         content.appendChild(author); content.appendChild(text);
         wrap.appendChild(avatar); wrap.appendChild(content);
         return wrap;
-    }
-    
-    // --- CÁC HÀM TIỆN ÍCH (DÙNG CHUNG) ---
-    // (Lấy từ utils.js để đảm bảo an toàn nếu người dùng chưa tạo file đó)
-
-    function getYoutubeId(url) {
-        // Dùng hàm getYoutubeId toàn cục từ utils.js nếu có
-        if (typeof window.getYoutubeId === 'function') {
-            return window.getYoutubeId(url);
-        }
-        // Fallback nếu utils.js chưa tải
-        const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
-        const match = url.match(regex);
-        return match ? match[1] : null;
-    }
-
-    function setLoading(button, isLoading, loadingText) {
-        // Dùng hàm setLoading toàn cục từ utils.js nếu có
-         if (typeof window.setLoading === 'function') {
-            window.setLoading(button, isLoading, loadingText || (isLoading ? '' : 'Tìm kiếm'));
-            return;
-        }
-        // Fallback
-        if (!button) return;
-        if (!button.dataset.originalContent) {
-            button.dataset.originalContent = button.innerHTML;
-        }
-        
-        if (isLoading) {
-            button.disabled = true;
-            button.innerHTML = `
-                <div class="loader" style="width: 20px; height: 20px; border-width: 3px;"></div>
-                ${loadingText ? `<span>${loadingText}</span>` : ''}
-            `;
-        } else {
-            button.disabled = false;
-            button.innerHTML = button.dataset.originalContent;
-            if(loadingText) {
-                 button.innerHTML = button.dataset.originalContent.replace(/<span>(.*?)<\/span>/, `<span>${loadingText}</span>`);
-            }
-        }
     }
 
 } // Kết thúc initCommentsTool()
