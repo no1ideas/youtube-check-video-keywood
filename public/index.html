@@ -93,21 +93,34 @@
 
         /* --- CSS CHO CÔNG CỤ COMMENT --- */
         .comment-tool-container { width:100%; max-width:900px; background:#fff; padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06) }
-        .comment-tool-container h1 { margin:0 0 8px; text-align:center; color:#d32f2f; font-weight:800; }
-        /* GHI CHÚ (Đã sửa) */
-        .comment-tool-note {
-            text-align: center;
-            font-size: 0.875rem; /* 14px */
-            color: #6b7280; /* text-gray-500 */
-            margin-bottom: 18px;
-        }
+        .comment-tool-container h1 { margin:0 0 18px; text-align:center; color:#d32f2f; font-weight:800; }
+        
+        /* Ghi chú (Đã xóa) */
+
         .comment-row { display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap }
-        .comment-row .field { flex:1; min-width:260px }
+        .comment-row-filters {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .comment-row-filters .field { flex: 1; } /* Ô URL */
+        
         .comment-input[type="text"] { width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:10px; font-size:15px; outline:none; }
+        
+        /* BỘ LỌC CHẾ ĐỘ QUÉT (MỚI) */
+        .order-filter-select {
+            border:1px solid #ddd; background:#fff; color:#333; 
+            padding: 12px 14px; border-radius:10px; font-size:15px;
+            flex-shrink: 0;
+        }
+
         .comment-btn { 
             padding:12px 18px; font-size:15px; background:#ff0000; 
             color:#fff; border:none; border-radius:10px; cursor:pointer; 
             transition:.2s; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
         }
         .comment-btn:hover { background:#c00000 }
         .comment-btn:disabled { background:#cfcfcf; cursor:not-allowed }
@@ -124,12 +137,11 @@
         }
         .sort-btn.active { border-color:#d32f2f; color:#d32f2f; font-weight:800 }
         
-        /* BỘ LỌC (Chung) */
+        /* BỘ LỌC THỜI GIAN */
         .time-filter-select {
             border:1px solid #e5e7eb; background:#fff; color:#333; 
-            padding: 12px 14px; /* Cập nhật padding cho giống ô input */
-            border-radius:10px; font-size:14px;
-            height: 47px; /* Căn chỉnh chiều cao */
+            padding: 8px 12px; border-radius:10px; font-size:14px;
+            margin-right: 10px; 
         }
 
         .sort-hint { margin-left:auto; color:#888; font-size:12px; flex-shrink: 0; }
@@ -159,6 +171,13 @@
             word-break:normal; line-height: 1.3;
         }
         @media (max-width: 980px){ .thread-row{ grid-template-columns:1fr } .thread-right { margin-top: 16px; } }
+        /* Xử lý responsive cho bộ lọc mới */
+        @media (max-width: 768px) {
+            .comment-row-filters { flex-direction: column; }
+            .comment-row-filters .field { width: 100%; }
+            .order-filter-select { width: 100%; }
+            .comment-btn { width: 100%; }
+        }
 
         /* Hiệu ứng loading chung */
         .loader {
@@ -222,7 +241,7 @@
                 <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
                 <button id="keywords-generate-button" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322-.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478-.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478.46-.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478-.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478.46-.744A6.7 6.7 0 0116.5 0c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" />
                     </svg>
                     <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
                 </button>
@@ -243,30 +262,33 @@
         </button>
         <div class="comment-tool-container mx-auto" style="max-width: 900px;">
             <h1>📝 Trình Lấy Comment YouTube</h1>
-            <!-- GHI CHÚ MỚI (Đã sửa) -->
-            <p class="comment-tool-note">Chọn chế độ quét và giới hạn 500 comment cấp 1. Lấy đủ comment trả lời (cấp 2) cho 500 comment đó.</p>
+            <!-- ĐÃ XÓA GHI CHÚ CŨ -->
 
-            <!-- Hàng nhập URL video (ĐÃ CẬP NHẬT) -->
-            <div class="comment-row">
+            <!-- Hàng nhập URL video VÀ BỘ LỌC MỚI -->
+            <div class="comment-row-filters">
                 <div class="field"><input id="comment-video-url" class="comment-input" type="text" placeholder="Dán link video YouTube vào đây..."></div>
                 
-                <!-- BỘ LỌC MỚI (500) -->
-                <div class="relative">
-                    <select id="comment-order-filter" class="time-filter-select">
-                        <option value="time">Tối đa 500 comment gần nhất</option>
-                        <option value="relevance">Tối đa 500 comment tương tác nhất</option>
-                    </select>
-                </div>
+                <!-- BỘ LỌC CHẾ ĐỘ QUÉT (MỚI) -->
+                <select id="comment-order-filter" class="order-filter-select">
+                    <option value="time">Tối đa 500 comment gần nhất</option>
+                    <option value="relevance">Top 100 comment tương tác nhất</option>
+                </select>
 
                 <button id="comment-search-button" class="comment-btn">Tìm kiếm</button>
             </div>
             
-            <!-- Thanh sắp xếp VÀ LỌC -->
+            <!-- Ghi chú giải thích bộ lọc (MỚI) -->
+            <p class="comment-tool-note">
+                Giới hạn chỉ áp dụng cho comment cấp 1. Ứng dụng sẽ lấy đủ comment trả lời (cấp 2) cho các comment cấp 1 đó.
+                <br>Nếu video có ít comment hơn giới hạn, ứng dụng sẽ quét toàn bộ.
+            </p>
+            
+            <!-- Thanh sắp xếp VÀ LỌC THỜI GIAN -->
             <div class="sort-bar" id="comment-sort-bar">
                 <!-- BỘ LỌC THỜI GIAN -->
                 <div>
                     <span class="sort-title">Lọc theo:</span>
-                    <select id="comment-time-filter" class="time-filter-select" style="height: 39px; padding-top: 6px; padding-bottom: 6px;">
+                    <select id="comment-time-filter" class="time-filter-select">
                         <option value="all">Tất cả thời gian</option>
                         <option value="today">Hôm nay</option>
                         <option value="yesterday">Hôm qua</option>
