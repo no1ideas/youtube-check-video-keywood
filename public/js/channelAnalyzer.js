@@ -171,16 +171,16 @@ function initChannelAnalyzer() {
 
         try {
             // TẤT CẢ CÁC LỆNH GỌI API GIỜ ĐÂY SẼ TRỎ VỀ /api/channel-analyzer
-            const channelId = await getChannelId(url);
+            const channelId = await getChannelId_backend(url);
             if (!channelId) return;
             
             showStatus('Đã tìm thấy kênh! Đang lấy danh sách video... (có thể mất vài phút)');
             const uploadsPlaylistId = channelId.replace('UC', 'UU');
-            const videos = await getVideosFromPlaylist(uploadsPlaylistId);
+            const videos = await getVideosFromPlaylist_backend(uploadsPlaylistId);
             if (videos.length === 0) { showError('Kênh này không có video công khai nào.'); hideStatus(); return; }
             
             showStatus(`Đã tải ${videos.length} video. Đang lấy lượt xem và từ khóa...`);
-            const videoDetailsMap = await getVideoDetails(videos);
+            const videoDetailsMap = await getVideoDetails_backend(videos);
 
             allFetchedVideos = videos.map(video => {
                 const videoId = video.snippet.resourceId.videoId;
@@ -204,7 +204,7 @@ function initChannelAnalyzer() {
     }
 
     // [BACKEND] GỌI /api/channel-analyzer
-    async function getChannelId(url) {
+    async function getChannelId_backend(url) {
         showStatus('Đang phân giải URL tùy chỉnh...');
         try {
             const response = await fetch('/api/channel-analyzer', {
@@ -216,7 +216,7 @@ function initChannelAnalyzer() {
             if (!response.ok) {
                 throw new Error(data.message || 'Lỗi không xác định từ backend');
             }
-            return data.channelId; // Backend trả về channelId
+            return data.channelId; // Backend trả về { channelId: "..." }
         } catch (error) {
             console.error('Lỗi tìm Channel ID:', error);
             showError(`Lỗi khi phân giải URL: ${error.message}`);
@@ -226,7 +226,7 @@ function initChannelAnalyzer() {
     }
     
     // [BACKEND] GỌI /api/channel-analyzer
-    async function getVideosFromPlaylist(playlistId) {
+    async function getVideosFromPlaylist_backend(playlistId) {
         let allVideos = [];
         let nextPageToken = null;
         let page = 1;
@@ -262,7 +262,7 @@ function initChannelAnalyzer() {
     }
 
     // [BACKEND] GỌI /api/channel-analyzer
-    async function getVideoDetails(playlistItems) {
+    async function getVideoDetails_backend(playlistItems) {
         const detailsMap = new Map();
         const videoIds = playlistItems.map(item => item.snippet.resourceId.videoId);
         
@@ -653,5 +653,3 @@ function initChannelAnalyzer() {
         activeDayFilter = null;
     }
 }
-
-// test change
