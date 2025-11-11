@@ -27,8 +27,9 @@ function initChannelAnalyzer() {
     const hideAnalysisButton = document.getElementById('analyzer-hideAnalysisButton'); // Nút ẩn mới
 
     // --- BIẾN & DOM MỚI CHO "GIỎ VIDEO" ---
-    const savedCountSpan = document.getElementById('analyzer-saved-count');
-    const showSavedListBtn = document.getElementById('analyzer-show-saved-list');
+    // **ĐÃ XÓA** const savedListBar = ...
+    const savedCountSpan = document.getElementById('analyzer-saved-count'); // Bây giờ là span bên trong nút
+    const showSavedListBtn = document.getElementById('analyzer-show-saved-list'); // Nút mới
     const savedListModal = document.getElementById('analyzer-saved-list-modal');
     const modalCloseBtn = document.getElementById('analyzer-modal-close-btn');
     const modalBody = document.getElementById('analyzer-modal-body');
@@ -46,7 +47,6 @@ function initChannelAnalyzer() {
     let showKeywords = false;
     let copyTimeout = null;
     let chartInstances = {}; // Để lưu trữ các biểu đồ
-    // ĐÃ XÓA isAnalysisActive
     let activeHourFilter = null; 
     let activeDayFilter = null;  
 
@@ -226,8 +226,8 @@ function initChannelAnalyzer() {
             updateDashboard(); 
             
             filterContainerWrapper.classList.remove('hidden');
-            analysisButtonContainer.classList.remove('hidden'); // Hiện nút "Phân Tích Kênh"
-            savedListBar.classList.remove('hidden');
+            analysisButtonContainer.classList.remove('hidden'); // Hiện nút "Phân Tích Kênh" và "Xem Giỏ Hàng"
+            // **ĐÃ XÓA** savedListBar.classList.remove('hidden');
             hideStatus();
         } catch (error) { console.error('Lỗi trong handleSearch:', error); showError(`Đã xảy ra lỗi: ${error.message}. Kiểm tra Console (F12).`); hideStatus(); }
     }
@@ -668,17 +668,18 @@ function initChannelAnalyzer() {
         updateSavedListBar();
     }
 
-function updateSavedListBar() {
-    const count = savedVideos.length;
-    
-    // savedCountSpan bây giờ là span bên trong nút mới
-    if (savedCountSpan) {
-        savedCountSpan.textContent = count; // Chỉ cập nhật con số
+    // *** [ĐÃ SỬA] ***
+    // Hàm này bây giờ chỉ cập nhật con số
+    function updateSavedListBar() {
+        const count = savedVideos.length;
+        
+        // savedCountSpan bây giờ là span bên trong nút mới
+        if (savedCountSpan) {
+            savedCountSpan.textContent = count; // Chỉ cập nhật con số
+        }
+        
+        // Không cần ẩn/hiện gì cả
     }
-    
-    // Chúng ta không cần ẩn/hiện thanh giỏ hàng nữa
-    // vì nó đã bị xóa và thay bằng nút mới.
-}
 
     function showSavedListModal() {
         modalBody.innerHTML = ''; // Xóa nội dung cũ
@@ -741,7 +742,7 @@ function updateSavedListBar() {
         if (confirm(`Bạn có chắc muốn xóa tất cả ${savedVideos.length} video đã lưu?`)) {
             savedVideos = [];
             showSavedListModal(); // Render lại modal (rỗng)
-            updateSavedListBar(); // Ẩn thanh giỏ hàng
+            updateSavedListBar(); // Cập nhật lại số trên nút
             
             // Reset tất cả các nút "Đã Lưu" đang hiển thị
             resultsContainer.querySelectorAll('.save-video-btn:disabled').forEach(btn => {
@@ -809,7 +810,7 @@ function updateSavedListBar() {
         filterContainerWrapper.classList.add('hidden');
         analysisButtonContainer.classList.add('hidden');
         analysisResults.classList.add('hidden');
-        analysisButton.classList.remove('hidden'); // SỬA LỖI: Luôn hiện lại nút Phân tích kênh khi Clear
+        analysisButton.classList.remove('hidden'); // Luôn hiện lại nút Phân tích kênh khi Clear
         
         if (analysisTitle) { 
             analysisTitle.textContent = 'Phân Tích Thói Quen Đăng Video'; 
@@ -835,11 +836,10 @@ function updateSavedListBar() {
         toggleKeywordsButton.classList.replace('bg-red-600', 'bg-green-600');
         allFetchedVideos = [];
 
-        // isAnalysisActive = false; // (Đã thay đổi ở Vercel)
         activeHourFilter = null;
         activeDayFilter = null;
         
-        // KHÔNG reset savedVideos, nhưng cập nhật thanh giỏ hàng
+        // KHÔNG reset savedVideos, nhưng cập nhật nút giỏ hàng
         updateSavedListBar();
     }
 }
