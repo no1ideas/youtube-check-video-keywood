@@ -267,12 +267,18 @@
         </button>
         <div class="comment-tool-container mx-auto" style="max-width: 900px;">
             <h1>📝 Trình Lấy Comment YouTube</h1>
+            <!-- GHI CHÚ MỚI -->
             <p class="comment-tool-note">Ứng dụng sẽ quét tối đa 500 comment có tương tác nhiều nhất (Top Comments) của video.</p>
+
+            <!-- Hàng nhập URL video (ĐÃ XÓA BỘ LỌC) -->
             <div class="comment-row">
                 <div class="field"><input id="comment-video-url" class="comment-input" type="text" placeholder="Dán link video YouTube vào đây..."></div>
                 <button id="comment-search-button" class="comment-btn">Tìm kiếm</button>
             </div>
+            
+            <!-- Thanh sắp xếp VÀ LỌC THỜI GIAN -->
             <div class="sort-bar" id="comment-sort-bar">
+                <!-- BỘ LỌC THỜI GIAN -->
                 <div>
                     <span class="sort-title">Lọc theo:</span>
                     <select id="comment-time-filter" class="time-filter-select">
@@ -281,8 +287,11 @@
                         <option value="yesterday">Hôm qua</option>
                         <option value="30days">30 ngày qua</option>
                         <option value="90days">90 ngày qua</option>
+                        <!-- Các năm sẽ được thêm bằng JS -->
                     </select>
                 </div>
+                
+                <!-- SẮP XẾP -->
                 <div>
                     <span class="sort-title">Sắp xếp theo:</span>
                     <button class="sort-btn" id="sort-like">Like ↓</button>
@@ -291,6 +300,7 @@
                 </div>
                 <span class="sort-hint">Bấm lại nút để đảo chiều ↑/↓</span>
             </div>
+            
             <div id="comment-status"></div>
             <div id="comment-results"></div>
         </div>
@@ -467,4 +477,3 @@
     
 </body>
 </html>
-
