@@ -1,6 +1,5 @@
 // ==================================================================
 // === SCRIPT CHO CÔNG CỤ PHÂN TÍCH KÊNH (Analyzer Tool) ===
-// =Details 3 ---
 // ==================================================================
 function initChannelAnalyzer() {
     // === KHAI BÁO BIẾN ===
@@ -809,8 +808,8 @@ function initChannelAnalyzer() {
         filterContainerWrapper.classList.add('hidden');
         analysisButtonContainer.classList.add('hidden');
         analysisResults.classList.add('hidden');
-        // analysisButton.textContent = '📊 Phân tích Kênh'; // (Đã thay đổi ở Vercel)
-        // analysisButton.classList.replace('bg-gray-500', 'bg-purple-600');
+        analysisButton.classList.remove('hidden'); // SỬA LỖI: Luôn hiện lại nút Phân tích kênh khi Clear
+        
         if (analysisTitle) { 
             analysisTitle.textContent = 'Phân Tích Thói Quen Đăng Video'; 
             analysisTitle.dataset.isSavedListAnalysis = 'false'; // Xóa cờ
