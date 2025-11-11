@@ -670,14 +670,17 @@ function initChannelAnalyzer() {
     }
 
     function updateSavedListBar() {
-        const count = savedVideos.length;
-        if (count > 0) {
-            savedCountSpan.textContent = `Bạn có ${count} video đã lưu.`;
-            savedListBar.classList.remove('hidden');
-        } else {
-            savedListBar.classList.add('hidden');
-        }
+    const count = savedVideos.length;
+    
+    // savedCountSpan bây giờ là span bên trong nút mới
+    if (savedCountSpan) {
+        savedCountSpan.textContent = count; // Chỉ cập nhật con số
     }
+    
+    // Chúng ta không cần ẩn/hiện bất cứ thứ gì nữa,
+    // vì bộ chứa (analysisButtonContainer) đã được
+    // quản lý bởi hàm handleSearch() và clearResults()
+}
 
     function showSavedListModal() {
         modalBody.innerHTML = ''; // Xóa nội dung cũ
