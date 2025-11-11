@@ -103,7 +103,7 @@
 
         /* --- CSS CHO CÔNG CỤ COMMENT --- */
         .comment-tool-container { width:100%; max-width:900px; background:#fff; padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06) }
-        .comment-tool-container h1 { margin:0 0 8px; text-align:center; color:#d32f2f; font-weight:800; }
+        .comment-tool-container h1 { margin:0 0 18px; text-align:center; color:#d32f2f; font-weight:800; }
         .comment-tool-note {
             text-align: center; font-size: 0.875rem; 
             color: #6b7280; margin-bottom: 18px;
@@ -177,6 +177,72 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
+
+        /* NÚT LƯU VIDEO (MỚI) */
+        .save-video-btn {
+            background-color: #e0e7ff; color: #3730a3;
+            font-size: 0.75rem; font-weight: 600;
+            padding: 2px 8px; border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .save-video-btn:hover { background-color: #c7d2fe; }
+        .save-video-btn:disabled {
+            background-color: #d1fae5; color: #065f46;
+            cursor: not-allowed;
+        }
+        
+        /* THANH GIỎ HÀNG (MỚI) */
+        #analyzer-saved-list-bar {
+            background-color: #f3e8ff; /* bg-purple-50 */
+            color: #7e22ce; /* text-purple-700 */
+            border: 1px solid #e9d5ff; /* border-purple-200 */
+        }
+        #analyzer-show-saved-list {
+            font-weight: 600;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        
+        /* MODAL (GIỎ HÀNG) (MỚI) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px;
+        }
+        .modal-header h2 { font-size: 1.25rem; font-weight: 700; }
+        .modal-close-btn {
+            background: #eee; border-radius: 50%; padding: 4px;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .modal-close-btn:hover { background: #ddd; }
+        .modal-body { overflow-y: auto; }
+        .modal-list-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 8px; border-bottom: 1px solid #eee;
+        }
+        .modal-list-item:last-child { border-bottom: none; }
+        .modal-list-img { width: 80px; height: 45px; object-fit: cover; border-radius: 4px; }
+        .modal-list-title { flex: 1; font-size: 0.875rem; line-height: 1.3; }
+        .modal-list-remove-btn {
+            color: #ef4444; font-size: 0.75rem; font-weight: 500;
+            cursor: pointer; text-decoration: underline;
+        }
+        .modal-footer { margin-top: 20px; }
 
         /* Hiệu ứng loading chung */
         .loader {
@@ -267,18 +333,12 @@
         </button>
         <div class="comment-tool-container mx-auto" style="max-width: 900px;">
             <h1>📝 Trình Lấy Comment YouTube</h1>
-            <!-- GHI CHÚ MỚI -->
             <p class="comment-tool-note">Ứng dụng sẽ quét tối đa 500 comment có tương tác nhiều nhất (Top Comments) của video.</p>
-
-            <!-- Hàng nhập URL video (ĐÃ XÓA BỘ LỌC) -->
             <div class="comment-row">
                 <div class="field"><input id="comment-video-url" class="comment-input" type="text" placeholder="Dán link video YouTube vào đây..."></div>
                 <button id="comment-search-button" class="comment-btn">Tìm kiếm</button>
             </div>
-            
-            <!-- Thanh sắp xếp VÀ LỌC THỜI GIAN -->
             <div class="sort-bar" id="comment-sort-bar">
-                <!-- BỘ LỌC THỜI GIAN -->
                 <div>
                     <span class="sort-title">Lọc theo:</span>
                     <select id="comment-time-filter" class="time-filter-select">
@@ -287,11 +347,8 @@
                         <option value="yesterday">Hôm qua</option>
                         <option value="30days">30 ngày qua</option>
                         <option value="90days">90 ngày qua</option>
-                        <!-- Các năm sẽ được thêm bằng JS -->
                     </select>
                 </div>
-                
-                <!-- SẮP XẾP -->
                 <div>
                     <span class="sort-title">Sắp xếp theo:</span>
                     <button class="sort-btn" id="sort-like">Like ↓</button>
@@ -300,7 +357,6 @@
                 </div>
                 <span class="sort-hint">Bấm lại nút để đảo chiều ↑/↓</span>
             </div>
-            
             <div id="comment-status"></div>
             <div id="comment-results"></div>
         </div>
@@ -325,16 +381,25 @@
                 </button>
             </div>
 
+            <!-- THANH GIỎ HÀNG (MỚI) -->
+            <div id="analyzer-saved-list-bar" class="hidden my-4 p-4 bg-purple-100 text-purple-700 border border-purple-200 rounded-lg flex items-center justify-between">
+                <div>
+                    <span class="font-bold">Giỏ Video:</span>
+                    <span id="analyzer-saved-count">Bạn có 0 video đã lưu.</span>
+                </div>
+                <button id="analyzer-show-saved-list" class="font-semibold hover:underline">
+                    Xem & Phân Tích Giỏ Hàng
+                </button>
+            </div>
+
             <div id="analyzer-filterContainerWrapper" class="hidden filter-container-wrapper py-2 mb-4">
                 <div id="analyzer-filterContainer" class="bg-gray-50 rounded-lg flex items-center justify-start md:justify-between gap-4 p-4 flex-nowrap min-w-max">
-                    
                     <div class="flex items-center gap-2 flex-shrink-0">
                         <label for="analyzer-yearFilter" class="text-gray-700 font-medium">Lọc theo năm:</label>
                         <select id="analyzer-yearFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="0">Tất cả năm</option>
                         </select>
                     </div>
-                    
                     <div class="flex items-center gap-2 flex-shrink-0">
                         <label for="analyzer-viewsFilter" class="text-gray-700 font-medium">Lọc lượt xem:</label>
                         <select id="analyzer-viewsFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -346,7 +411,6 @@
                             <option value="20">Top 20 xem nhiều nhất</option>
                         </select>
                     </div>
-                    
                     <div class="flex items-center gap-2 flex-shrink-0">
                         <label for="analyzer-videoTypeFilter" class="text-gray-700 font-medium">Lọc loại video:</label>
                         <select id="analyzer-videoTypeFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -356,7 +420,6 @@
                             <option value="live">Phát trực tiếp</option>
                         </select>
                     </div>
-                    
                     <div class="flex items-center gap-2 flex-shrink-0">
                         <label for="analyzer-timezoneFilter" class="text-gray-700 font-medium">Múi giờ:</label>
                         <select id="analyzer-timezoneFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -396,7 +459,6 @@
                             </optgroup>
                         </select>
                     </div>
-
                     <button id="analyzer-toggleKeywordsButton" class="flex-shrink-0 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition-all active:transform active:scale-95">
                         Hiện Từ khóa
                     </button>
@@ -411,7 +473,6 @@
 
             <div id="analyzer-analysisResults" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <h2 id="analyzer-analysisTitle" class="text-xl md:text-2xl font-bold text-center text-gray-800 mb-6">Phân Tích Thói Quen Đăng Video</h2>
-                
                 <div class="flex flex-wrap -mx-4">
                     <div class="w-full lg:w-1/3 px-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow-md h-full">
@@ -423,7 +484,6 @@
                             <div id="analyzer-chartHourRecommendation" class="mt-3 text-sm text-purple-700 bg-purple-50 p-3 rounded-md"></div>
                         </div>
                     </div>
-                    
                     <div class="w-full lg:w-1/3 px-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow-md h-full">
                             <h3 class="text-base font-bold text-center text-gray-700 mb-2">Phân tích Thứ trong tuần</h3>
@@ -434,7 +494,6 @@
                             <div id="analyzer-chartDayOfWeekRecommendation" class="mt-3 text-sm text-indigo-700 bg-indigo-50 p-3 rounded-md"></div>
                         </div>
                     </div>
-
                     <div class="w-full lg:w-1/3 px-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow-md h-full">
                             <h3 class="text-base font-bold text-center text-gray-700 mb-2">Phân tích Nhịp độ Đăng bài</h3>
@@ -467,11 +526,40 @@
         </div>
     </div>
 
+    <!-- MODAL GIỎ HÀNG (MỚI - ẨN) -->
+    <div id="analyzer-saved-list-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <!-- Header Modal -->
+            <div class="modal-header">
+                <h2 id="analyzer-modal-title">Giỏ Video Đã Lưu (0 video)</h2>
+                <button id="analyzer-modal-close-btn" class="modal-close-btn">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <!-- Body Modal -->
+            <div id="analyzer-modal-body" class="modal-body">
+                <!-- Danh sách video đã lưu sẽ hiển thị ở đây -->
+                <p class="text-gray-500 text-center">Bạn chưa lưu video nào.</p>
+            </div>
+            
+            <!-- Footer Modal -->
+            <div class="modal-footer flex flex-col sm:flex-row justify-end gap-3 mt-4">
+                 <button id="analyzer-modal-clear-btn" class="px-5 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all">
+                    Xóa Tất Cả
+                </button>
+                <button id="analyzer-modal-analyze-btn" class="px-5 py-2 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition-all">
+                    Phân Tích Toàn Bộ Giỏ Hàng
+                </button>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Tải các tệp JS (BẮT BUỘC PHẢI Ở CUỐI BODY) -->
     <script src="js/utils.js"></script>
     <script src="js/keywordsTool.js"></script>
     <script src="js/commentsTool.js"></script>
-    <!-- TỆP JS MỚI CHO CÔNG CỤ 3 -->
     <script src="js/channelAnalyzer.js"></script> 
     <script src="js/main.js"></script>
     
