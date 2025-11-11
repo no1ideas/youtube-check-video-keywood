@@ -27,7 +27,6 @@ function initChannelAnalyzer() {
     const hideAnalysisButton = document.getElementById('analyzer-hideAnalysisButton'); // Nút ẩn mới
 
     // --- BIẾN & DOM MỚI CHO "GIỎ VIDEO" ---
-    const savedListBar = document.getElementById('analyzer-saved-list-bar');
     const savedCountSpan = document.getElementById('analyzer-saved-count');
     const showSavedListBtn = document.getElementById('analyzer-show-saved-list');
     const savedListModal = document.getElementById('analyzer-saved-list-modal');
@@ -669,7 +668,7 @@ function initChannelAnalyzer() {
         updateSavedListBar();
     }
 
-    function updateSavedListBar() {
+function updateSavedListBar() {
     const count = savedVideos.length;
     
     // savedCountSpan bây giờ là span bên trong nút mới
@@ -677,9 +676,8 @@ function initChannelAnalyzer() {
         savedCountSpan.textContent = count; // Chỉ cập nhật con số
     }
     
-    // Chúng ta không cần ẩn/hiện bất cứ thứ gì nữa,
-    // vì bộ chứa (analysisButtonContainer) đã được
-    // quản lý bởi hàm handleSearch() và clearResults()
+    // Chúng ta không cần ẩn/hiện thanh giỏ hàng nữa
+    // vì nó đã bị xóa và thay bằng nút mới.
 }
 
     function showSavedListModal() {
