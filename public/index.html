@@ -25,6 +25,22 @@
         .page.active { display: block; }
         #page-hub { display: block; } /* Trang chủ luôn hiển thị ban đầu */
 
+        /* Điều chỉnh logo */
+        img.header-logo {
+            height: 40px; /* Tăng 30% từ 32px (h-8) */
+            width: 40px;  /* Tăng 30% từ 32px (w-8) */
+            object-fit: contain;
+            background-color: transparent !important; /* Đảm bảo nền trong suốt */
+        }
+
+        img.footer-logo {
+            height: 40px; /* Tăng 30% từ 32px (h-8) */
+            width: 40px;  /* Tăng 30% từ 32px (w-8) */
+            object-fit: contain;
+            background-color: transparent !important; /* Đảm bảo nền trong suốt */
+        }
+
+
         /* Trang chủ (Hub) */
         .hub-card {
             background-color: #ffffff;
@@ -250,7 +266,7 @@
             
             <a href="#" id="nav-brand" data-page="page-hub" 
                class="header-nav-link flex items-center gap-2 text-xl font-bold text-gray-800">
-                <img src="images/logo.png" alt="ChannelPulse Logo" class="h-8 w-8 object-contain">
+                <img src="images/logo.png" alt="ChannelPulse Logo" class="header-logo">
                 <span>ChannelPulse</span>
             </a>
 
@@ -327,7 +343,7 @@
             <div class="bg-white p-5 rounded-lg shadow-lg">
                 <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
                 <button id="keywords-generate-button" class="w-full bg-[#1890FF] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#0C457D] transition duration-300 flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322-.478-.46-.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322-.478-.46-.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478-.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322-.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322-.478-.46-.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478-.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" /></svg>
                     <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
                 </button>
                 <div id="keywords-results-container" class="mt-5 space-y-4 max-h-[550px] overflow-y-auto pr-2">
@@ -478,7 +494,8 @@
                                 <canvas id="analyzer-chartHour"></canvas>
                             </div>
                             <div id="analyzer-chartHourMeaning" class="mt-4 text-sm text-gray-700 bg-blue-50 p-3 rounded-md"></div>
-                            <div id="analyzer-chartHourRecommendation" class="mt-3 text-sm text-blue-700 bg-blue-50 p-3 rounded-md"></div> </div>
+                            <div id="analyzer-chartHourRecommendation" class="mt-3 text-sm text-blue-700 bg-blue-50 p-3 rounded-md"></div>
+                        </div>
                     </div>
                     <div class="w-full lg:w-1/3 px-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow-md h-full">
@@ -487,7 +504,8 @@
                                 <canvas id="analyzer-chartDayOfWeek"></canvas>
                             </div>
                             <div id="analyzer-chartDayOfWeekMeaning" class="mt-4 text-sm text-gray-700 bg-green-50 p-3 rounded-md"></div>
-                            <div id="analyzer-chartDayOfWeekRecommendation" class="mt-3 text-sm text-green-700 bg-green-50 p-3 rounded-md"></div> </div>
+                            <div id="analyzer-chartDayOfWeekRecommendation" class="mt-3 text-sm text-green-700 bg-green-50 p-3 rounded-md"></div>
+                        </div>
                     </div>
                     <div class="w-full lg:w-1/3 px-4 mb-6">
                         <div class="bg-white p-4 rounded-lg shadow-md h-full">
@@ -496,7 +514,8 @@
                                 <canvas id="analyzer-chartDayOfMonth"></canvas>
                             </div>
                             <div id="analyzer-chartDayOfMonthMeaning" class="mt-4 text-sm text-gray-700 bg-yellow-50 p-3 rounded-md"></div>
-                            <div id="analyzer-chartDayOfMonthRecommendation" class="mt-3 text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md"></div> </div>
+                            <div id="analyzer-chartDayOfMonthRecommendation" class="mt-3 text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -581,7 +600,7 @@
             
             <div>
                 <h3 class="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                    <img src="images/logo.png" alt="ChannelPulse Logo" class="h-8 w-8 object-contain">
+                    <img src="images/logo.png" alt="ChannelPulse Logo" class="footer-logo">
                     <span>ChannelPulse.me</span>
                 </h3>
                 <p class="text-gray-400">Bộ công cụ miễn phí hỗ trợ nhà sáng tạo nội dung YouTube tối ưu và phân tích video.</p>
