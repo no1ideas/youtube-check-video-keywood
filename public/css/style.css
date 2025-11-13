@@ -230,16 +230,28 @@ img.footer-logo {
     display: flex; align-items: center; justify-content: center;
     z-index: 100;
 }
-.modal-content {
-    background-color: var(--bg-white);
-    border-radius: 12px;
-    padding: 24px;
-    width: 90%;
-    max-width: 900px;
-    max-height: 80vh;
-    display: flex;
-    flex-direction: column;
-}
+/* [ĐIỀU CHỈNH] CSS cho nội dung Modal */
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            position: relative;
+            z-index: 1001; /* Đảm bảo nó nằm trên lớp phủ */
+            max-height: 95vh; /* Tăng chiều cao tối đa một chút */
+            overflow-y: visible; /* Thay đổi: Không tự động cuộn nội dung modal */
+            animation: slideIn 0.3s forwards ease-out;
+            margin: 1rem; /* Khoảng cách với mép màn hình */
+            width: 100%; /* Chiếm toàn bộ chiều rộng có thể */
+            display: flex; /* Sử dụng flexbox để kiểm soát chiều cao bên trong */
+            flex-direction: column; /* Sắp xếp các mục theo chiều dọc */
+        }
+
+        /* [THÊM MỚI] CSS cho phần body của modal để nó tự cuộn nếu cần */
+        .modal-body {
+            flex-grow: 1; /* Cho phép body chiếm hết không gian còn lại */
+            overflow-y: auto; /* CHỈ body mới được cuộn nếu nội dung quá dài */
+            padding-bottom: 1rem; /* Khoảng cách cuối body */
+        }
 .modal-header {
     display: flex; justify-content: space-between; align-items: center;
     margin-bottom: 16px;
