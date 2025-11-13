@@ -280,40 +280,39 @@ img.footer-logo {
 }
 
 /* [SỬA LỖI] Footer Căn đều (Trái, Giữa, Phải) */
-.footer-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* 3 cột bằng nhau */
-    gap: 2rem; /* Khoảng cách giữa các cột */
-}
-.footer-grid > div:first-child {
-    justify-self: start; /* Cột đầu tiên sát trái */
-}
-.footer-grid > div:nth-child(2) {
-    justify-self: center; /* Cột thứ hai ở giữa */
-    text-align: center; /* Căn giữa nội dung cột 2 */
-}
-.footer-grid > div:last-child {
-    justify-self: end; /* Cột cuối cùng sát phải */
-    text-align: right; /* Căn phải nội dung cột 3 */
-}
-/* Icon mạng xã hội căn phải */
-.footer-grid > div:last-child .flex {
-    justify-content: flex-end;
-}
+/* [SỬA ĐỔI BỐ CỤC FOOTER] Footer Căn đều (Trái, Giữa, Phải) */
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr; /* Cột 1 lớn hơn, 2 cột sau bằng nhau */
+            gap: 2rem; /* Khoảng cách giữa các cột */
+        }
+        .footer-col-left {
+            justify-self: start; /* Cột đầu tiên sát trái */
+            text-align: left;
+        }
+        .footer-col-center {
+            justify-self: center; /* Cột thứ hai ở giữa */
+            text-align: center; /* Căn giữa nội dung cột 2 */
+        }
+        .footer-col-right {
+            justify-self: end; /* Cột cuối cùng sát phải */
+            text-align: right; /* Căn phải nội dung cột 3 */
+        }
 
-@media (max-width: 768px) {
-    .footer-grid {
-        grid-template-columns: 1fr; /* Một cột trên màn hình nhỏ */
-        text-align: center; /* Căn giữa mọi thứ trên di động */
-    }
-    .footer-grid > div:first-child,
-    .footer-grid > div:nth-child(2),
-    .footer-grid > div:last-child {
-        justify-self: center; /* Căn giữa trên màn hình nhỏ */
-        text-align: center; /* Căn giữa nội dung trên di động */
-    }
-    .footer-grid > div:last-child .flex { 
-        justify-content: center; /* Căn giữa icon mạng xã hội trên di động */
-    }
+        @media (max-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 1fr; /* Một cột trên màn hình nhỏ */
+                text-align: center; /* Căn giữa mọi thứ trên di động */
+            }
+            .footer-col-left,
+            .footer-col-center,
+            .footer-col-right {
+                justify-self: center; /* Căn giữa trên màn hình nhỏ */
+                text-align: center; /* Căn giữa nội dung trên di động */
+            }
+            .footer-col-right .flex { 
+                justify-content: center; /* Căn giữa icon mạng xã hội trên di động */
+            }
+        }
 }
     </style>
