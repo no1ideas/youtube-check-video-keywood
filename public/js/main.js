@@ -96,6 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==================================================================
 // === SCRIPT CHO FORM LIÊN HỆ (ĐÃ NÂNG CẤP LÊN MODAL) ===
 // ==================================================================
+// ==================================================================
+// === SCRIPT CHO FORM LIÊN HỆ (ĐÃ NÂNG CẤP VỚI BỘ ĐẾM) ===
+// ==================================================================
 function initContactForm() {
     // Modal elements
     const contactModal = document.getElementById('contact-modal');
@@ -107,6 +110,9 @@ function initContactForm() {
     const subjectInput = document.getElementById('contact-subject');
     const messageInput = document.getElementById('contact-message');
     const statusEl = document.getElementById('contact-status');
+    
+    // [THÊM MỚI] Bộ đếm ký tự
+    const charCounter = document.getElementById('char-counter');
 
     if (!contactModal || !submitButton) return; // Thoát nếu không tìm thấy modal
 
@@ -133,6 +139,21 @@ function initContactForm() {
             hideModal();
         }
     });
+
+    // [THÊM MỚI] Gán sự kiện cho bộ đếm ký tự
+    if (messageInput && charCounter) {
+        messageInput.addEventListener('input', () => {
+            const currentLength = messageInput.value.length;
+            charCounter.textContent = `${currentLength}/3000`;
+            
+            // Đổi màu nếu vượt quá (dù maxlength đã chặn)
+            if (currentLength >= 3000) {
+                charCounter.classList.add('text-red-600', 'font-bold');
+            } else {
+                charCounter.classList.remove('text-red-600', 'font-bold');
+            }
+        });
+    }
 
     // --- Logic Gửi Form (Giữ nguyên) ---
     submitButton.addEventListener('click', async () => {
@@ -177,11 +198,15 @@ function initContactForm() {
             statusEl.className = 'text-center mt-4 text-green-600';
             statusEl.classList.remove('hidden');
             
-            // Xóa form
+            // [SỬA] Xóa form VÀ reset bộ đếm
             emailInput.value = '';
             messageInput.value = '';
+            if (charCounter) {
+                charCounter.textContent = '0/3000';
+                charCounter.classList.remove('text-red-600', 'font-bold');
+            }
 
-            // [NÂNG CẤP] Tự động đóng modal sau 2 giây
+            // Tự động đóng modal sau 2 giây
             setTimeout(() => {
                 hideModal();
             }, 2000);
