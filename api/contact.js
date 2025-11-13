@@ -22,7 +22,7 @@ export default async function handler(request, response) {
             
             // [THAY THẾ] BẰNG EMAIL CÁ NHÂN CỦA BẠN
             // Đây là email bạn dùng để nhận góp ý
-            to: 'email-ca-nhan-cua-ban@gmail.com', 
+            to: 'contact@channelpulse.me', 
             
             // Tiêu đề email bạn nhận được
             subject: `Phản hồi mới từ ChannelPulse: [${subject}]`, 
