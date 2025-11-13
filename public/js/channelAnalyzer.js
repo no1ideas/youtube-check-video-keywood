@@ -27,7 +27,6 @@ function initChannelAnalyzer() {
     const hideAnalysisButton = document.getElementById('analyzer-hideAnalysisButton'); // Nút ẩn mới
 
     // --- BIẾN & DOM MỚI CHO "GIỎ VIDEO" ---
-    // **ĐÃ XÓA** const savedListBar = ...
     const savedCountSpan = document.getElementById('analyzer-saved-count'); // Bây giờ là span bên trong nút
     const showSavedListBtn = document.getElementById('analyzer-show-saved-list'); // Nút mới
     const savedListModal = document.getElementById('analyzer-saved-list-modal');
@@ -50,11 +49,11 @@ function initChannelAnalyzer() {
     let activeHourFilter = null; 
     let activeDayFilter = null;  
 
-    // Mảng màu
+    // Mảng màu (Sử dụng CSS Variables đã định nghĩa trong <style>)
     const CHART_COLORS = {
-        blue: 'rgba(59, 130, 246, 0.7)',
-        green: 'rgba(16, 185, 129, 0.7)',
-        yellow: 'rgba(245, 159, 11, 0.7)',
+        blue: 'rgba(24, 144, 255, 0.7)', // var(--primary-blue-light)
+        green: 'rgba(16, 185, 129, 0.7)', // Màu xanh lá (giữ nguyên cho biểu đồ này)
+        yellow: 'rgba(245, 159, 11, 0.7)', // Màu vàng (giữ nguyên cho biểu đồ này)
     };
     
     const WEEKDAY_NAMES = [ 'Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7' ];
@@ -82,18 +81,16 @@ function initChannelAnalyzer() {
 
     toggleKeywordsButton.addEventListener('click', handleToggleKeywords);
     
-    // --- SỬA LẠI LOGIC GÁN SỰ KIỆN ---
     analysisButton.addEventListener('click', handleAnalyzeChannel); // Phân tích KÊNH
     hideAnalysisButton.addEventListener('click', hideAnalysis); // Nút ẩn
     
     urlInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleSearch());
     
-    // --- GÁN SỰ KIỆN MỚI ---
     resultsContainer.addEventListener('click', handleCardClick); // Uỷ quyền sự kiện
-    showSavedListBtn.addEventListener('click', showSavedListModal);
+    showSavedListBtn.addEventListener('click', showSavedListModal); // Nút này giờ chỉ mở modal
     modalCloseBtn.addEventListener('click', hideSavedListModal);
     modalClearBtn.addEventListener('click', handleClearSavedList);
-    modalAnalyzeBtn.addEventListener('click', handleAnalyzeSavedList); // Phân tích GIỎ HÀNG
+    modalAnalyzeBtn.addEventListener('click', handleAnalyzeSavedList); // Nút trong modal
     modalBody.addEventListener('click', handleRemoveFromSaved); // Uỷ quyền sự kiện
     
     savedListModal.addEventListener('click', (e) => {
@@ -102,6 +99,37 @@ function initChannelAnalyzer() {
         }
     });
 
+    /**
+     * [HÀM MỚI] Quản lý trạng thái active của 2 nút tab
+     * @param {'channel' | 'cart' | 'none'} activeState 
+     */
+    function setActiveTab(activeState) {
+        // Các lớp (class) cho trạng thái KHÔNG HOẠT ĐỘNG (xám)
+        const inactiveClasses = ['bg-gray-200', 'text-gray-700', 'hover:bg-gray-300'];
+        // Các lớp (class) cho trạng thái HOẠT ĐỘNG (xanh)
+        // Chúng ta sẽ dùng màu xanh đậm (#0C457D) làm màu active
+        const activeClasses = ['bg-[#0C457D]', 'text-white', 'hover:bg-[#0a3a66]'];
+        
+        // 1. Nút Phân Tích Kênh
+        if (analysisButton) {
+            analysisButton.classList.remove(...activeClasses, ...inactiveClasses);
+            if (activeState === 'channel') {
+                analysisButton.classList.add(...activeClasses);
+            } else {
+                analysisButton.classList.add(...inactiveClasses);
+            }
+        }
+        
+        // 2. Nút Giỏ Hàng
+        if (showSavedListBtn) {
+            showSavedListBtn.classList.remove(...activeClasses, ...inactiveClasses);
+            if (activeState === 'cart') {
+                showSavedListBtn.classList.add(...activeClasses);
+            } else {
+                showSavedListBtn.classList.add(...inactiveClasses);
+            }
+        }
+    }
     
     // === CÁC HÀM CHÍNH ===
 
@@ -226,8 +254,7 @@ function initChannelAnalyzer() {
             updateDashboard(); 
             
             filterContainerWrapper.classList.remove('hidden');
-            analysisButtonContainer.classList.remove('hidden'); // Hiện nút "Phân Tích Kênh" và "Xem Giỏ Hàng"
-            // **ĐÃ XÓA** savedListBar.classList.remove('hidden');
+            analysisButtonContainer.classList.remove('hidden'); // Hiện 2 nút tab
             hideStatus();
         } catch (error) { console.error('Lỗi trong handleSearch:', error); showError(`Đã xảy ra lỗi: ${error.message}. Kiểm tra Console (F12).`); hideStatus(); }
     }
@@ -398,7 +425,7 @@ function initChannelAnalyzer() {
                 </div>
                 <div class="p-4 flex-grow flex flex-col">
                     <h3 class="text-base font-semibold text-gray-800 leading-snug mb-2 h-16 overflow-hidden">
-                        <a href="${videoUrl}" target="_blank" class="hover:text-blue-600 line-clamp-2">${title}</a>
+                        <a href="${videoUrl}" target="_blank" class="hover:text-[var(--primary-blue-light)] line-clamp-2">${title}</a>
                     </h3>
                     <div class="text-sm text-gray-500 mt-auto">
                         <p class="mb-1">Thời gian đăng: ${formattedDate}</p>
@@ -431,9 +458,8 @@ function initChannelAnalyzer() {
     // Nút "Phân tích Kênh (Kênh Hiện Tại)"
     function handleAnalyzeChannel() {
         analysisResults.classList.remove('hidden');
-        analysisButton.classList.add('hidden'); // Ẩn nút "Phân Tích"
+        setActiveTab('channel'); // [ĐÃ SỬA]
         
-        // Phân tích dựa trên KÊNH HIỆN TẠI (đã lọc)
         const mainFilteredVideos = getFilteredVideos();
         const selectedTz = (timezoneFilter.value === 'local') ? undefined : timezoneFilter.value;
         const videosForHourChart = mainFilteredVideos.filter(v => !activeDayFilter || videoMatchesDay(v, activeDayFilter, selectedTz));
@@ -449,12 +475,11 @@ function initChannelAnalyzer() {
     // Nút "Ẩn Phân Tích" (MỚI)
     function hideAnalysis() {
         analysisResults.classList.add('hidden');
-        analysisButton.classList.remove('hidden'); // Hiện lại nút "Phân Tích"
+        setActiveTab('none'); // [ĐÃ SỬA]
         
-        // Reset bộ lọc phụ
         activeHourFilter = null;
         activeDayFilter = null;
-        updateDashboard(); // Gọi updateDashboard để render lại list
+        updateDashboard(); 
     }
     
     function runAnalysis(videosForHour, videosForDay, videosForGap, isSavedListAnalysis = false) {
@@ -465,13 +490,13 @@ function initChannelAnalyzer() {
             
             if (isSavedListAnalysis) {
                 analysisTitle.textContent = `Phân Tích Dựa Trên Giỏ Hàng (${totalVideosInList} video đã lưu)`;
-                analysisTitle.dataset.isSavedListAnalysis = 'true'; // Đặt cờ
+                analysisTitle.dataset.isSavedListAnalysis = 'true'; 
             } else if (yearFilter.value == "0" && videoTypeFilter.value == "all" && viewsFilter.value == "0" && !activeHourFilter && !activeDayFilter) {
                 analysisTitle.textContent = `Phân Tích Thói Quen Đăng Video (Toàn bộ ${totalVideosInList} video)`;
-                analysisTitle.dataset.isSavedListAnalysis = 'false'; // Xóa cờ
+                analysisTitle.dataset.isSavedListAnalysis = 'false'; 
             } else {
                 analysisTitle.textContent = `Phân Tích Dựa Trên Bộ Lọc (${totalVideosInList} video phù hợp)`;
-                analysisTitle.dataset.isSavedListAnalysis = 'false'; // Xóa cờ
+                analysisTitle.dataset.isSavedListAnalysis = 'false'; 
             }
         }
 
@@ -537,9 +562,8 @@ function initChannelAnalyzer() {
         if (total <= 0) { return '<h4 class="font-semibold text-gray-800 mb-2">Đề xuất Top 3:</h4><p class="text-sm">Không có đề xuất nào.</p>'; }
         if (sortedData.length === 0) { return '<h4 class="font-semibold text-gray-800 mb-2">Đề xuất Top 3:</h4><p class="text-sm">Không có đề xuất nào.</p>'; }
         
-        // Tạo Nút Reset/Lọc
         let resetButton = '';
-        if (filterFunction && !isSavedListAnalysis) { // Chỉ hiển thị nút lọc/xóa lọc khi KHÔNG ở chế độ Phân Tích Giỏ Hàng
+        if (filterFunction && !isSavedListAnalysis) { 
             if (activeFilter) {
                 resetButton = `<button onclick="${filterFunction}(null)" class="text-xs font-medium text-blue-600 hover:underline">[Xóa lọc]</button>`;
             } else {
@@ -554,11 +578,10 @@ function initChannelAnalyzer() {
         
         top3.forEach((item, index) => { 
             const percentage = ((item.value / total) * 100).toFixed(1);
-            
             let itemClass = "flex justify-between items-center text-sm p-1 rounded-md transition-all";
             let onclick = '';
             
-            if (filterFunction && !isSavedListAnalysis) { // Chỉ cho phép click khi KHÔNG ở chế độ Phân Tích Giỏ Hàng
+            if (filterFunction && !isSavedListAnalysis) { 
                 if (item.key === activeFilter) {
                     itemClass += " bg-blue-100 text-blue-700 font-bold";
                 } else {
@@ -618,9 +641,7 @@ function initChannelAnalyzer() {
 
     // === CÁC HÀM TIỆN ÍCH (Copy, Thông báo, Dọn dẹp) ===
     
-    // Sửa đổi để xử lý uỷ quyền
     function handleCardClick(event) {
-        // Dùng hàm copyToClipboard từ utils.js
         let textToCopy = null; 
         let buttonElement = null;
 
@@ -634,7 +655,7 @@ function initChannelAnalyzer() {
         } 
         else if (event.target.classList.contains('save-video-btn')) {
             handleSaveVideoClick(event.target);
-            return; // Dừng, không copy
+            return; 
         }
         
         if (textToCopy && buttonElement) {
@@ -648,41 +669,32 @@ function initChannelAnalyzer() {
     function handleSaveVideoClick(saveButton) {
         const videoId = saveButton.dataset.videoId;
         
-        // 1. Kiểm tra xem đã lưu chưa
         const isAlreadySaved = savedVideos.some(v => v.id === videoId);
         if (isAlreadySaved) return;
 
-        // 2. Tìm video trong kết quả tìm kiếm hiện tại
         const videoToSave = allFetchedVideos.find(v => v.id === videoId);
         if (!videoToSave) {
             console.error("Không tìm thấy video để lưu?", videoId);
             return;
         }
 
-        // 3. Thêm vào giỏ hàng
         savedVideos.push(videoToSave);
 
-        // 4. Cập nhật UI
         saveButton.textContent = '✓ Đã Lưu';
         saveButton.disabled = true;
         updateSavedListBar();
     }
 
-    // *** [ĐÃ SỬA] ***
-    // Hàm này bây giờ chỉ cập nhật con số
+    // [ĐÃ SỬA]
     function updateSavedListBar() {
         const count = savedVideos.length;
-        
-        // savedCountSpan bây giờ là span bên trong nút mới
         if (savedCountSpan) {
-            savedCountSpan.textContent = count; // Chỉ cập nhật con số
+            savedCountSpan.textContent = count; 
         }
-        
-        // Không cần ẩn/hiện gì cả
     }
 
     function showSavedListModal() {
-        modalBody.innerHTML = ''; // Xóa nội dung cũ
+        modalBody.innerHTML = ''; 
         const count = savedVideos.length;
         modalTitle.textContent = `Giỏ Video Đã Lưu (${count} video)`;
 
@@ -698,7 +710,7 @@ function initChannelAnalyzer() {
                 itemEl.innerHTML = `
                     <img src="${thumbnailUrl}" alt="${video.snippet.title}" class="modal-list-img">
                     <div class="modal-list-title">
-                        <a href="${videoUrl}" target="_blank" class="hover:text-blue-600 font-medium">${video.snippet.title}</a>
+                        <a href="${videoUrl}" target="_blank" class="hover:text-[var(--primary-blue-light)] font-medium">${video.snippet.title}</a>
                         <p class="text-xs text-gray-500">${video.snippet.channelTitle}</p>
                     </div>
                     <button class="modal-list-remove-btn" data-video-id="${video.id}">Xóa</button>
@@ -719,16 +731,10 @@ function initChannelAnalyzer() {
         
         const videoId = event.target.dataset.videoId;
         
-        // 1. Xóa khỏi giỏ hàng
         savedVideos = savedVideos.filter(v => v.id !== videoId);
-        
-        // 2. Render lại modal
         showSavedListModal();
-        
-        // 3. Cập nhật thanh giỏ hàng
         updateSavedListBar();
 
-        // 4. Cập nhật lại nút "Lưu" trên thẻ video (nếu nó đang hiển thị)
         const correspondingSaveBtn = resultsContainer.querySelector(`.save-video-btn[data-video-id="${videoId}"]`);
         if (correspondingSaveBtn) {
             correspondingSaveBtn.textContent = '➕ Lưu Video';
@@ -741,10 +747,9 @@ function initChannelAnalyzer() {
         
         if (confirm(`Bạn có chắc muốn xóa tất cả ${savedVideos.length} video đã lưu?`)) {
             savedVideos = [];
-            showSavedListModal(); // Render lại modal (rỗng)
-            updateSavedListBar(); // Cập nhật lại số trên nút
+            showSavedListModal(); 
+            updateSavedListBar(); 
             
-            // Reset tất cả các nút "Đã Lưu" đang hiển thị
             resultsContainer.querySelectorAll('.save-video-btn:disabled').forEach(btn => {
                 btn.textContent = '➕ Lưu Video';
                 btn.disabled = false;
@@ -752,24 +757,18 @@ function initChannelAnalyzer() {
         }
     }
 
-    // Nút "Phân Tích Toàn Bộ Giỏ Hàng" (MỚI)
+    // Nút "Phân Tích Toàn Bộ Giỏ Hàng"
     function handleAnalyzeSavedList() {
         if (savedVideos.length === 0) {
             alert("Bạn chưa có video nào trong giỏ hàng để phân tích.");
             return;
         }
 
-        // 1. Đóng modal
         hideSavedListModal();
-
-        // 2. Chạy lại phân tích với mảng savedVideos
         runAnalysis(savedVideos, savedVideos, savedVideos, true); // true = cờ phân tích giỏ hàng
-
-        // 3. Hiển thị kết quả phân tích
         analysisResults.classList.remove('hidden');
-        analysisButton.classList.add('hidden'); // Ẩn nút phân tích KÊNH
+        setActiveTab('cart'); // [ĐÃ SỬA]
         
-        // Cuộn đến phần phân tích
         analysisResults.scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -810,11 +809,11 @@ function initChannelAnalyzer() {
         filterContainerWrapper.classList.add('hidden');
         analysisButtonContainer.classList.add('hidden');
         analysisResults.classList.add('hidden');
-        analysisButton.classList.remove('hidden'); // Luôn hiện lại nút Phân tích kênh khi Clear
+        setActiveTab('none'); // [ĐÃ SỬA]
         
         if (analysisTitle) { 
             analysisTitle.textContent = 'Phân Tích Thói Quen Đăng Video'; 
-            analysisTitle.dataset.isSavedListAnalysis = 'false'; // Xóa cờ
+            analysisTitle.dataset.isSavedListAnalysis = 'false'; 
         }
         destroyCharts();
         
@@ -839,7 +838,6 @@ function initChannelAnalyzer() {
         activeHourFilter = null;
         activeDayFilter = null;
         
-        // KHÔNG reset savedVideos, nhưng cập nhật nút giỏ hàng
         updateSavedListBar();
     }
 }
