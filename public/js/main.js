@@ -41,11 +41,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Gán sự kiện cho các link trên Header (và Footer)
     // Bao gồm logo, các link dropdown, link menu, và link ở footer
+    // Gán sự kiện cho các link trên Header (và Footer)
+    // Gán sự kiện cho các link trên Header (và Footer)
     document.querySelectorAll('.header-nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault(); // Ngăn trình duyệt nhảy trang
             const pageId = link.dataset.page;
-            if (pageId) {
+
+            if (pageId === 'page-contact') {
+                // [NÂNG CẤP] Nếu là link "Liên hệ", gọi hàm mở Modal
+                if (typeof window.showContactModal === 'function') {
+                    window.showContactModal();
+                } else {
+                    console.error('Không tìm thấy hàm showContactModal()');
+                }
+            } else if (pageId) {
+                // Giữ nguyên logic cũ cho các trang khác
                 showPage(pageId);
             }
         });
@@ -82,15 +93,48 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==================================================================
 // === SCRIPT CHO FORM LIÊN HỆ (MỚI) ===
 // ==================================================================
+// ==================================================================
+// === SCRIPT CHO FORM LIÊN HỆ (ĐÃ NÂNG CẤP LÊN MODAL) ===
+// ==================================================================
 function initContactForm() {
+    // Modal elements
+    const contactModal = document.getElementById('contact-modal');
+    const closeModalBtn = document.getElementById('contact-modal-close-btn');
+    
+    // Form elements
     const submitButton = document.getElementById('contact-submit-button');
     const emailInput = document.getElementById('contact-email');
     const subjectInput = document.getElementById('contact-subject');
     const messageInput = document.getElementById('contact-message');
     const statusEl = document.getElementById('contact-status');
 
-    if (!submitButton) return; // Không ở trang liên hệ
+    if (!contactModal || !submitButton) return; // Thoát nếu không tìm thấy modal
 
+    // --- Logic Mở/Đóng Modal ---
+    const showModal = () => {
+        contactModal.classList.remove('hidden');
+    };
+
+    const hideModal = () => {
+        contactModal.classList.add('hidden');
+        // Reset trạng thái form khi đóng
+        statusEl.classList.add('hidden');
+        statusEl.className = 'text-center mt-4';
+    };
+
+    // Đưa hàm showModal ra toàn cục để Header/Footer có thể gọi
+    window.showContactModal = showModal;
+
+    // Gán sự kiện đóng modal
+    closeModalBtn.addEventListener('click', hideModal);
+    contactModal.addEventListener('click', (e) => {
+        // Chỉ đóng khi nhấn vào lớp phủ màu đen
+        if (e.target === contactModal) {
+            hideModal();
+        }
+    });
+
+    // --- Logic Gửi Form (Giữ nguyên) ---
     submitButton.addEventListener('click', async () => {
         // 0. Validate (đơn giản)
         if (!emailInput.value || !messageInput.value) {
@@ -136,6 +180,11 @@ function initContactForm() {
             // Xóa form
             emailInput.value = '';
             messageInput.value = '';
+
+            // [NÂNG CẤP] Tự động đóng modal sau 2 giây
+            setTimeout(() => {
+                hideModal();
+            }, 2000);
 
         } catch (error) {
             // 5. Hiển thị lỗi fetch hoặc lỗi server
