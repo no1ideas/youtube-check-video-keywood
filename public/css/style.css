@@ -281,6 +281,7 @@ img.footer-logo {
 
 /* [SỬA LỖI] Footer Căn đều (Trái, Giữa, Phải) */
 /* [SỬA ĐỔI BỐ CỤC FOOTER] Footer Căn đều (Trái, Giữa, Phải) */
+        /* [ĐÃ SỬA] Footer Căn đều (Trái, Giữa, Phải) với nội dung căn TRÁI */
         .footer-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr; /* Cột 1 lớn hơn, 2 cột sau bằng nhau */
@@ -292,27 +293,28 @@ img.footer-logo {
         }
         .footer-col-center {
             justify-self: center; /* Cột thứ hai ở giữa */
-            text-align: center; /* Căn giữa nội dung cột 2 */
+            text-align: left; /* Nội dung căn trái */
+            width: 100%; /* Đảm bảo cột giữa chiếm không gian */
         }
         .footer-col-right {
             justify-self: end; /* Cột cuối cùng sát phải */
-            text-align: right; /* Căn phải nội dung cột 3 */
+            text-align: left; /* Nội dung căn trái */
+            width: 100%; /* Đảm bảo cột phải chiếm không gian */
         }
 
         @media (max-width: 768px) {
             .footer-grid {
                 grid-template-columns: 1fr; /* Một cột trên màn hình nhỏ */
-                text-align: center; /* Căn giữa mọi thứ trên di động */
+                gap: 2rem;
             }
             .footer-col-left,
             .footer-col-center,
             .footer-col-right {
-                justify-self: center; /* Căn giữa trên màn hình nhỏ */
-                text-align: center; /* Căn giữa nội dung trên di động */
+                justify-self: start; /* Căn trái trên di động */
+                text-align: left; /* Căn trái nội dung trên di động */
+                width: 100%;
             }
-            .footer-col-right .flex { 
-                justify-content: center; /* Căn giữa icon mạng xã hội trên di động */
-            }
+            /* Giữ cho icon căn trái trên di động (mặc định) */
         }
 }
     </style>
