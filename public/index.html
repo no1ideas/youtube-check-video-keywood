@@ -364,9 +364,45 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
             Quay lại
         </button>
-        <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Liên hệ</h1>
-        <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-            <p class="text-lg text-gray-600">Thông tin liên hệ, form góp ý, hoặc địa chỉ email hỗ trợ sẽ được cập nhật tại đây.</p>
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Góp ý & Liên hệ</h1>
+        
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-2xl mx-auto">
+            <p class="text-center text-gray-600 mb-6">
+                Chúng tôi rất mong nhận được phản hồi của bạn! Mọi góp ý, báo lỗi, hoặc câu hỏi đều giúp ChannelPulse trở nên tốt hơn.
+            </p>
+            
+            <div class="space-y-6">
+                
+                <div>
+                    <label for="contact-email" class="block text-sm font-medium text-gray-700">Email của bạn (để chúng tôi trả lời)</label>
+                    <input type="email" name="email" id="contact-email" required
+                           class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-blue-light)]">
+                </div>
+                
+                <div>
+                    <label for="contact-subject" class="block text-sm font-medium text-gray-700">Chủ đề</label>
+                    <select id="contact-subject" name="chủ đề"
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-blue-light)] bg-white">
+                        <option>Góp ý tính năng</option>
+                        <option>Báo cáo lỗi (Bug)</option>
+                        <option>Câu hỏi khác</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="contact-message" class="block text-sm font-medium text-gray-700">Nội dung tin nhắn</label>
+                    <textarea id="contact-message" name="message" rows="5" required
+                              class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-blue-light)]"></textarea>
+                </div>
+
+                <div>
+                    <button id="contact-submit-button"
+                            class="w-full flex justify-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-[var(--primary-blue-light)] hover:bg-[var(--primary-blue-dark)] transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-blue-dark)]">
+                        <span>Gửi phản hồi</span>
+                    </button>
+                    <p id="contact-status" class="hidden text-center mt-4"></p>
+                </div>
+            </div>
         </div>
     </div>
 
