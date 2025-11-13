@@ -4,11 +4,308 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChannelPulse.me - Bộ Công Cụ YouTube</title>
-    <link rel="icon" href="images/logo.jpg" type="image/png"> 
+    <link rel="icon" href="images/logo.jpg" type="image/jpeg"> 
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        /* Biến CSS cho màu sắc chủ đạo (từ logo mới) */
+        :root {
+            --primary-blue-dark: #0C457D; /* Màu xanh đậm từ logo */
+            --primary-blue-light: #1890FF; /* Màu xanh nhạt từ logo */
+            --text-gray-medium: #4b5563; /* Màu chữ xám trung tính */
+            --text-gray-light: #6b7280; /* Màu chữ xám nhạt */
+            --bg-light-gray: #f3f4f6; /* Nền xám nhạt */
+            --border-light-gray: #d1d5db; /* Viền xám nhạt */
+            --bg-white: #ffffff; /* Nền trắng */
+        }
+
+        /* Tùy chỉnh font chữ Inter */
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-light-gray);
+        }
+        /* Tùy chỉnh thanh cuộn */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #a8a8a8; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #7c7c7c; }
+        
+        /* Ẩn/Hiện các trang */
+        .page { display: none; }
+        .page.active { display: block; }
+        #page-hub { display: block; } /* Trang chủ luôn hiển thị ban đầu */
+
+        /* Điều chỉnh logo (tăng 30% và xóa nền) */
+        img.header-logo {
+            height: 40px; /* Tăng 30% từ 32px (h-8) */
+            width: 40px;  /* Tăng 30% từ 32px (w-8) */
+            object-fit: contain;
+            background-color: transparent !important; /* Đảm bảo nền trong suốt */
+        }
+        img.footer-logo {
+            height: 40px; /* Tăng 30% từ 32px (h-8) */
+            width: 40px;  /* Tăng 30% từ 32px (w-8) */
+            object-fit: contain;
+            background-color: transparent !important; /* Đảm bảo nền trong suốt */
+        }
+        /* Nav link hover */
+        .header-nav-link:hover {
+            color: var(--primary-blue-dark);
+        }
+
+        /* Trang chủ (Hub) */
+        .hub-card {
+            background-color: var(--bg-white);
+            border-radius: 0.75rem; /* 12px */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            padding: 2rem; /* 32px */
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .hub-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        .hub-card h2 {
+            font-size: 1.5rem; /* 24px */
+            font-weight: 700;
+            margin-bottom: 0.75rem; /* 12px */
+            color: var(--primary-blue-dark); 
+        }
+        .hub-card p {
+            font-size: 1rem; /* 16px */
+            color: var(--text-gray-medium); 
+        }
+
+        /* Nút quay lại chung */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.875rem; /* 14px */
+            font-weight: 600;
+            color: var(--text-gray-medium); 
+            background-color: var(--bg-white);
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-light-gray); 
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+        .back-button:hover {
+            background-color: #f9fafb; /* bg-gray-50 */
+        }
+        
+        /* --- CSS CHO CÔNG CỤ TỪ KHÓA --- */
+        .popover {
+            display: none; position: absolute; z-index: 50; width: 320px;
+            max-height: 400px; overflow-y: auto; word-wrap: break-word;
+        }
+        .result-btn:hover + .popover, .popover:hover { display: block; }
+        .toggle-desc { color: var(--primary-blue-light); font-weight: 500; cursor: pointer; margin-left: 4px; } 
+        .toggle-desc:hover { text-decoration: underline; }
+        .desc-full { display: none; }
+        .copy-btn {
+            background-color: var(--bg-light-gray); color: #374151; border: 1px solid var(--border-light-gray);
+            padding: 2px 8px; border-radius: 6px; font-size: 0.875rem; font-weight: 500;
+            transition: all 0.2s; cursor: pointer; flex-shrink: 0;
+        }
+        .copy-btn:hover { background-color: #e5e7eb; }
+        .copy-btn:disabled { background-color: #e0f2f1; color: #0f766e; cursor: not-allowed; } 
+        .popover-copy-btn {
+            background-color: #e0f2f1; color: #0f766e; padding: 2px 6px; 
+            border-radius: 4px; font-size: 0.75rem; font-weight: 500;
+            transition: all 0.2s; cursor: pointer;
+        }
+        .popover-copy-btn:hover { background-color: #cce9e6; } 
+        .popover-copy-btn:disabled { background-color: #d1fae5; color: #065f46; cursor: not-allowed; }
+
+        /* --- CSS CHO CÔNG CỤ COMMENT --- */
+        .comment-tool-container { width:100%; max-width:900px; background:var(--bg-white); padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06) }
+        .comment-tool-container h1 { margin:0 0 8px; text-align:center; color:var(--primary-blue-dark); font-weight:800; } 
+        .comment-tool-note {
+            text-align: center; font-size: 0.875rem; 
+            color: var(--text-gray-light); margin-bottom: 18px;
+        }
+        .comment-row { display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap }
+        .comment-row .field { flex:1; min-width:260px }
+        .comment-input[type="text"] { width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:10px; font-size:15px; outline:none; }
+        .comment-btn { 
+            padding:12px 18px; font-size:15px; background:var(--primary-blue-light); 
+            color:#fff; border:none; border-radius:10px; cursor:pointer; 
+            transition:.2s; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .comment-btn:hover { background:var(--primary-blue-dark); } 
+        .comment-btn:disabled { background:#cfcfcf; cursor:not-allowed }
+        .sort-bar { 
+            display:none; gap:10px; align-items:center; 
+            flex-wrap:wrap; margin:12px 0 6px;
+        }
+        .sort-title { font-weight:700; color:#444; flex-shrink: 0; }
+        .sort-btn { 
+            border:1px solid #e5e7eb; background:var(--bg-white); color:#333; 
+            padding:8px 12px; border-radius:10px; cursor:pointer; font-size:14px;
+            flex-shrink: 0;
+        }
+        .sort-btn.active { border-color:var(--primary-blue-light); color:var(--primary-blue-light); font-weight:800 } 
+        .time-filter-select {
+            border:1px solid #e5e7eb; background:var(--bg-white); color:#333; 
+            padding: 8px 12px; border-radius:10px; font-size:14px;
+            margin-right: 10px; 
+        }
+        .sort-hint { margin-left:auto; color:#888; font-size:12px; flex-shrink: 0; }
+        #comment-status { text-align:center; font-size:14px; color:#777; margin:8px 0 0 }
+        #comment-results { margin-top:4px }
+        .comment-thread { border-bottom:1px solid #e9e9ef; padding:16px 0 }
+        .comment-thread:last-child { border-bottom:none }
+        .thread-row { display:grid; grid-template-columns: 1fr 300px; gap:16px; align-items:start }
+        .left-col { border:1px solid #e9e9ef; border-radius:12px; background:#fafafa; padding:12px }
+        .left-col h3 { margin:0 0 10px; font-size:14px; color:#555; font-weight:800 }
+        .comment { display:flex; align-items:flex-start; gap:12px }
+        .comment + .comment { margin-top:10px }
+        .comment-author-img { width:40px; height:40px; border-radius:50%; background-color: #eee; }
+        .comment-content { flex:1 }
+        .comment-author { font-weight:800; margin-bottom:5px }
+        .replies-container { margin-left:52px; margin-top:12px; border-left:2px solid #e0e0e0; padding-left:12px }
+        .reply .comment-author-img { width:30px; height:30px }
+        .reply { margin-top:8px }
+        .thread-right { border:1px solid #e9e9ef; border-radius:12px; padding:12px; background:#fafafa }
+        .metrics-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px }
+        .metric { text-align:center; padding:10px 8px; border-radius:10px; background:var(--bg-white); border:1px solid #f0f0f0 }
+        .metric-label { font-size:12px; color:#666; margin-bottom:4px }
+        .metric-value { 
+            font-weight:800; 
+            font-size:16px; 
+            word-break:normal; line-height: 1.3;
+        }
+        @media (max-width: 980px){ .thread-row{ grid-template-columns:1fr } .thread-right { margin-top: 16px; } }
+
+        /* --- CSS CHO CÔNG CỤ PHÂN TÍCH KÊNH --- */
+        .analyzer-container { width:100%; max-width: 100%; background:var(--bg-white); padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06) }
+        .analyzer-container h1 { margin:0 0 18px; text-align:center; color:var(--primary-blue-dark); font-weight:800; } 
+        .filter-container-wrapper { overflow-x: auto; scrollbar-width: none; }
+        .filter-container-wrapper::-webkit-scrollbar { display: none; }
+        .chart-container { position: relative; width: 100%; height: 300px; margin: auto; }
+        .copy-success-toast {
+            position: fixed; bottom: 20px; right: 20px;
+            background-color: #10B981; color: white; 
+            padding: 12px 20px; border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .save-video-btn {
+            background-color: #e0f2f1; color: #0f766e; 
+            font-size: 0.75rem; font-weight: 600;
+            padding: 2px 8px; border-radius: 6px;
+            transition: all 0.2s;
+            margin-left: auto; 
+        }
+        .save-video-btn:hover { background-color: #cce9e6; } 
+        .save-video-btn:disabled {
+            background-color: #d1fae5; color: #065f46;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background-color: var(--bg-white);
+            border-radius: 12px;
+            padding: 24px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px;
+        }
+        .modal-header h2 { font-size: 1.25rem; font-weight: 700; }
+        .modal-close-btn {
+            background: #eee; border-radius: 50%; padding: 4px;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .modal-close-btn:hover { background: #ddd; }
+        .modal-body { overflow-y: auto; }
+        .modal-list-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 8px; border-bottom: 1px solid #eee;
+        }
+        .modal-list-item:last-child { border-bottom: none; }
+        .modal-list-img { width: 80px; height: 45px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+        .modal-list-title { flex: 1; font-size: 0.875rem; line-height: 1.3; }
+        .modal-list-remove-btn {
+            color: #ef4444; font-size: 0.75rem; font-weight: 500; 
+            cursor: pointer; text-decoration: underline;
+            flex-shrink: 0;
+        }
+        .modal-footer { margin-top: 20px; }
+
+        /* Hiệu ứng loading chung */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-blue-light); 
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* [SỬA LỖI] Footer Căn đều (Trái, Giữa, Phải) */
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; /* 3 cột bằng nhau */
+            gap: 2rem; /* Khoảng cách giữa các cột */
+        }
+        .footer-grid > div:first-child {
+            justify-self: start; /* Cột đầu tiên sát trái */
+        }
+        .footer-grid > div:nth-child(2) {
+            justify-self: center; /* Cột thứ hai ở giữa */
+            text-align: center; /* Căn giữa nội dung cột 2 */
+        }
+        .footer-grid > div:last-child {
+            justify-self: end; /* Cột cuối cùng sát phải */
+            text-align: right; /* Căn phải nội dung cột 3 */
+        }
+
+        @media (max-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 1fr; /* Một cột trên màn hình nhỏ */
+                text-align: center; /* Căn giữa mọi thứ trên di động */
+            }
+            .footer-grid > div:first-child,
+            .footer-grid > div:nth-child(2),
+            .footer-grid > div:last-child {
+                justify-self: center; /* Căn giữa trên màn hình nhỏ */
+                text-align: center; /* Căn giữa nội dung trên di động */
+            }
+            .footer-grid .flex { 
+                justify-content: center; /* Căn giữa icon mạng xã hội trên di động */
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -18,7 +315,7 @@
             
             <a href="#" id="nav-brand" data-page="page-hub" 
                class="header-nav-link flex items-center gap-2 text-xl font-bold text-gray-800">
-                <img src="images/logo.png" alt="ChannelPulse Logo" class="header-logo">
+                <img src="images/logo.jpg" alt="ChannelPulse Logo" class="header-logo">
                 <span>ChannelPulse</span>
             </a>
 
@@ -101,7 +398,7 @@
             <div class="bg-white p-5 rounded-lg shadow-lg">
                 <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
                 <button id="keywords-generate-button" class="w-full bg-[var(--primary-blue-light)] text-white font-bold py-3 px-4 rounded-lg hover:bg-[var(--primary-blue-dark)] transition duration-300 flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322-.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322-.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478-.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17.228-.322-.478-.46.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322-.478-.46.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.17-.228.322-.478-.46-.744A6.7 6.7 0 0112 3c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" /></svg>
                     <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
                 </button>
                 <div id="keywords-results-container" class="mt-5 space-y-4 max-h-[550px] overflow-y-auto pr-2">
@@ -372,7 +669,7 @@
             <div>
                 <a href="#" id="nav-brand-footer" data-page="page-hub" 
                    class="header-nav-link text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                    <img src="images/logo.png" alt="ChannelPulse Logo" class="footer-logo">
+                    <img src="images/logo.jpg" alt="ChannelPulse Logo" class="footer-logo">
                     <span>ChannelPulse.me</span>
                 </a>
                 <p class="text-gray-400">Bộ công cụ miễn phí hỗ trợ nhà sáng tạo nội dung YouTube.</p>
@@ -421,3 +718,4 @@
     <script src="js/main.js"></script>
     
 </body>
+</html>
