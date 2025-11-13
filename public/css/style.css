@@ -231,14 +231,15 @@ img.footer-logo {
     z-index: 100;
 }
 /* [ĐIỀU CHỈNH] CSS cho nội dung Modal */
+        /* [ĐIỀU CHỈNH] CSS cho nội dung Modal */
         .modal-content {
             background-color: white;
-            padding: 2rem;
+            padding: 1.5rem; /* [SỬA] Giảm padding từ 2rem (32px) xuống 1.5rem (24px) */
             border-radius: 0.5rem;
             position: relative;
             z-index: 1001; /* Đảm bảo nó nằm trên lớp phủ */
-            max-height: 95vh; /* Tăng chiều cao tối đa một chút */
-            overflow-y: visible; /* Thay đổi: Không tự động cuộn nội dung modal */
+            max-height: 95vh;
+            overflow-y: visible; /* Không tự động cuộn nội dung modal */
             animation: slideIn 0.3s forwards ease-out;
             margin: 1rem; /* Khoảng cách với mép màn hình */
             width: 100%; /* Chiếm toàn bộ chiều rộng có thể */
