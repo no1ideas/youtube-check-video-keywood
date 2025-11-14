@@ -18,7 +18,7 @@ export default async function handler(request, response) {
         // 3. Gửi email bằng Resend
         const { data, error } = await resend.emails.send({
             // [ĐÃ SỬA] Đổi email gửi thành một địa chỉ "no-reply" hoặc "form"
-            from: 'ChannelPulse Form <form@channelpulse.me>', 
+            from: 'ChannelPulse Form <onboarding@resend.dev>',
             
             // Giữ nguyên: Đây là hòm thư admin của bạn
             to: 'contact@channelpulse.me', 
