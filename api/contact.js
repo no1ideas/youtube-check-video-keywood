@@ -6,13 +6,11 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Hàm xử lý chính
 export default async function handler(request, response) {
-    // 1. Chỉ chấp nhận phương thức POST
     if (request.method !== 'POST') {
         return response.status(405).json({ message: 'Method Not Allowed' });
     }
 
     try {
-        // 2. Lấy dữ liệu từ form
         // 'email' ở đây là email của NGƯỜI DÙNG (ví dụ: tranmaily.2312@gmail.com)
         const { email, subject, message } = request.body;
 
@@ -20,18 +18,15 @@ export default async function handler(request, response) {
             return response.status(400).json({ message: 'Vui lòng nhập đủ thông tin.' });
         }
         
-        // [GIẢI PHÁP] Gửi từ tên miền chính đã xác minh
-        const fromAddress = 'ChannelPulse Form <form@channelpulse.me>';
+        // [QUAN TRỌNG] Gửi từ tên miền phụ đã xác minh
+        const fromAddress = 'ChannelPulse Form <form@form.channelpulse.me>';
         
-        // [GIẢI PHÁP] Gửi đến một hòm thư Gmail TRUNG GIAN
-        // Bạn cần tạo hòm thư này và cài đặt nó TỰ ĐỘNG CHUYỂN TIẾP (Forward)
-        // đến hòm thư Zoho contact@channelpulse.me của bạn.
-        const intermediateInbox = 'contact.no1ideas@gmail.com'; // <-- THAY BẰNG GMAIL TRUNG GIAN CỦA BẠN
+        // [QUAN TRỌNG] Gửi đến hòm thư Zoho của bạn
+        const adminInbox = 'contact@channelpulse.me'; 
 
-        // 3. Gửi email bằng Resend
         const { data, error } = await resend.emails.send({
             from: fromAddress,
-            to: intermediateInbox, // Gửi đến Gmail trung gian
+            to: adminInbox,
             subject: `Phản hồi mới từ ChannelPulse: [${subject}]`,
             html: `
                 <p>Bạn nhận được một phản hồi mới từ <strong>${email}</strong>.</p>
@@ -40,22 +35,17 @@ export default async function handler(request, response) {
                 <p><strong>Nội dung:</strong></p>
                 <p>${message.replace(/\n/g, '<br>')}</p>
             `,
-            // Giữ nguyên: Đây là email của NGƯỜI DÙNG
-            // Gmail sẽ giữ lại 'reply_to' này khi chuyển tiếp.
             reply_to: email 
         });
 
-        // 4. Xử lý lỗi từ Resend
         if (error) {
             console.error('Lỗi Resend:', error);
             return response.status(400).json({ message: 'Lỗi khi gửi email.', error: error.message });
         }
 
-        // 5. Gửi phản hồi thành công về cho frontend
         return response.status(200).json({ message: 'Cảm ơn! Phản hồi của bạn đã được gửi.' });
 
     } catch (error) {
-        // Xử lý các lỗi máy chủ khác
         console.error('Lỗi máy chủ:', error);
         return response.status(500).json({ message: 'Lỗi máy chủ nội bộ.', error: error.message });
     }
