@@ -17,14 +17,12 @@ export default async function handler(request, response) {
 
         // 3. Gửi email bằng Resend
         const { data, error } = await resend.emails.send({
-            // [QUAN TRỌNG] Gửi từ tên miền đã xác minh của bạn
-            from: 'Góp ý <contact@channelpulse.me>', 
+            // [ĐÃ SỬA] Đổi email gửi thành một địa chỉ "no-reply" hoặc "form"
+            from: 'ChannelPulse Form <form@channelpulse.me>', 
             
-            // [THAY THẾ] BẰNG EMAIL CÁ NHÂN CỦA BẠN
-            // Đây là email bạn dùng để nhận góp ý
+            // Giữ nguyên: Đây là hòm thư admin của bạn
             to: 'contact@channelpulse.me', 
             
-            // Tiêu đề email bạn nhận được
             subject: `Phản hồi mới từ ChannelPulse: [${subject}]`, 
             
             // Nội dung email, bao gồm thông tin người gửi
@@ -36,7 +34,7 @@ export default async function handler(request, response) {
                 <p>${message.replace(/\n/g, '<br>')}</p>
             `,
             
-            // Quan trọng: Giúp bạn nhấn "Reply" là trả lời thẳng cho người dùng
+            // Giữ nguyên: Đây là email của NGƯỜI DÙNG (ví dụ: contact.no1ideas@gmail.com)
             reply_to: email 
         });
 
