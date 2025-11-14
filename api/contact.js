@@ -13,21 +13,24 @@ export default async function handler(request, response) {
 
     try {
         // 2. Lấy dữ liệu từ form
+        // 'email' ở đây là email của NGƯỜI DÙNG (ví dụ: contact.no1ideas@gmail.com)
         const { email, subject, message } = request.body;
 
         // 3. Gửi email bằng Resend
         const { data, error } = await resend.emails.send({
-            // [QUAN TRỌNG] Gửi từ tên miền đã xác minh của bạn
-            from: 'Góp ý <contact@channelpulse.me>', 
             
-            // [THAY THẾ] BẰNG EMAIL CÁ NHÂN CỦA BẠN
-            // Đây là email bạn dùng để nhận góp ý
+            // [SỬA LỖI] Đặt tên người gửi là EMAIL CỦA KHÁCH HÀNG
+            // Điều này "gợi ý" cho Zoho biết phải trả lời ai
+            // Cấu trúc: from: "Tên Hiển Thị <email@da-xac-minh.com>"
+            from: `${email} <form@channelpulse.me>`, 
+            
+            // Giữ nguyên: Đây là hòm thư admin của bạn
             to: 'contact@channelpulse.me', 
             
             // Tiêu đề email bạn nhận được
             subject: `Phản hồi mới từ ChannelPulse: [${subject}]`, 
             
-            // Nội dung email, bao gồm thông tin người gửi
+            // Nội dung email
             html: `
                 <p>Bạn nhận được một phản hồi mới từ <strong>${email}</strong>.</p>
                 <p><strong>Chủ đề:</strong> ${subject}</p>
@@ -36,7 +39,7 @@ export default async function handler(request, response) {
                 <p>${message.replace(/\n/g, '<br>')}</p>
             `,
             
-            // Quan trọng: Giúp bạn nhấn "Reply" là trả lời thẳng cho người dùng
+            // Giữ nguyên: Đây là email của NGƯỜI DÙNG
             reply_to: email 
         });
 
