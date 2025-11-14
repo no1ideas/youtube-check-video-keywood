@@ -18,18 +18,28 @@ export default async function handler(request, response) {
 
         // 3. Gửi email bằng Resend
         const { data, error } = await resend.emails.send({
-            // Giữ nguyên, Resend yêu cầu
-            from: 'ChannelPulse Form <form@channelpulse.me>', 
             
-            // [SỬA] Đổi thành email CÁ NHÂN của bạn (Admin)
-            // Đây là nơi bạn sẽ nhận thông báo.
-            to: 'contact.no1ideas@gmail.com', // (Hoặc bất kỳ email nào không phải @channelpulse.me)
+            // [SỬA LỖI] Đặt tên người gửi là EMAIL CỦA KHÁCH HÀNG
+            // Điều này "gợi ý" cho Zoho biết phải trả lời ai
+            // Cấu trúc: from: "Tên Hiển Thị <email@da-xac-minh.com>"
+            from: `${email} <form@channelpulse.me>`, 
             
+            // Giữ nguyên: Đây là hòm thư admin của bạn
+            to: 'contact@channelpulse.me', 
+            
+            // Tiêu đề email bạn nhận được
             subject: `Phản hồi mới từ ChannelPulse: [${subject}]`, 
             
-            // ... (code html giữ nguyên) ...
+            // Nội dung email
+            html: `
+                <p>Bạn nhận được một phản hồi mới từ <strong>${email}</strong>.</p>
+                <p><strong>Chủ đề:</strong> ${subject}</p>
+                <hr>
+                <p><strong>Nội dung:</strong></p>
+                <p>${message.replace(/\n/g, '<br>')}</p>
+            `,
             
-            // Giữ nguyên: Đây là email của NGƯỜI DÙNG (đến từ form)
+            // Giữ nguyên: Đây là email của NGƯỜI DÙNG
             reply_to: email 
         });
 
