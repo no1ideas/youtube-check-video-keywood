@@ -11,23 +11,33 @@ export default async function handler(request, response) {
     }
 
     try {
+        // 'email' ở đây là email của NGƯỜI DÙNG (ví dụ: tranmaily.2312@gmail.com)
         const { email, subject, message } = request.body;
 
-        // Validation cơ bản
         if (!email || !subject || !message) {
             return response.status(400).json({ message: 'Vui lòng nhập đủ thông tin.' });
         }
-
-        // [SỬA LỖI] Gửi từ tên miền chính (Resend yêu cầu)
-        const fromAddress = 'ChannelPulse Form <form@channelpulse.me>';
         
-        // [SỬA LỖI] Gửi đến Gmail cá nhân của bạn (để tránh lỗi logic của Zoho)
-        const adminInbox = 'contact.no1ideas@gmail.com'; 
+        // Đây là email CÁ NHÂN của bạn (Admin) để nhận thông báo
+        const adminInbox = 'contact.no1ideas@gmail.com';
+
+        // Đây là email GỬI ĐI đã xác minh với Resend
+        const fromAddress = 'form@channelpulse.me';
 
         const { data, error } = await resend.emails.send({
-            from: fromAddress,
-            to: adminInbox,
-            subject: `Phản hồi mới từ ChannelPulse: [${subject}]`,
+            
+            // [SỬA LỖI QUAN TRỌNG]
+            // Đặt email của khách hàng làm Tên Hiển Thị.
+            // Cấu trúc: from: "Email Khách Hàng <email@da-xac-minh.com>"
+            from: `${email} <${fromAddress}>`, 
+            
+            // Gửi đến hòm thư Admin (Gmail)
+            to: adminInbox, 
+            
+            // Tiêu đề email bạn nhận được
+            subject: `Phản hồi mới từ ChannelPulse: [${subject}]`, 
+            
+            // Nội dung email
             html: `
                 <p>Bạn nhận được một phản hồi mới từ <strong>${email}</strong>.</p>
                 <p><strong>Chủ đề:</strong> ${subject}</p>
@@ -35,7 +45,9 @@ export default async function handler(request, response) {
                 <p><strong>Nội dung:</strong></p>
                 <p>${message.replace(/\n/g, '<br>')}</p>
             `,
-            // Giữ nguyên: Đây là email của NGƯỜI DÙNG
+            
+            // [QUAN TRỌNG] Đặt Reply-To là email của khách hàng.
+            // Gmail sẽ thấy 'From' và 'Reply-To' giống nhau và sẽ tuân thủ.
             reply_to: email 
         });
 
