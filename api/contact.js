@@ -6,11 +6,13 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Hàm xử lý chính
 export default async function handler(request, response) {
+    // 1. Chỉ chấp nhận phương thức POST
     if (request.method !== 'POST') {
         return response.status(405).json({ message: 'Method Not Allowed' });
     }
 
     try {
+        // 2. Lấy dữ liệu từ form
         // 'email' ở đây là email của NGƯỜI DÙNG (ví dụ: tranmaily.2312@gmail.com)
         const { email, subject, message } = request.body;
 
@@ -18,26 +20,18 @@ export default async function handler(request, response) {
             return response.status(400).json({ message: 'Vui lòng nhập đủ thông tin.' });
         }
         
-        // Đây là email CÁ NHÂN của bạn (Admin) để nhận thông báo
-        const adminInbox = 'contact.no1ideas@gmail.com';
+        // [SỬA 1] Gửi từ một địa chỉ cố định, SẠCH. 
+        // Không dùng "mẹo" ${email} ở đây nữa.
+        const fromAddress = 'ChannelPulse Form <form@channelpulse.me>';
+        
+        // [SỬA 2] Gửi đến Gmail cá nhân của bạn (Admin)
+        const adminInbox = 'contact.no1ideas@gmail.com'; 
 
-        // Đây là email GỬI ĐI đã xác minh với Resend
-        const fromAddress = 'form@channelpulse.me';
-
+        // 3. Gửi email bằng Resend
         const { data, error } = await resend.emails.send({
-            
-            // [SỬA LỖI QUAN TRỌNG]
-            // Đặt email của khách hàng làm Tên Hiển Thị.
-            // Cấu trúc: from: "Email Khách Hàng <email@da-xac-minh.com>"
-            from: `${email} <${fromAddress}>`, 
-            
-            // Gửi đến hòm thư Admin (Gmail)
-            to: adminInbox, 
-            
-            // Tiêu đề email bạn nhận được
-            subject: `Phản hồi mới từ ChannelPulse: [${subject}]`, 
-            
-            // Nội dung email
+            from: fromAddress,
+            to: adminInbox, // Gửi đến Gmail
+            subject: `Phản hồi mới từ ChannelPulse: [${subject}]`,
             html: `
                 <p>Bạn nhận được một phản hồi mới từ <strong>${email}</strong>.</p>
                 <p><strong>Chủ đề:</strong> ${subject}</p>
@@ -45,20 +39,22 @@ export default async function handler(request, response) {
                 <p><strong>Nội dung:</strong></p>
                 <p>${message.replace(/\n/g, '<br>')}</p>
             `,
-            
-            // [QUAN TRỌNG] Đặt Reply-To là email của khách hàng.
-            // Gmail sẽ thấy 'From' và 'Reply-To' giống nhau và sẽ tuân thủ.
+            // [QUAN TRỌNG] Đây là email của NGƯỜI DÙNG.
+            // Gmail sẽ tuân thủ 100% vì 'from' và 'to' là 2 tên miền khác nhau.
             reply_to: email 
         });
 
+        // 4. Xử lý lỗi từ Resend
         if (error) {
             console.error('Lỗi Resend:', error);
             return response.status(400).json({ message: 'Lỗi khi gửi email.', error: error.message });
         }
 
+        // 5. Gửi phản hồi thành công về cho frontend
         return response.status(200).json({ message: 'Cảm ơn! Phản hồi của bạn đã được gửi.' });
 
     } catch (error) {
+        // Xử lý các lỗi máy chủ khác
         console.error('Lỗi máy chủ:', error);
         return response.status(500).json({ message: 'Lỗi máy chủ nội bộ.', error: error.message });
     }
