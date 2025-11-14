@@ -20,17 +20,18 @@ export default async function handler(request, response) {
             return response.status(400).json({ message: 'Vui lòng nhập đủ thông tin.' });
         }
         
-        // [SỬA 1] Gửi từ một địa chỉ cố định, SẠCH. 
-        // Không dùng "mẹo" ${email} ở đây nữa.
+        // [GIẢI PHÁP] Gửi từ tên miền chính đã xác minh
         const fromAddress = 'ChannelPulse Form <form@channelpulse.me>';
         
-        // [SỬA 2] Gửi đến Gmail cá nhân của bạn (Admin)
-        const adminInbox = 'contact.no1ideas@gmail.com'; 
+        // [GIẢI PHÁP] Gửi đến một hòm thư Gmail TRUNG GIAN
+        // Bạn cần tạo hòm thư này và cài đặt nó TỰ ĐỘNG CHUYỂN TIẾP (Forward)
+        // đến hòm thư Zoho contact@channelpulse.me của bạn.
+        const intermediateInbox = 'contact.no1ideas@gmail.com'; // <-- THAY BẰNG GMAIL TRUNG GIAN CỦA BẠN
 
         // 3. Gửi email bằng Resend
         const { data, error } = await resend.emails.send({
             from: fromAddress,
-            to: adminInbox, // Gửi đến Gmail
+            to: intermediateInbox, // Gửi đến Gmail trung gian
             subject: `Phản hồi mới từ ChannelPulse: [${subject}]`,
             html: `
                 <p>Bạn nhận được một phản hồi mới từ <strong>${email}</strong>.</p>
@@ -39,8 +40,8 @@ export default async function handler(request, response) {
                 <p><strong>Nội dung:</strong></p>
                 <p>${message.replace(/\n/g, '<br>')}</p>
             `,
-            // [QUAN TRỌNG] Đây là email của NGƯỜI DÙNG.
-            // Gmail sẽ tuân thủ 100% vì 'from' và 'to' là 2 tên miền khác nhau.
+            // Giữ nguyên: Đây là email của NGƯỜI DÙNG
+            // Gmail sẽ giữ lại 'reply_to' này khi chuyển tiếp.
             reply_to: email 
         });
 

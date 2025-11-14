@@ -40,9 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Gán sự kiện cho các link trên Header (và Footer)
-    // Bao gồm logo, các link dropdown, link menu, và link ở footer
-    // Gán sự kiện cho các link trên Header (và Footer)
-    // Gán sự kiện cho các link trên Header (và Footer)
     document.querySelectorAll('.header-nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault(); // Ngăn trình duyệt nhảy trang
@@ -63,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // --- KHỞI CHẠY CÁC SCRIPT CHO TỪNG CÔNG CỤ ---
-    // Kiểm tra xem các hàm init có tồn tại không trước khi gọi
     
     if (typeof initKeywordsTool === 'function') {
         initKeywordsTool();
@@ -91,12 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==================================================================
-// === SCRIPT CHO FORM LIÊN HỆ (MỚI) ===
-// ==================================================================
-// ==================================================================
-// === SCRIPT CHO FORM LIÊN HỆ (ĐÃ NÂNG CẤP LÊN MODAL) ===
-// ==================================================================
-// ==================================================================
 // === SCRIPT CHO FORM LIÊN HỆ (ĐÃ NÂNG CẤP VỚI BỘ ĐẾM) ===
 // ==================================================================
 function initContactForm() {
@@ -111,7 +101,7 @@ function initContactForm() {
     const messageInput = document.getElementById('contact-message');
     const statusEl = document.getElementById('contact-status');
     
-    // [THÊM MỚI] Bộ đếm ký tự
+    // Bộ đếm ký tự
     const charCounter = document.getElementById('char-counter');
 
     if (!contactModal || !submitButton) return; // Thoát nếu không tìm thấy modal
@@ -140,13 +130,12 @@ function initContactForm() {
         }
     });
 
-    // [THÊM MỚI] Gán sự kiện cho bộ đếm ký tự
+    // Gán sự kiện cho bộ đếm ký tự
     if (messageInput && charCounter) {
         messageInput.addEventListener('input', () => {
             const currentLength = messageInput.value.length;
             charCounter.textContent = `${currentLength}/3000`;
             
-            // Đổi màu nếu vượt quá (dù maxlength đã chặn)
             if (currentLength >= 3000) {
                 charCounter.classList.add('text-red-600', 'font-bold');
             } else {
@@ -198,7 +187,7 @@ function initContactForm() {
             statusEl.className = 'text-center mt-4 text-green-600';
             statusEl.classList.remove('hidden');
             
-            // [SỬA] Xóa form VÀ reset bộ đếm
+            // Xóa form VÀ reset bộ đếm
             emailInput.value = '';
             messageInput.value = '';
             if (charCounter) {
