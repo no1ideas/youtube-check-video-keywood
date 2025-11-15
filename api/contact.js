@@ -1,33 +1,26 @@
 // File: /api/contact.js
 import { Resend } from 'resend';
 
-// Khởi tạo Resend với API Key đã lưu trong Vercel
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Hàm xử lý chính
 export default async function handler(request, response) {
-    // 1. Chỉ chấp nhận phương thức POST
     if (request.method !== 'POST') {
         return response.status(405).json({ message: 'Method Not Allowed' });
     }
 
     try {
-        // 2. Lấy dữ liệu từ form
-        // 'email' ở đây là email của NGƯỜI DÙNG
         const { email, subject, message } = request.body;
 
         if (!email || !subject || !message) {
             return response.status(400).json({ message: 'Vui lòng nhập đủ thông tin.' });
         }
         
-        // [GIẢI PHÁP]
-        // Gửi từ một địa chỉ cố định đã được xác minh trên Resend.
+        // Gửi từ địa chỉ đã được xác minh trên Resend
         const fromAddress = 'ChannelPulse Form <form@channelpulse.me>';
         
-        // Gửi đến hòm thư Zoho của bạn.
+        // Gửi đến hòm thư Google Workspace (đã được kích hoạt MX)
         const adminInbox = 'contact@channelpulse.me'; 
 
-        // 3. Gửi email bằng Resend
         const { data, error } = await resend.emails.send({
             from: fromAddress,
             to: adminInbox,
@@ -39,23 +32,17 @@ export default async function handler(request, response) {
                 <p><strong>Nội dung:</strong></p>
                 <p>${message.replace(/\n/g, '<br>')}</p>
             `,
-            // Chúng ta vẫn giữ 'reply_to' để lưu lại thông tin email của khách hàng
+            // Google Workspace sẽ tuân thủ 100% 'reply_to' này
             reply_to: email 
         });
 
-        // 4. Xử lý lỗi từ Resend
         if (error) {
-            console.error('Lỗi Resend:', error);
-            // Lỗi "Lỗi khi gửi email." của bạn sẽ bị bắt ở đây
             return response.status(400).json({ message: 'Lỗi khi gửi email.', error: error.message });
         }
 
-        // 5. Gửi phản hồi thành công về cho frontend
         return response.status(200).json({ message: 'Cảm ơn! Phản hồi của bạn đã được gửi.' });
 
     } catch (error) {
-        // Xử lý các lỗi máy chủ khác
-        console.error('Lỗi máy chủ:', error);
         return response.status(500).json({ message: 'Lỗi máy chủ nội bộ.', error: error.message });
     }
 }
