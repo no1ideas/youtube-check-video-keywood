@@ -1,6 +1,7 @@
 {
   "name": "youtube-check-video-keywood",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,7 +17,7 @@
     "url": "https://github.com/no1ideas/youtube-check-video-keywood/issues"
   },
   "homepage": "https://github.com/no1ideas/youtube-check-video-keywood#readme",
-  "description": "",
+  "description": "Bộ công cụ miễn phí hỗ trợ nhà sáng tạo nội dung YouTube.",
   "dependencies": {
     "resend": "^6.4.2"
   }
