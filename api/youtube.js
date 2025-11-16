@@ -1,53 +1,42 @@
-// Đây là "Người gác cổng" cho YouTube (file /api/youtube.js)
-// Nó sẽ chạy trên máy chủ, không phải trình duyệt.
+// api/youtube.js (Code Đã Tối Ưu)
+
+import { getYoutubeApiKey } from './utils/apiConfig'; 
 
 export default async function handler(request, response) {
-    // Chỉ chấp nhận phương thức POST
     if (request.method !== 'POST') {
-        return response.status(405).json({ message: 'Chỉ chấp nhận POST' });
+        return response.status(405).json({ message: 'Method Not Allowed' });
     }
 
     try {
+        // Lấy API Key đã được kiểm tra và xác thực từ module cấu hình
+        const YOUTUBE_API_KEY = getYoutubeApiKey(); 
+        
         const { videoId } = request.body;
+        
         if (!videoId) {
-            return response.status(400).json({ message: 'Thiếu videoId' });
+            return response.status(400).json({ message: 'Missing videoId' });
         }
 
-        // 1. LẤY API KEY BÍ MẬT (Từ Biến Môi Trường)
-        // Chúng ta sẽ cài đặt biến này trên Vercel sau
-        const YOUTUBE_API_KEY = process.env.MY_YOUTUBE_API_KEY;
-
-        if (!YOUTUBE_API_KEY) {
-             throw new Error("Chưa cài đặt API Key cho máy chủ");
+        const apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=${videoId}&key=${YOUTUBE_API_KEY}`;
+        
+        const apiResponse = await fetch(apiUrl);
+        
+        if (!apiResponse.ok) {
+            // Xử lý lỗi từ YouTube API
+            const errorText = await apiResponse.text();
+            throw new Error(`YouTube API failed: ${apiResponse.status} - ${errorText}`);
         }
 
-        const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${YOUTUBE_API_KEY}`;
+        const data = await apiResponse.json();
         
-        const ytResponse = await fetch(apiUrl);
-        
-        if (!ytResponse.ok) {
-            const errorData = await ytResponse.json();
-            console.error("Lỗi từ YouTube API:", errorData);
-            throw new Error(errorData.error?.message || `Lỗi API YouTube: ${ytResponse.status}`);
-        }
-        
-        const data = await ytResponse.json();
-        
-        if (data.items && data.items.length > 0) {
-            const snippet = data.items[0].snippet;
-            const videoData = {
-                title: snippet.title,
-                description: snippet.description,
-                tags: snippet.tags || []
-            };
-            // 2. Trả dữ liệu về cho Frontend
-            return response.status(200).json(videoData);
-        } else {
-            throw new Error("Không tìm thấy video");
+        if (data.items.length === 0) {
+            return response.status(404).json({ message: 'Video not found or is private/deleted.' });
         }
 
+        response.status(200).json(data.items[0]);
     } catch (error) {
-        console.error("Lỗi trong /api/youtube:", error.message);
-        return response.status(500).json({ message: error.message || 'Lỗi máy chủ không xác định' });
+        console.error('Error in YouTube API handler:', error.message);
+        // Trả về lỗi 500 với thông điệp chung (hoặc thông điệp cụ thể nếu là lỗi API Key)
+        response.status(500).json({ message: 'Server error when fetching video details.', error: error.message });
     }
 }

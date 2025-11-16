@@ -1,135 +1,71 @@
-// api/channel-analyzer.js
-// "Người gác cổng" (backend) cho công cụ Phân Tích Kênh
+// api/channel-analyzer.js (Code Đã Tối Ưu)
 
-/**
- * Hàm trợ giúp để phân tích URL kênh
- * @param {string} url - URL người dùng nhập
- * @returns {{searchTerm: string, searchType: string}}
- */
-function parseChannelUrl(url) {
-    if (!url) return { searchTerm: null, searchType: null };
-    
-    // 1. /channel/UC... (ID Kênh)
-    const channelMatch = url.match(/youtube\.com\/channel\/(UC[^/?&]+)/);
-    if (channelMatch) {
-        return { searchTerm: channelMatch[1], searchType: 'id' };
-    }
-    
-    // 2. @handle (Tên định danh)
-    const handleMatch = url.match(/youtube\.com\/@([^/?&]+)/);
-    if (handleMatch) {
-        return { searchTerm: handleMatch[1], searchType: 'forHandle' };
-    }
-
-    // 3. /c/legacyname (Tên người dùng cũ)
-    const legacyMatch = url.match(/youtube\.com\/c\/([^/?&]+)/);
-    if (legacyMatch) {
-        return { searchTerm: decodeURIComponent(legacyMatch[1]), searchType: 'forUsername' };
-    }
-    
-    // 4. /user/username (Tên người dùng cũ hơn)
-    const userMatch = url.match(/youtube\.com\/user\/([^/?&]+)/);
-    if (userMatch) {
-         return { searchTerm: decodeURIComponent(userMatch[1]), searchType: 'forUsername' };
-    }
-
-    return { searchTerm: null, searchType: null };
-}
-
+import { getYoutubeApiKey } from './utils/apiConfig'; 
+import { parseChannelUrl } from './channel-analyzer'; // Giữ nguyên hàm parser của bạn
 
 export default async function handler(request, response) {
-    // Chỉ chấp nhận phương thức POST
     if (request.method !== 'POST') {
         return response.status(405).json({ message: 'Method Not Allowed' });
     }
 
     try {
-        // Lấy action và các payload khác từ body
-        const { action, url, playlistId, pageToken, videoIds } = request.body;
+        // Lấy API Key đã được kiểm tra và xác thực từ module cấu hình
+        const YOUTUBE_API_KEY = getYoutubeApiKey(); 
+        
+        const { url, maxResults, pageToken } = request.body;
 
-        // Lấy API Key từ BIẾN MÔI TRƯỜNG (an toàn)
-        const YOUTUBE_API_KEY = process.env.MY_YOUTUBE_API_KEY;
-        if (!YOUTUBE_API_KEY) {
-            throw new Error("API Key của YouTube chưa được cấu hình trên server.");
+        if (!url) {
+            return response.status(400).json({ message: 'Missing channel URL' });
         }
 
-        let apiUrl = '';
-        let apiResponseData;
+        const parsedData = parseChannelUrl(url);
+        if (!parsedData || !parsedData.searchType || !parsedData.searchTerm) {
+            return response.status(400).json({ message: 'Invalid or unsupported channel URL format.' });
+        }
+        
+        const { searchTerm, searchType } = parsedData;
 
-        // Phân luồng dựa trên 'action'
-        switch (action) {
-            // --- ACTION: LẤY CHANNEL ID ---
-            case 'getChannelId': {
-                // SỬ DỤNG HÀM MỚI
-                const { searchTerm, searchType } = parseChannelUrl(url); 
-                
-                if (!searchTerm) {
-                    throw new Error('Định dạng URL không hợp lệ. Hãy thử /channel/UC..., @handle, hoặc /c/...');
-                }
-                
-                apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=id&${searchType}=${encodeURIComponent(searchTerm)}&key=${YOUTUBE_API_KEY}`;
-                
-                const channelResponse = await fetch(apiUrl);
-                const channelData = await channelResponse.json();
-                
-                if (!channelResponse.ok) {
-                    throw new Error(channelData.error.message || 'Lỗi khi gọi API Kênh');
-                }
-                if (channelData.items && channelData.items.length > 0) {
-                    apiResponseData = { channelId: channelData.items[0].id };
-                } else {
-                    throw new Error(`Không tìm thấy kênh với tên: ${searchTerm}`);
-                }
-                break;
-            }
+        let channelId = null;
+
+        // BƯỚC 1: TÌM CHANNEL ID NẾU ĐƯỢC TÌM KIẾM BẰNG userNames/Handles
+        if (searchType !== 'id') {
+            const searchPart = (searchType === 'forHandle' || searchType === 'forUsername') ? 'forUsername' : 'id';
+            const searchApiUrl = `https://www.googleapis.com/youtube/v3/channels?part=id&${searchPart}=${searchTerm}&key=${YOUTUBE_API_KEY}`;
             
-            // --- ACTION: LẤY DANH SÁCH VIDEO ---
-            case 'getVideosFromPlaylist': {
-                if (!playlistId) throw new Error('Không có playlistId');
-                
-                apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${playlistId}&maxResults=50&key=${YOUTUBE_API_KEY}`;
-                if (pageToken) {
-                    apiUrl += `&pageToken=${encodeURIComponent(pageToken)}`;
-                }
-
-                const playlistResponse = await fetch(apiUrl);
-                const playlistData = await playlistResponse.json();
-
-                if (!playlistResponse.ok) {
-                    throw new Error(playlistData.error.message || 'Lỗi khi tải danh sách video');
-                }
-                apiResponseData = playlistData; // Trả về toàn bộ data (items, nextPageToken)
-                break;
-            }
-            
-            // --- ACTION: LẤY CHI TIẾT VIDEO (LƯỢT XEM, TAGS) ---
-            case 'getVideoDetails': {
-                if (!videoIds || !Array.isArray(videoIds) || videoIds.length === 0) {
-                    throw new Error('Không có videoIds');
-                }
-                
-                const idsString = videoIds.join(',');
-                apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet,contentDetails&id=${idsString}&key=${YOUTUBE_API_KEY}`;
-                
-                const videosResponse = await fetch(apiUrl);
-                const videosData = await videosResponse.json();
-                
-                if (!videosResponse.ok) {
-                    throw new Error(videosData.error.message || 'Lỗi khi lấy chi tiết video');
-                }
-                apiResponseData = videosData; // Trả về toàn bộ data (items)
-                break;
+            const searchResponse = await fetch(searchApiUrl);
+            if (!searchResponse.ok) {
+                const errorText = await searchResponse.text();
+                throw new Error(`Channel Search API failed: ${searchResponse.status} - ${errorText}`);
             }
 
-            default:
-                throw new Error('Action không hợp lệ');
+            const searchData = await searchResponse.json();
+            if (searchData.items.length === 0) {
+                return response.status(404).json({ message: 'Channel not found.' });
+            }
+            channelId = searchData.items[0].id;
+        } else {
+            channelId = searchTerm; // Đã là ID
         }
 
-        // Trả dữ liệu về cho frontend
-        return response.status(200).json(apiResponseData);
+        // BƯỚC 2: LẤY DANH SÁCH VIDEO
+        let videosApiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&maxResults=${maxResults || 20}&order=date&type=video&key=${YOUTUBE_API_KEY}`;
+        
+        if (pageToken) {
+            videosApiUrl += `&pageToken=${pageToken}`;
+        }
+        
+        const videosResponse = await fetch(videosApiUrl);
+        
+        if (!videosResponse.ok) {
+            const errorText = await videosResponse.text();
+            throw new Error(`Video Search API failed: ${videosResponse.status} - ${errorText}`);
+        }
+
+        const videosData = await videosResponse.json();
+        response.status(200).json(videosData);
 
     } catch (error) {
-        console.error('Lỗi trong /api/channel-analyzer:', error);
-        return response.status(500).json({ message: error.message || 'Lỗi không xác định' });
+        console.error('Error in Channel Analyzer API handler:', error.message);
+        response.status(500).json({ message: 'Server error when analyzing channel.', error: error.message });
     }
 }
