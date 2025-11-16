@@ -1,0 +1,11 @@
+# Thư mục chứa các gói phụ thuộc (Dependencies)
+node_modules/
+
+# File chứa các biến môi trường và khóa API bí mật
+.env
+
+# Files/thư mục tạo ra trong quá trình build/caching (nếu có)
+# Bạn có thể thêm sau này nếu dùng các công cụ build như webpack, parcel...
+.cache/
+dist/
+build/
