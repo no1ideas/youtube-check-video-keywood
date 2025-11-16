@@ -6,12 +6,9 @@
  * @throws {Error} Nếu khóa API bị thiếu.
  */
 export function getYoutubeApiKey() {
-    // Tên biến môi trường cần khớp với tên bạn đã đặt trong Vercel (ví dụ: YOUTUBE_API_KEY)
-    const key = process.env.YOUTUBE_API_KEY; 
-    
+    const key = process.env.MY_YOUTUBE_API_KEY; 
     if (!key) {
-        // [CẢNH BÁO LỖI] Đảm bảo tên biến hiển thị chính xác để dễ debug
-        throw new Error("Lỗi cấu hình: Khóa API YouTube (YOUTUBE_API_KEY) chưa được thiết lập.");
+        throw new Error("Lỗi cấu hình: Khóa API YouTube (MY_YOUTUBE_API_KEY) chưa được thiết lập.");
     }
     return key;
 }
@@ -22,17 +19,15 @@ export function getYoutubeApiKey() {
  * @throws {Error} Nếu khóa API bị thiếu.
  */
 export function getGeminiApiKey() {
-    // Tên biến môi trường cần khớp với tên bạn đã đặt trong Vercel
-    const key = process.env.GEMINI_API_KEY; 
-    
+    const key = process.env.MY_GEMINI_API_KEY; 
     if (!key) {
-        throw new Error("Lỗi cấu hình: Khóa API Gemini (GEMINI_API_KEY) chưa được thiết lập.");
+        throw new Error("Lỗi cấu hình: Khóa API Gemini (MY_GEMINI_API_KEY) chưa được thiết lập.");
     }
     return key;
 }
 
 /**
- * Lấy tên mô hình Gemini.
+ * Lấy tên mô hình Gemini từ biến môi trường.
  * @returns {string} Tên mô hình (mặc định là 'gemini-2.5-flash').
  */
 export function getGeminiModelName() {
