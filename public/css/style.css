@@ -10,26 +10,21 @@
 }
 
 /* =============================================================
-  CLASSES TIỆN ÍCH TÙY CHỈNH (ĐỂ THAY THẾ CHO [var(...)])
-  Tailwind CDN không thể đọc biến :root từ file CSS ngoài,
-  vì vậy chúng ta tạo các class này để sử dụng lại.
-  =============================================================
+   CLASSES TIỆN ÍCH TÙY CHỈNH (ĐỂ THAY THẾ CHO [var(...)])
+   Sử dụng !important để đảm bảo ghi đè các giá trị mặc định của Tailwind
+   =============================================================
 */
-.bg-primary-dark { background-color: var(--primary-blue-dark); }
-.bg-primary-light { background-color: var(--primary-blue-light); }
-.text-primary-dark { color: var(--primary-blue-dark); }
-.text-primary-light { color: var(--primary-blue-light); }
-.hover\:bg-primary-dark:hover { background-color: var(--primary-blue-dark); }
-.hover\:text-primary-dark:hover { color: var(--primary-blue-dark); }
+.bg-primary-dark { background-color: var(--primary-blue-dark) !important; }
+.bg-primary-light { background-color: var(--primary-blue-light) !important; }
+.text-primary-dark { color: var(--primary-blue-dark) !important; }
+.text-primary-light { color: var(--primary-blue-light) !important; }
+.hover\:bg-primary-dark:hover { background-color: var(--primary-blue-dark) !important; }
+.hover\:text-primary-dark:hover { color: var(--primary-blue-dark) !important; }
 
-/* Đây là class Tailwind tạo ra, được sao chép lại để dùng cho focus */
-
-.focus-ring-primary-dark:focus {
-    --tw-ring-opacity: 1;
-    --tw-ring-color: rgb(12 69 125 / var(--tw-ring-opacity)); /* #0C457D */
-    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+/* [SỬA LỖI FOCUS] */
+.focus\:border-primary-light:focus {
+    border-color: var(--primary-blue-light) !important;
+    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.4) !important; /* Thêm shadow nhẹ */
 }
 /* ============================================================= */
 
@@ -45,23 +40,23 @@ body {
 ::-webkit-scrollbar-thumb { background: #a8a8a8; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #7c7c7c; }
 
-/* Ẩn/Hiện các trang */
+/* Ẩn/Hiện các trang (Cấu trúc Single Page Application - SPA) */
 .page { display: none; }
 .page.active { display: block; }
 #page-hub { display: block; } /* Trang chủ luôn hiển thị ban đầu */
 
-/* [SỬA LỖI] Điều chỉnh logo (tăng 30% và xóa nền) */
+/* [SỬA LỖI] Điều chỉnh logo */
 img.header-logo {
-    height: 40px; /* Tăng 30% từ 32px (h-8) */
-    width: 40px;  /* Tăng 30% từ 32px (w-8) */
+    height: 40px; 
+    width: 40px; 
     object-fit: contain;
-    background-color: transparent !important; /* Đảm bảo nền trong suốt */
+    background-color: transparent !important; 
 }
 img.footer-logo {
-    height: 40px; /* Tăng 30% từ 32px (h-8) */
-    width: 40px;  /* Tăng 30% từ 32px (w-8) */
+    height: 40px; 
+    width: 40px; 
     object-fit: contain;
-    background-color: transparent !important; /* Đảm bảo nền trong suốt */
+    background-color: transparent !important; 
 }
 /* Nav link hover */
 .header-nav-link:hover {
@@ -116,11 +111,12 @@ img.footer-logo {
     background-color: #f9fafb; /* bg-gray-50 */
 }
 
-/* --- CSS CHO CÔNG CỤ TỪ KHÓA --- */
+/* --- CSS CHO CÔNG CỤ TỪ KHÓA (Keywords Tool) --- */
 .popover {
     display: none; position: absolute; z-index: 50; width: 320px;
     max-height: 400px; overflow-y: auto; word-wrap: break-word;
 }
+/* Kích hoạt Popover khi nút Thông Tin được hover */
 .result-btn:hover + .popover, .popover:hover { display: block; }
 .toggle-desc { color: var(--primary-blue-light); font-weight: 500; cursor: pointer; margin-left: 4px; } 
 .toggle-desc:hover { text-decoration: underline; }
@@ -140,7 +136,7 @@ img.footer-logo {
 .popover-copy-btn:hover { background-color: #cce9e6; } 
 .popover-copy-btn:disabled { background-color: #d1fae5; color: #065f46; cursor: not-allowed; }
 
-/* --- CSS CHO CÔNG CỤ COMMENT --- */
+/* --- CSS CHO CÔNG CỤ COMMENT (Comments Tool) --- */
 .comment-tool-container { width:100%; max-width:900px; background:var(--bg-white); padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06) }
 .comment-tool-container h1 { margin:0 0 8px; text-align:center; color:var(--primary-blue-dark); font-weight:800; } 
 .comment-tool-note {
@@ -201,7 +197,7 @@ img.footer-logo {
 }
 @media (max-width: 980px){ .thread-row{ grid-template-columns:1fr } .thread-right { margin-top: 16px; } }
 
-/* --- CSS CHO CÔNG CỤ PHÂN TÍCH KÊNH --- */
+/* --- CSS CHO CÔNG CỤ PHÂN TÍCH KÊNH (Channel Analyzer) --- */
 .analyzer-container { width:100%; max-width: 100%; background:var(--bg-white); padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06) }
 .analyzer-container h1 { margin:0 0 18px; text-align:center; color:var(--primary-blue-dark); font-weight:800; } 
 .filter-container-wrapper { overflow-x: auto; scrollbar-width: none; }
@@ -236,7 +232,6 @@ img.footer-logo {
     background-color: rgba(0, 0, 0, 0.5);
     display: flex; align-items: center; justify-content: center;
     z-index: 100;
-    /* Thêm animation cho lớp phủ */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -259,7 +254,6 @@ img.footer-logo {
     width: 100%;
     display: flex;
     flex-direction: column;
-    /* Thêm animation cho popup */
     transform: translateY(20px);
     transition: transform 0.3s ease-out;
 }
@@ -270,10 +264,9 @@ img.footer-logo {
 
 .modal-header {
     display: flex; justify-content: space-between; align-items: center;
-    /* [SỬA] Đã thêm padding-bottom và border */
     padding-bottom: 1rem; /* 16px */
     border-bottom: 1px solid var(--border-light-gray);
-    margin-bottom: 0; /* Xóa margin-bottom cũ */
+    margin-bottom: 0; 
 }
 .modal-header h2 { font-size: 1.25rem; font-weight: 700; }
 .modal-close-btn {
@@ -284,10 +277,9 @@ img.footer-logo {
 
 /* [ĐIỀU CHỈNH] CSS cho phần body của modal */
 .modal-body {
-    flex-grow: 1; /* Cho phép body chiếm hết không gian còn lại */
-    overflow-y: auto; /* CHỈ body mới được cuộn nếu nội dung quá dài */
-    padding-bottom: 1rem; /* Khoảng cách cuối body */
-    /* [SỬA] Thêm padding-top */
+    flex-grow: 1; 
+    overflow-y: auto; 
+    padding-bottom: 1rem; 
     padding-top: 1rem; /* 16px */
 }
 
@@ -319,7 +311,7 @@ img.footer-logo {
     100% { transform: rotate(360deg); }
 }
 
-/* [SỬA LỖI] Footer Căn đều (Trái, Giữa, Phải) */
+/* Footer Căn đều (Trái, Giữa, Phải) */
 .footer-grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr; /* Cột 1 lớn hơn, 2 cột sau bằng nhau */
@@ -354,7 +346,7 @@ img.footer-logo {
     }
 }
 
-/* [THÊM MỚI] CSS cho hiệu ứng hover icon mạng xã hội */
+/* CSS cho hiệu ứng hover icon mạng xã hội */
 .footer-social-icon {
     display: inline-flex;
     align-items: center;
