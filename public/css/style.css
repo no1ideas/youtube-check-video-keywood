@@ -44,33 +44,45 @@ body {
 .page.active { display: block; }
 #page-hub { display: block; }
 
-/* [SỬA LỖI UX] Dropdown Header */
+/* --- BREAK FIX CHO HEADER DROPDOWN UX (Lỗi Menu Biến Mất) --- */
+
+/* Thêm vùng an toàn (padding) cho phần tử kích hoạt (.group) */
+.group {
+    /* Đảm bảo vùng hover bao phủ cả khoảng trống nhỏ giữa nút và menu */
+    padding-bottom: 5px; 
+    margin-bottom: -5px; /* Kéo menu lên lại */
+}
+
+/* Menu con - Khắc phục bằng transition/delay */
 .dropdown-menu-content {
     /* Mặc định được ẩn bằng lớp 'hidden' trong HTML */
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
-    /* Đảm bảo không bị ẩn ngay lập tức khi chuột rời khỏi button */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition-delay: 0.1s; /* Chờ 100ms trước khi ẩn */
 }
 
+/* GHI ĐÈ bằng độ ưu tiên cao hơn khi hover */
 .group:hover .dropdown-menu-content {
-    /* Ghi đè lớp 'hidden' khi phần tử cha (group) được hover */
     opacity: 1;
     visibility: visible;
+    transition-delay: 0s; /* Không chờ khi hiển thị */
     display: block !important;
 }
 
-/* Footer Link Hover: Đã sửa lỗi link bị chìm */
+/* --- BREAK FIX CHO FOOTER HOVER (Lỗi Chữ Bị Chìm) --- */
+
+/* Fix Footer Link Hover: Buộc chữ ChannelPulse.me nổi bật */
 .footer-col-left a.header-nav-link:hover span {
-    /* Chỉnh sửa riêng cho tên thương hiệu để có màu xanh sáng tương phản với nền xanh đậm */
+    /* ÉP MÀU NỔI BẬT: Dùng màu xanh sáng chủ đạo */
     color: var(--primary-blue-light) !important; 
 }
 
+/* Fix các link khác trong Footer */
 .footer-col-center a.header-nav-link:hover {
     color: var(--primary-blue-light) !important;
-    text-decoration: underline; 
+    text-decoration: underline;
 }
-
 
 /* [SỬA LỖI] Điều chỉnh logo */
 img.header-logo {
