@@ -44,41 +44,7 @@ body {
 .page.active { display: block; }
 #page-hub { display: block; }
 
-/* --- BREAK FIX CHO HEADER DROPDOWN UX (Sửa Lỗi Rê Chuột) --- */
 
-/* BƯỚC 1: TĂNG VÙNG AN TOÀN CHO PHẦN TỬ CHA (.group) */
-.group {
-    /* Mở rộng vùng hover an toàn: 15px */
-    padding-bottom: 15px; 
-    margin-bottom: -15px; /* Kéo vùng nội dung phía dưới lên */
-}
-
-/* BƯỚC 2: TỐI ƯU HÓA TỐC ĐỘ ẨN VÀ VỊ TRÍ (Đồng nhất PX) */
-.dropdown-menu-content {
-    /* Mặc định được ẩn */
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-    transition-delay: 0.15s; /* Chờ 0.15s để menu ổn định */
-    
-    /* Vị trí tinh chỉnh (Đẩy ngược lên 8px) */
-    margin-top: -8px; 
-    top: 100%;
-    
-    /* Vị trí ngang: Giá trị mới -75px */
-    right: -75px; 
-}
-
-/* GHI ĐÈ bằng độ ưu tiên cao hơn khi hover */
-.group:hover .dropdown-menu-content {
-    opacity: 1;
-    visibility: visible;
-    transition-delay: 0s; /* Hiển thị ngay lập tức */
-    display: block !important;
-    
-    /* Đảm bảo vị trí ổn định khi hiển thị */
-    margin-top: -8px; 
-}
 
 /* --- BREAK FIX CHO FOOTER HOVER (Lỗi Chữ Bị Chìm) --- */
 
