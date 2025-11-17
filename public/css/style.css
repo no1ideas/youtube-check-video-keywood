@@ -59,17 +59,17 @@ body {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-    transition-delay: 0.15s; /* Chờ 0.15s để menu ổn định */
+    transition-delay: 0.15s; /* Chờ 0.15s trước khi ẩn (FIX RÊ CHUỘT CHẬM) */
     
     /* Vị trí tinh chỉnh (Đẩy ngược lên 8px) */
     margin-top: -8px; 
     top: 100%;
     
-    /* Vị trí ngang: Giá trị mới -75px */
+    /* Vị trí ngang: Giá trị mới -105px */
     right: -105px; 
 }
 
-/* GHI ĐÈ bằng độ ưu tiên cao hơn khi hover */
+/* BƯỚC 3: GHI ĐÈ bằng độ ưu tiên cao hơn khi hover */
 .group:hover .dropdown-menu-content {
     opacity: 1;
     visibility: visible;
@@ -78,6 +78,18 @@ body {
     
     /* Đảm bảo vị trí ổn định khi hiển thị */
     margin-top: -8px; 
+}
+
+/* BƯỚC 4: STYLING CÁC MỤC BÊN TRONG MENU CON */
+/* Mục đích: Ghi đè padding và xóa padding thừa */
+.dropdown-menu-content a.header-nav-link {
+    /* Đảm bảo kích thước 7px đồng nhất */
+    padding: 7px !important; 
+}
+
+.dropdown-menu-content a.header-nav-link div {
+    /* Xóa padding/margin thừa khỏi các div bao quanh text bên trong link */
+    padding: 0; 
 }
 
 /* --- BREAK FIX CHO FOOTER HOVER (Lỗi Chữ Bị Chìm) --- */
