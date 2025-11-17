@@ -16,23 +16,29 @@
 }
 
 /* =============================================================
-   MÃ CSS MẪU MỚI: HEADER DARK THEME (Đã Khôi Phục)
+   MÃ CSS MẪU MỚI: HEADER DARK THEME (Đã Khắc phục Lỗi Reset)
    =============================================================
 */
-/* Reset chung - Đã khôi phục các reset bị thiếu */
+/* Khôi phục Reset cơ bản và Box-sizing */
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: "Inter", sans-serif; /* Đã đặt font cơ bản */
+    box-sizing: border-box; /* RẤT QUAN TRỌNG cho Layout và Box Model */
+    font-family: "Inter", sans-serif;
 }
 
 body {
     background: var(--bg-light-gray);
     color: var(--text-gray-medium);
-    padding-top: 60px; /* Bù đắp chiều cao Header cố định */
+    padding-top: 60px; /* Bù đắp chiều cao Header cố định (Khắc phục khoảng trống thừa) */
     font-family: "Inter", sans-serif;
 }
+
+/* Tùy chỉnh thanh cuộn */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #a8a8a8; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #7c7c7c; }
 
 .navbar {
     /* Áp dụng màu Gradient tối (Khắc phục lỗi nền trắng) */
@@ -169,12 +175,6 @@ body {
     border-color: var(--primary-blue-light) !important;
     box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.4) !important;
 }
-
-/* Tùy chỉnh thanh cuộn */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f1f1f1; }
-::-webkit-scrollbar-thumb { background: #a8a8a8; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #7c7c7c; }
 
 /* Ẩn/Hiện các trang (Cấu trúc Single Page Application - SPA) */
 .page { display: none; }
