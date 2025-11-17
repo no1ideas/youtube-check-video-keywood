@@ -44,29 +44,34 @@ body {
 .page.active { display: block; }
 #page-hub { display: block; }
 
-/* --- BREAK FIX CHO HEADER DROPDOWN UX (Lỗi Menu Biến Mất) --- */
+/* --- BREAK FIX CHO HEADER DROPDOWN UX (Sửa Lỗi Rê Chuột) --- */
 
-/* BƯỚC 1: TĂNG MẠNH VÙNG AN TOÀN CHO PHẦN TỬ CHA (.group) */
+/* BƯỚC 1: Tăng Vùng An Toàn cho Phần tử Cha (.group) */
 .group {
-    /* Mở rộng vùng hover của phần tử cha để bao phủ khoảng trống giữa nút và menu con */
+    /* Tạo vùng an toàn cho chuột là 10px ở dưới nút */
     padding-bottom: 10px; 
-    margin-bottom: -10px; /* Kéo vùng nội dung phía dưới lên để không tạo khoảng trống */
+    /* KHÔNG DÙNG margin-bottom âm, điều này có thể gây lỗi. */
 }
 
-/* BƯỚC 2: TỐI ƯU HÓA TỐC ĐỘ ẨN (Transition Delay) */
+/* BƯỚC 2: ÉP MENU CON DỊCH CHUYỂN NGƯỢC LÊN */
+/* Menu con (đã có lớp top-full) */
 .dropdown-menu-content {
-    /* Mặc định được ẩn bằng lớp 'hidden' trong HTML */
+    /* Mặc định được ẩn... */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    transition-delay: 0.15s; /* Tăng độ trễ lên 0.15s (Chờ lâu hơn một chút) */
+    transition-delay: 0.15s; 
+
+    /* [FIX QUAN TRỌNG]: Dịch chuyển ngược lên bằng margin-top */
+    margin-top: -10px; /* Dịch ngược 10px để phủ lên padding-bottom của nút cha */
+    top: 100%; /* Giữ nguyên vị trí ban đầu (dưới nút) */
 }
 
-/* GHI ĐÈ bằng độ ưu tiên cao hơn khi hover */
+/* BƯỚC 3: Kích hoạt Hover */
 .group:hover .dropdown-menu-content {
     opacity: 1;
     visibility: visible;
-    transition-delay: 0s; /* Hiển thị ngay lập tức */
+    transition-delay: 0s;
     display: block !important;
 }
 
