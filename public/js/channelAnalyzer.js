@@ -106,10 +106,10 @@ function initChannelAnalyzer() {
     function setActiveTab(activeState) {
         // Các lớp (class) cho trạng thái KHÔNG HOẠT ĐỘNG (xám)
         const inactiveClasses = ['bg-gray-200', 'text-gray-700', 'hover:bg-gray-300'];
-        // Các lớp (class) cho trạng thái HOẠT ĐỘNG (xanh)
-        // Chúng ta sẽ dùng màu xanh đậm (#0C457D) làm màu active
-        const activeClasses = ['bg-[#0C457D]', 'text-white', 'hover:bg-[#0a3a66]'];
-        
+        // Code ĐÃ ĐIỀU CHỈNH trong channelAnalyzer.js
+// Sử dụng các lớp tiện ích CSS đã được định nghĩa trong style.css
+const activeClasses = ['bg-primary-dark', 'text-white', 'hover:bg-primary-dark'];
+
         // 1. Nút Phân Tích Kênh
         if (analysisButton) {
             analysisButton.classList.remove(...activeClasses, ...inactiveClasses);
