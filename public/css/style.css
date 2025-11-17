@@ -46,7 +46,7 @@ body {
 
 /* --- BREAK FIX CHO HEADER DROPDOWN UX (Sửa Lỗi Rê Chuột) --- */
 
-/* BƯỚC 1: TĂNG MẠNH VÙNG AN TOÀN CHO PHẦN TỬ CHA (.group) */
+/* BƯỚC 1: TĂNG VÙNG AN TOÀN CHO PHẦN TỬ CHA (.group) */
 .group {
     /* Đảm bảo vùng an toàn luôn lớn hơn menu con một chút */
     padding-bottom: 15px; /* Tăng padding an toàn lên 15px */
