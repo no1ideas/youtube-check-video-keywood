@@ -10,8 +10,7 @@
 }
 
 /* =============================================================
-   CLASSES TIỆN ÍCH TÙY CHỈNH (ĐỂ THAY THẾ CHO [var(...)])
-   Sử dụng !important để đảm bảo ghi đè các giá trị mặc định của Tailwind
+   CLASSES TIỆN ÍCH TÙY CHỈNH
    =============================================================
 */
 .bg-primary-dark { background-color: var(--primary-blue-dark) !important; }
@@ -24,7 +23,7 @@
 /* [SỬA LỖI FOCUS] */
 .focus\:border-primary-light:focus {
     border-color: var(--primary-blue-light) !important;
-    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.4) !important; /* Thêm shadow nhẹ */
+    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.4) !important;
 }
 /* ============================================================= */
 
@@ -43,7 +42,35 @@ body {
 /* Ẩn/Hiện các trang (Cấu trúc Single Page Application - SPA) */
 .page { display: none; }
 .page.active { display: block; }
-#page-hub { display: block; } /* Trang chủ luôn hiển thị ban đầu */
+#page-hub { display: block; }
+
+/* [SỬA LỖI UX] Dropdown Header */
+.dropdown-menu-content {
+    /* Mặc định được ẩn bằng lớp 'hidden' trong HTML */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    /* Đảm bảo không bị ẩn ngay lập tức khi chuột rời khỏi button */
+}
+
+.group:hover .dropdown-menu-content {
+    /* Ghi đè lớp 'hidden' khi phần tử cha (group) được hover */
+    opacity: 1;
+    visibility: visible;
+    display: block !important;
+}
+
+/* Footer Link Hover: Đã sửa lỗi link bị chìm */
+.footer-col-left a.header-nav-link:hover span {
+    /* Chỉnh sửa riêng cho tên thương hiệu để có màu xanh sáng tương phản với nền xanh đậm */
+    color: var(--primary-blue-light) !important; 
+}
+
+.footer-col-center a.header-nav-link:hover {
+    color: var(--primary-blue-light) !important;
+    text-decoration: underline; 
+}
+
 
 /* [SỬA LỖI] Điều chỉnh logo */
 img.header-logo {
@@ -66,9 +93,9 @@ img.footer-logo {
 /* Trang chủ (Hub) */
 .hub-card {
     background-color: var(--bg-white);
-    border-radius: 0.75rem; /* 12px */
+    border-radius: 0.75rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-    padding: 2rem; /* 32px */
+    padding: 2rem;
     text-align: center;
     transition: all 0.3s ease;
     cursor: pointer;
@@ -82,13 +109,13 @@ img.footer-logo {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
 }
 .hub-card h2 {
-    font-size: 1.5rem; /* 24px */
+    font-size: 1.5rem;
     font-weight: 700;
-    margin-bottom: 0.75rem; /* 12px */
+    margin-bottom: 0.75rem;
     color: var(--primary-blue-dark); 
 }
 .hub-card p {
-    font-size: 1rem; /* 16px */
+    font-size: 1rem;
     color: var(--text-gray-medium); 
 }
 
@@ -96,7 +123,7 @@ img.footer-logo {
 .back-button {
     display: inline-flex;
     align-items: center;
-    font-size: 0.875rem; /* 14px */
+    font-size: 0.875rem;
     font-weight: 600;
     color: var(--text-gray-medium); 
     background-color: var(--bg-white);
@@ -108,7 +135,7 @@ img.footer-logo {
     margin-bottom: 16px;
 }
 .back-button:hover {
-    background-color: #f9fafb; /* bg-gray-50 */
+    background-color: #f9fafb;
 }
 
 /* --- CSS CHO CÔNG CỤ TỪ KHÓA (Keywords Tool) --- */
@@ -116,7 +143,6 @@ img.footer-logo {
     display: none; position: absolute; z-index: 50; width: 320px;
     max-height: 400px; overflow-y: auto; word-wrap: break-word;
 }
-/* Kích hoạt Popover khi nút Thông Tin được hover */
 .result-btn:hover + .popover, .popover:hover { display: block; }
 .toggle-desc { color: var(--primary-blue-light); font-weight: 500; cursor: pointer; margin-left: 4px; } 
 .toggle-desc:hover { text-decoration: underline; }
@@ -244,12 +270,12 @@ img.footer-logo {
 /* [ĐIỀU CHỈNH] CSS cho nội dung Modal */
 .modal-content {
     background-color: white;
-    padding: 1.5rem; /* Giảm padding */
+    padding: 1.5rem;
     border-radius: 0.5rem;
     position: relative;
     z-index: 1001;
     max-height: 95vh;
-    overflow-y: visible; /* Không cuộn */
+    overflow-y: visible;
     margin: 1rem; 
     width: 100%;
     display: flex;
@@ -264,7 +290,7 @@ img.footer-logo {
 
 .modal-header {
     display: flex; justify-content: space-between; align-items: center;
-    padding-bottom: 1rem; /* 16px */
+    padding-bottom: 1rem;
     border-bottom: 1px solid var(--border-light-gray);
     margin-bottom: 0; 
 }
@@ -280,7 +306,7 @@ img.footer-logo {
     flex-grow: 1; 
     overflow-y: auto; 
     padding-bottom: 1rem; 
-    padding-top: 1rem; /* 16px */
+    padding-top: 1rem;
 }
 
 .modal-list-item {
@@ -314,34 +340,34 @@ img.footer-logo {
 /* Footer Căn đều (Trái, Giữa, Phải) */
 .footer-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr; /* Cột 1 lớn hơn, 2 cột sau bằng nhau */
-    gap: 2rem; /* Khoảng cách giữa các cột */
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2rem;
 }
 .footer-col-left {
-    justify-self: start; /* Cột đầu tiên sát trái */
+    justify-self: start;
     text-align: left;
 }
 .footer-col-center {
-    justify-self: center; /* Cột thứ hai ở giữa */
-    text-align: left; /* [SỬA] Nội dung căn trái */
+    justify-self: center;
+    text-align: left;
     width: 100%;
 }
 .footer-col-right {
-    justify-self: end; /* Cột cuối cùng sát phải */
-    text-align: left; /* [SỬA] Nội dung căn trái */
+    justify-self: end;
+    text-align: left;
     width: 100%;
 }
 
 @media (max-width: 768px) {
     .footer-grid {
-        grid-template-columns: 1fr; /* Một cột trên màn hình nhỏ */
+        grid-template-columns: 1fr;
         gap: 2rem;
     }
     .footer-col-left,
     .footer-col-center,
     .footer-col-right {
-        justify-self: start; /* Căn trái trên di động */
-        text-align: left; /* Căn trái nội dung trên di động */
+        justify-self: start;
+        text-align: left;
         width: 100%;
     }
 }
@@ -351,14 +377,14 @@ img.footer-logo {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 44px;  /* 2.75rem (w-11) */
-    height: 44px; /* 2.75rem (h-11) */
-    border-radius: 50%; /* Làm cho nó tròn */
-    border: 2px solid transparent; /* Border trong suốt mặc định */
-    transition: all 0.2s ease-in-out; /* Hiệu ứng mượt */
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: all 0.2s ease-in-out;
 }
 
 .footer-social-icon:hover {
-    border-color: var(--bg-white); /* Border màu trắng khi hover */
-    background-color: rgba(255, 255, 255, 0.1); /* Thêm 1 lớp nền mờ */
+    border-color: var(--bg-white);
+    background-color: rgba(255, 255, 255, 0.1);
 }
