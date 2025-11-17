@@ -8,7 +8,7 @@
     --border-light-gray: #d1d5db; /* Viền xám nhạt */
     --bg-white: #ffffff; /* Nền trắng */
     
-    /* BIẾN MỚI CHO DARK THEME HEADER (Lấy cảm hứng từ mẫu code) */
+    /* BIẾN MỚI CHO DARK THEME HEADER */
     --dark-bg-start: #1e293b;
     --dark-bg-end: #0f172a;
     --dark-text: #cbd5e1;
@@ -27,14 +27,13 @@
 }
 
 body {
-    background: var(--bg-light-gray); /* Giữ lại nền sáng cho nội dung chính */
+    background: var(--bg-light-gray);
     color: var(--text-gray-medium);
-    padding-top: 60px; /* Bù đắp chiều cao Header */
+    padding-top: 60px; /* Bù đắp chiều cao Header cố định */
     font-family: "Inter", sans-serif;
 }
 
 .navbar {
-    /* Áp dụng màu Gradient tối */
     background: linear-gradient(135deg, var(--dark-bg-start) 0%, var(--dark-bg-end) 100%);
     padding: 0 2rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
@@ -75,7 +74,6 @@ body {
 
 .nav-item {
     position: relative;
-    /* FIX: Thêm margin-right để giãn cách giữa các mục menu */
     margin-right: 10px; 
 }
 
@@ -105,7 +103,7 @@ body {
     top: 100%;
     left: 0;
     background: var(--dark-bg-start);
-    min-width: 300px; 
+    min-width: 300px;
     border-radius: 8px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
     opacity: 0;
@@ -159,10 +157,46 @@ body {
 }
 
 
+/* --- CÁC QUY TẮC PHỤ TRỢ/FIXES VÀ STYLING NỘI DUNG --- */
+
 /* =============================================================
-   CÁC QUY TẮC CŨ (Đã Tối Ưu và Fix Lỗi)
+   CLASSES TIỆN ÍCH TÙY CHỈNH
    =============================================================
 */
+.bg-primary-dark { background-color: var(--primary-blue-dark) !important; }
+.bg-primary-light { background-color: var(--primary-blue-light) !important; }
+.text-primary-dark { color: var(--primary-blue-dark) !important; }
+.text-primary-light { color: var(--primary-blue-light) !important; }
+.hover\:bg-primary-dark:hover { background-color: var(--primary-blue-dark) !important; }
+.hover\:text-primary-dark:hover { color: var(--primary-blue-dark) !important; }
+
+/* [SỬA LỖI FOCUS] */
+.focus\:border-primary-light:focus {
+    border-color: var(--primary-blue-light) !important;
+    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.4) !important;
+}
+/* ============================================================= */
+
+/* Tùy chỉnh thanh cuộn */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #a8a8a8; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #7c7c7c; }
+
+/* Ẩn/Hiện các trang (Cấu trúc Single Page Application - SPA) */
+.page { display: none; }
+.page.active { display: block; }
+#page-hub { display: block; }
+
+/* --- BREAK FIX CHO FOOTER HOVER (Lỗi Chữ Bị Chìm) --- */
+.footer-col-left a.header-nav-link:hover span {
+    color: var(--primary-blue-light) !important; 
+}
+
+.footer-col-center a.header-nav-link:hover {
+    color: var(--primary-blue-light) !important;
+    text-decoration: underline;
+}
 
 /* [SỬA LỖI] Điều chỉnh logo */
 img.header-logo {
@@ -177,30 +211,8 @@ img.footer-logo {
     object-fit: contain;
     background-color: transparent !important; 
 }
-/* Nav link hover */
-.header-nav-link:hover {
-    color: var(--primary-blue-dark);
-}
 
-/* --- BREAK FIX CHO FOOTER HOVER (Lỗi Chữ Bị Chìm) --- */
-
-/* Fix Footer Link Hover: Buộc chữ ChannelPulse.me nổi bật */
-.footer-col-left a.header-nav-link:hover span {
-    color: var(--primary-blue-light) !important; 
-}
-
-/* Fix các link khác trong Footer */
-.footer-col-center a.header-nav-link:hover {
-    color: var(--primary-blue-light) !important;
-    text-decoration: underline;
-}
-
-/* Các quy tắc còn lại (Hub, Cards, Tools, Modals...) */
-/* --- Các quy tắc khác trong style.css giữ nguyên --- */
-.page { display: none; }
-.page.active { display: block; }
-#page-hub { display: block; }
-
+/* Trang chủ (Hub) */
 .hub-card {
     background-color: var(--bg-white);
     border-radius: 0.75rem;
@@ -228,6 +240,8 @@ img.footer-logo {
     font-size: 1rem;
     color: var(--text-gray-medium); 
 }
+
+/* Nút quay lại chung */
 .back-button {
     display: inline-flex;
     align-items: center;
@@ -246,7 +260,8 @@ img.footer-logo {
     background-color: #f9fafb;
 }
 
-/* --- Các quy tắc CSS cho Tools, Modals, Footer Grid... (Giữ nguyên) --- */
+/* --- Các quy tắc còn lại cho Tools, Modals, Footer Grid... --- */
+
 .popover { display: none; position: absolute; z-index: 50; width: 320px; max-height: 400px; overflow-y: auto; word-wrap: break-word; }
 .result-btn:hover + .popover, .popover:hover { display: block; }
 .toggle-desc { color: var(--primary-blue-light); font-weight: 500; cursor: pointer; margin-left: 4px; } 
