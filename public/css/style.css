@@ -16,14 +16,15 @@
 }
 
 /* =============================================================
-   MÃ CSS MẪU MỚI: HEADER DARK THEME
+   MÃ CSS MẪU MỚI: HEADER DARK THEME (Đã Khôi Phục)
    =============================================================
 */
-/* Reset chung */
+/* Reset chung - Đã khôi phục các reset bị thiếu */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: "Inter", sans-serif; /* Đã đặt font cơ bản */
 }
 
 body {
@@ -34,6 +35,7 @@ body {
 }
 
 .navbar {
+    /* Áp dụng màu Gradient tối (Khắc phục lỗi nền trắng) */
     background: linear-gradient(135deg, var(--dark-bg-start) 0%, var(--dark-bg-end) 100%);
     padding: 0 2rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
@@ -103,7 +105,7 @@ body {
     top: 100%;
     left: 0;
     background: var(--dark-bg-start);
-    min-width: 300px;
+    min-width: 300px; 
     border-radius: 8px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
     opacity: 0;
@@ -115,6 +117,7 @@ body {
     z-index: 100;
 }
 
+/* FIX DROPDOWN HOVER (Menu Cấp 2): Kích hoạt hiển thị */
 .nav-item:hover > .dropdown {
     opacity: 1;
     visibility: visible;
@@ -156,26 +159,16 @@ body {
     color: var(--dark-bg-end);
 }
 
-
-/* --- CÁC QUY TẮC PHỤ TRỢ/FIXES VÀ STYLING NỘI DUNG --- */
-
 /* =============================================================
-   CLASSES TIỆN ÍCH TÙY CHỈNH
+   CÁC QUY TẮC CŨ (Đã Tích Hợp và Sửa Lỗi)
    =============================================================
 */
-.bg-primary-dark { background-color: var(--primary-blue-dark) !important; }
-.bg-primary-light { background-color: var(--primary-blue-light) !important; }
-.text-primary-dark { color: var(--primary-blue-dark) !important; }
-.text-primary-light { color: var(--primary-blue-light) !important; }
-.hover\:bg-primary-dark:hover { background-color: var(--primary-blue-dark) !important; }
-.hover\:text-primary-dark:hover { color: var(--primary-blue-dark) !important; }
 
 /* [SỬA LỖI FOCUS] */
 .focus\:border-primary-light:focus {
     border-color: var(--primary-blue-light) !important;
     box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.4) !important;
 }
-/* ============================================================= */
 
 /* Tùy chỉnh thanh cuộn */
 ::-webkit-scrollbar { width: 6px; }
@@ -187,16 +180,6 @@ body {
 .page { display: none; }
 .page.active { display: block; }
 #page-hub { display: block; }
-
-/* --- BREAK FIX CHO FOOTER HOVER (Lỗi Chữ Bị Chìm) --- */
-.footer-col-left a.header-nav-link:hover span {
-    color: var(--primary-blue-light) !important; 
-}
-
-.footer-col-center a.header-nav-link:hover {
-    color: var(--primary-blue-light) !important;
-    text-decoration: underline;
-}
 
 /* [SỬA LỖI] Điều chỉnh logo */
 img.header-logo {
@@ -210,6 +193,16 @@ img.footer-logo {
     width: 40px; 
     object-fit: contain;
     background-color: transparent !important; 
+}
+
+/* --- FIX FOOTER HOVER (Lỗi Chữ Bị Chìm) --- */
+.footer-col-left a.header-nav-link:hover span {
+    color: var(--primary-blue-light) !important; 
+}
+
+.footer-col-center a.header-nav-link:hover {
+    color: var(--primary-blue-light) !important;
+    text-decoration: underline;
 }
 
 /* Trang chủ (Hub) */
@@ -260,7 +253,7 @@ img.footer-logo {
     background-color: #f9fafb;
 }
 
-/* --- Các quy tắc còn lại cho Tools, Modals, Footer Grid... --- */
+/* --- Các quy tắc còn lại cho Tools, Modals, Footer Grid... (Giữ nguyên) --- */
 
 .popover { display: none; position: absolute; z-index: 50; width: 320px; max-height: 400px; overflow-y: auto; word-wrap: break-word; }
 .result-btn:hover + .popover, .popover:hover { display: block; }
