@@ -10,7 +10,7 @@
 }
 
 /* =============================================================
-   CLASSES TIỆN ÍCH TÙY CHỈNH
+   CLASSES TIỆN ÍCH TÙY CHỈNH (Custom Utility Classes)
    =============================================================
 */
 .bg-primary-dark { background-color: var(--primary-blue-dark) !important; }
@@ -48,9 +48,9 @@ body {
 
 /* Thêm vùng an toàn (padding) cho phần tử kích hoạt (.group) */
 .group {
-    /* Đảm bảo vùng hover bao phủ cả khoảng trống nhỏ giữa nút và menu */
+    /* Mở rộng vùng hover của phần tử cha để bao phủ khoảng trống giữa nút và menu con */
     padding-bottom: 5px; 
-    margin-bottom: -5px; /* Kéo menu lên lại */
+    margin-bottom: -5px; /* Kéo menu lên lại để loại bỏ khoảng trống vật lý */
 }
 
 /* Menu con - Khắc phục bằng transition/delay */
