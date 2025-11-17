@@ -46,14 +46,14 @@ body {
 
 /* --- BREAK FIX CHO HEADER DROPDOWN UX (Sửa Lỗi Rê Chuột) --- */
 
-/* BƯỚC 1: TĂNG MẠNH VÙNG AN TOÀN CHO PHẦN TỬ CHA (.group) */
+/* BƯỚC 1: TĂNG VÙNG AN TOÀN CHO PHẦN TỬ CHA (.group) */
 .group {
     /* Mở rộng vùng hover an toàn: 15px */
     padding-bottom: 15px; 
     margin-bottom: -15px; /* Kéo vùng nội dung phía dưới lên */
 }
 
-/* BƯỚC 2: TỐI ƯU HÓA TỐC ĐỘ ẨN VÀ DỊCH CHUYỂN */
+/* BƯỚC 2: TỐI ƯU HÓA TỐC ĐỘ ẨN VÀ VỊ TRÍ (Đồng nhất PX) */
 .dropdown-menu-content {
     /* Mặc định được ẩn */
     opacity: 0;
@@ -65,7 +65,7 @@ body {
     margin-top: -8px; 
     top: 100%;
     
-    /* Nếu bạn không thể dùng lớp right-[-96px] trong HTML, hãy thêm quy tắc sau */
+    /* Vị trí ngang: Giá trị mới -75px */
     right: -75px; 
 }
 
