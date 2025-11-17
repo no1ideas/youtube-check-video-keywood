@@ -46,33 +46,34 @@ body {
 
 /* --- BREAK FIX CHO HEADER DROPDOWN UX (Sửa Lỗi Rê Chuột) --- */
 
-/* BƯỚC 1: Tăng Vùng An Toàn cho Phần tử Cha (.group) */
+/* BƯỚC 1: TĂNG MẠNH VÙNG AN TOÀN CHO PHẦN TỬ CHA (.group) */
 .group {
-    /* Tạo vùng an toàn cho chuột là 10px ở dưới nút */
-    padding-bottom: 10px; 
-    /* KHÔNG DÙNG margin-bottom âm, điều này có thể gây lỗi. */
+    /* Đảm bảo vùng an toàn luôn lớn hơn menu con một chút */
+    padding-bottom: 15px; /* Tăng padding an toàn lên 15px */
+    margin-bottom: -15px; /* Kéo vùng nội dung phía dưới lên để không tạo khoảng trống */
 }
 
-/* BƯỚC 2: ÉP MENU CON DỊCH CHUYỂN NGƯỢC LÊN */
-/* Menu con (đã có lớp top-full) */
+/* BƯỚC 2: DỊCH CHUYỂN NGƯỢC MENU CON LÊN VÀ TẠO ĐỘ TRỄ */
 .dropdown-menu-content {
-    /* Mặc định được ẩn... */
+    /* Mặc định ẩn, áp dụng độ trễ khi ẩn */
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    transition-delay: 0.15s; 
-
-    /* [FIX QUAN TRỌNG]: Dịch chuyển ngược lên bằng margin-top */
-    margin-top: -10px; /* Dịch ngược 10px để phủ lên padding-bottom của nút cha */
-    top: 100%; /* Giữ nguyên vị trí ban đầu (dưới nút) */
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    transition-delay: 0.15s; /* Chờ 150ms trước khi ẩn */
+    
+    /* [FIX CUỐI CÙNG]: Đẩy menu con xuống 5px khi ẩn */
+    transform: translateY(-5px); 
 }
 
-/* BƯỚC 3: Kích hoạt Hover */
+/* GHI ĐÈ bằng độ ưu tiên cao hơn khi hover */
 .group:hover .dropdown-menu-content {
     opacity: 1;
     visibility: visible;
-    transition-delay: 0s;
+    transition-delay: 0s; /* Hiển thị ngay lập tức */
     display: block !important;
+    
+    /* [FIX CUỐI CÙNG]: Kéo menu con về vị trí 0 (gắn sát vào nút) */
+    transform: translateY(0); 
 }
 
 /* --- BREAK FIX CHO FOOTER HOVER (Lỗi Chữ Bị Chìm) --- */
