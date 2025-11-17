@@ -1,505 +1,307 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>ChannelPulse.me - Bộ Công Cụ YouTube Phân Tích SEO & Từ Khoá Miễn Phí</title>
-    <meta name="description" content="ChannelPulse.me: Bộ công cụ miễn phí giúp nhà sáng tạo YouTube phân tích từ khóa SEO, bình luận, và thói quen đăng bài để tăng lượt xem và tương tác.">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://channelpulse.me/">
-    
-    <meta property="og:title" content="ChannelPulse.me - Bộ Công Cụ YouTube Chuyên Nghiệp">
-    <meta property="og:description" content="Phân tích SEO, từ khóa, bình luận và thói quen đăng bài. Miễn phí cho mọi nhà sáng tạo.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://channelpulse.me/">
-    <meta property="og:image" content="https://channelpulse.me/images/logo.png"> 
-    <meta name="twitter:card" content="summary_large_image">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>ChannelPulse.me - Bộ Công Cụ YouTube Phân Tích SEO & Từ Khoá Miễn Phí</title>
+    <meta name="description" content="ChannelPulse.me: Bộ công cụ miễn phí giúp nhà sáng tạo YouTube phân tích từ khóa SEO, bình luận, và thói quen đăng bài để tăng lượt xem và tương tác.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://channelpulse.me/">
+    
+    <meta property="og:title" content="ChannelPulse.me - Bộ Công Cụ YouTube Chuyên Nghiệp">
+    <meta property="og:description" content="Phân tích SEO, từ khóa, bình luận và thói quen đăng bài. Miễn phí cho mọi nhà sáng tạo.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://channelpulse.me/">
+    <meta property="og:image" content="https://channelpulse.me/images/logo.png"> 
+    <meta name="twitter:card" content="summary_large_image">
 
-    <link rel="icon" href="images/logo.png" type="image/png"> 
+    <link rel="icon" href="images/logo.png" type="image/png"> 
 
-    <script src="https://cdn.tailwindcss.com"></script> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+        <script src="https://cdn.tailwindcss.com"></script> 
     
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <style>
-        :root {
-            --primary-blue-dark: #0C457D;
-            --primary-blue-light: #1890FF;
-            --text-gray-medium: #4b5563;
-            --text-gray-light: #6b7280;
-            --bg-light-gray: #f3f4f6;
-            --border-light-gray: #d1d5db;
-            --bg-white: #ffffff;
-        }
-    </style>
-    
-    <link rel="stylesheet" href="css/style.css">
-    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              // Định nghĩa lại màu 'primary' để sử dụng trong các class như bg-primary-light
+              primary: {
+                light: 'var(--primary-blue-light)', // #1890FF
+                dark: 'var(--primary-blue-dark)',   // #0C457D
+                DEFAULT: 'var(--primary-blue-light)',
+              },
+            },
+          },
+        },
+      }
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="css/style.css">
+    
 </head>
 
 <body>
+    <nav class="navbar">
+        <div class="nav-container">
+                        <a href="#" id="nav-brand" data-page="page-hub" 
+               class="nav-logo header-nav-link">
+                <img src="images/logo.png" alt="ChannelPulse Logo" class="header-logo">
+                <span>ChannelPulse</span>
+            </a>
 
-    <header class="bg-white shadow-md sticky top-0 z-40">
-        <nav class="container mx-auto max-w-7xl px-4 py-3 flex justify-between items-center">
-            
-            <a href="#" id="nav-brand" data-page="page-hub" 
-               class="header-nav-link flex items-center gap-2 text-xl font-bold text-gray-800 py-1">
-                <img src="images/logo.png" alt="ChannelPulse Logo" class="header-logo">
-                <span>ChannelPulse</span>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-tools"></i> Công cụ
+                    </a>
+                    <ul class="dropdown">
+                        <li>
+                                                        <a href="#" data-page="page-keywords" class="dropdown-link seo header-nav-link">
+                                <i class="fas fa-search-plus"></i> Công cụ Từ khóa SEO
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-page="page-comments" class="dropdown-link comment header-nav-link">
+                                <i class="fas fa-comments"></i> Trình Lấy Comment
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-page="page-analyzer" class="dropdown-link analytics header-nav-link">
+                                <i class="fas fa-chart-line"></i> Trình Phân Tích Kênh
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+        
+                <li class="nav-item"><a href="#" data-page="page-blog" class="nav-link header-nav-link">Tin tức</a></li>
+                <li class="nav-item"><a href="#" data-page="page-about" class="nav-link header-nav-link">Giới thiệu</a></li>
+                <li class="nav-item"><a href="#" data-page="page-contact" class="nav-link header-nav-link">Liên hệ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+        <div id="page-hub" class="page active container mx-auto p-6 max-w-7xl">
+        <div class="text-center py-12 mb-12 bg-white shadow-xl rounded-2xl px-6">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">Tăng Tốc Kênh YouTube Của Bạn</h1>
+            <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">Khám phá dữ liệu ẩn, tối ưu SEO và hiểu rõ khán giả với bộ công cụ miễn phí của ChannelPulse.</p>
+            <a href="#tools-section" class="bg-primary-light text-white font-bold py-3 px-8 rounded-lg hover:bg-primary-dark transition duration-300 inline-block shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-opacity-50">
+                Bắt đầu sử dụng ngay
             </a>
-
-            <div class="hidden md:flex items-center space-x-6">
-                <div class="relative group">
-                    <button class="text-gray-600 font-semibold hover:text-primary-dark flex items-center p-2 rounded-md transition duration-200">
-                        <span>Danh sách công cụ</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transform group-hover:rotate-180 transition duration-200" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                    
-                    <div class="absolute top-full right-[-105px] w-72 bg-white rounded-xl shadow-2xl border border-gray-100 p-3 space-y-1 hidden z-50 dropdown-menu-content">
-                        <a href="#" data-page="page-keywords"
-                           class="header-nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition duration-200">
-                            <span class="text-xl">🚀</span>
-                            <div class="flex flex-col">
-                                <span class="font-bold text-sm text-primary-dark">Công Cụ Từ Khoá SEO</span>
-                                <span class="text-xs text-gray-500">Tạo bộ từ khoá và mô tả chuẩn AI.</span>
-                            </div>
-                        </a>
-                        <a href="#" data-page="page-comments"
-                           class="header-nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition duration-200">
-                            <span class="text-xl">📝</span>
-                            <div class="flex flex-col">
-                                <span class="font-bold text-sm text-primary-dark">Trình Lấy Comment</span>
-                                <span class="text-xs text-gray-500">Quét và sắp xếp bình luận video.</span>
-                            </div>
-                        </a>
-                        <a href="#" data-page="page-analyzer"
-                           class="header-nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition duration-200">
-                            <span class="text-xl">📊</span>
-                            <div class="flex flex-col">
-                                <span class="font-bold text-sm text-primary-dark">Trình Phân Tích Kênh</span>
-                                <span class="text-xs text-gray-500">Phân tích thói quen đăng bài của kênh.</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-                <a href="#" data-page="page-blog" 
-                   class="header-nav-link text-gray-600 font-medium hover:text-primary-dark p-2 rounded-md transition duration-200">Tin tức</a>
-                <a href="#" data-page="page-about" 
-                   class="header-nav-link text-gray-600 font-medium hover:text-primary-dark p-2 rounded-md transition duration-200">Giới thiệu</a>
-                
-                <a href="#" data-page="page-contact" 
-                   class="header-nav-link text-gray-600 font-medium hover:text-primary-dark p-2 rounded-md transition duration-200">Liên hệ</a>
-            </div>
-
-            <div class="md:hidden">
-                <button id="mobile-menu-btn" class="text-gray-700 hover:text-primary-dark p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                    </svg>
-                </button>
-            </div>
-        </nav>
-    </header>
-
-    <div id="page-hub" class="page active container mx-auto p-4 max-w-7xl">
-        <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Bộ Công Cụ YouTube</h1>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div id="hub-card-keywords" class="hub-card" data-page="page-keywords">
-                <h2>🚀 Công Cụ Từ Khoá SEO</h2>
-                <p>Phân tích video và tạo bộ từ khoá, tiêu đề, mô tả chuẩn SEO cho chủ đề của bạn.</p>
-            </div>
-            <div id="hub-card-comments" class="hub-card" data-page="page-comments">
-                <h2>📝 Trình Lấy Comment</h2>
-                <p>Lấy toàn bộ bình luận từ video (không dịch) và sắp xếp theo lượt thích.</p>
-            </div>
-            <div id="hub-card-analyzer" class="hub-card" data-page="page-analyzer">
-                <h2>📊 Trình Phân Tích Kênh</h2>
-                <p>Tìm kiếm, lọc video và phân tích thói quen đăng bài của bất kỳ kênh YouTube nào.</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="page-keywords" class="page container mx-auto p-4 max-w-7xl">
-        <button class="back-button" data-page="page-hub">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            Quay lại
-        </button>
-        <h1 class="text-3xl font-bold text-center text-primary-dark mb-6">Công Cụ Phân Tích YouTube & Tạo Từ Khoá Chủ Đề</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-5 rounded-lg shadow-lg">
-                <h2 class="text-xl font-semibold mb-4">Danh Sách Link YouTube (Tối đa 15)</h2>
-                <div id="keywords-video-inputs" class="space-y-3 max-h-[600px] overflow-y-auto pr-2"></div>
-                <button id="keywords-search-button" class="mt-5 w-full bg-primary-light text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-dark transition duration-300 flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
-                    <span>Tìm kiếm Thông Tin Video</span>
-                </button>
-            </div>
-            <div class="bg-white p-5 rounded-lg shadow-lg">
-                <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
-                <button id="keywords-generate-button" class="w-full bg-primary-light text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-dark transition duration-300 flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322-.478-.46-.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" /></svg>
-                    <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
-                </button>
-                <div id="keywords-results-container" class="mt-5 space-y-4 max-h-[550px] overflow-y-auto pr-2">
-                    <p class="text-gray-500 text-center">Kết quả tạo từ khoá sẽ xuất hiện ở đây sau khi bạn nhấn nút.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="page-comments" class="page container mx-auto p-4">
-        <button class="back-button" data-page="page-hub">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            Quay lại
-        </button>
-        <div class="comment-tool-container mx-auto" style="max-width: 900px;">
-            <h1>📝 Trình Lấy Comment YouTube</h1>
-            <p class="comment-tool-note">Ứng dụng sẽ quét tối đa 500 comment có tương tác nhiều nhất (Top Comments) của video.</p>
-            <div class="comment-row">
-                <div class="field"><input id="comment-video-url" class="comment-input" type="text" placeholder="Dán link video YouTube vào đây..."></div>
-                <button id="comment-search-button" class="comment-btn">Tìm kiếm</button>
-            </div>
-            <div class="sort-bar" id="comment-sort-bar">
-                <div>
-                    <span class="sort-title">Lọc theo:</span>
-                    <select id="comment-time-filter" class="time-filter-select">
-                        <option value="all">Tất cả thời gian</option>
-                        <option value="today">Hôm nay</option>
-                        <option value="yesterday">Hôm qua</option>
-                        <option value="30days">30 ngày qua</option>
-                        <option value="90days">90 ngày qua</option>
-                    </select>
-                </div>
-                <div>
-                    <span class="sort-title">Sắp xếp theo:</span>
-                    <button class="sort-btn" id="sort-like">Like ↓</button>
-                    <button class="sort-btn" id="sort-replies">Cmt cấp 2 ↓</button>
-                    <button class="sort-btn" id="sort-date">Ngày ↓</button>
-                </div>
-                <span class="sort-hint">Bấm lại nút để đảo chiều ↑/↓</span>
-            </div>
-            <div id="comment-status"></div>
-            <div id="comment-results"></div>
-        </div>
-    </div>
-
-    <div id="page-analyzer" class="page container mx-auto p-4">
-        <button class="back-button" data-page="page-hub">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            Quay lại
-        </button>
-        
-        <div class="analyzer-container">
-            <h1>📊 Trình Tìm Kiếm & Phân Tích Video Kênh YouTube</h1>
-
-            <div class="flex flex-col sm:flex-row gap-2 mb-4">
-                <input type="text" id="analyzer-urlInput" class="flex-grow px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus-ring-primary-light text-base" placeholder="Dán link kênh (ví dụ: /channel/..., @handle, /c/...)">
-                <button id="analyzer-searchButton" class="px-6 py-3 bg-primary-light text-white font-semibold rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus-ring-primary-light focus:ring-opacity-75 transition-all active:transform active:scale-95 text-base">
-                    Tìm kiếm
-                </button>
-            </div>
-
-            <div id="analyzer-filterContainerWrapper" class="hidden filter-container-wrapper py-2 mb-4">
-                <div id="analyzer-filterContainer" class="bg-gray-50 rounded-lg flex items-center justify-start md:justify-between gap-4 p-4 flex-nowrap min-w-max">
-                    <div class="flex items-center gap-2 flex-shrink-0">
-                        <label for="analyzer-yearFilter" class="text-gray-700 font-medium">Lọc theo năm:</label>
-                        <select id="analyzer-yearFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus-ring-primary-light">
-                            <option value="0">Tất cả năm</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center gap-2 flex-shrink-0">
-                        <label for="analyzer-viewsFilter" class="text-gray-700 font-medium">Lọc lượt xem:</label>
-                        <select id="analyzer-viewsFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus-ring-primary-light">
-                            <option value="0">Tất cả (Mới nhất)</option>
-                            <option value="3">Top 3 xem nhiều nhất</option>
-                            <option value="5">Top 5 xem nhiều nhất</option>
-                            <option value="10">Top 10 xem nhiều nhất</option>
-                            <option value="15">Top 15 xem nhiều nhất</option>
-                            <option value="20">Top 20 xem nhiều nhất</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center gap-2 flex-shrink-0">
-                        <label for="analyzer-videoTypeFilter" class="text-gray-700 font-medium">Lọc loại video:</label>
-                        <select id="analyzer-videoTypeFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus-ring-primary-light">
-                            <option value="all">Tất cả</option>
-                            <option value="long">Video dài</option>
-                            <option value="short">Video ngắn</option>
-                            <option value="live">Phát trực tiếp</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center gap-2 flex-shrink-0">
-                        <label for="analyzer-timezoneFilter" class="text-gray-700 font-medium">Múi giờ:</label>
-                        <select id="analyzer-timezoneFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus-ring-primary-light">
-                            <optgroup label="Múi giờ chung">
-                                <option value="local">Giờ địa phương</option>
-                                <option value="UTC">Giờ UTC/GMT</option>
-                            </optgroup>
-                            <optgroup label="Thị trường Lớn (Mỹ)">
-                                <option value="America/New_York">Mỹ (Miền Đông - ET)</option>
-                                <option value="America/Los_Angeles">Mỹ (Miền Tây - PT)</option>
-                            </optgroup>
-                            <optgroup label="Top 25 Quốc gia">
-                                <option value="Asia/Kolkata">Ấn Độ (Kolkata)</option>
-                                <option value="America/Sao_Paulo">Brazil (São Paulo)</option>
-                                <option value="Asia/Jakarta">Indonesia (Jakarta)</option>
-                                <option value="America/Mexico_City">Mexico (Mexico City)</option>
-                                <option value="Asia/Tokyo">Nhật Bản (Tokyo)</option>
-                                <option value="Asia/Karachi">Pakistan (Karachi)</option>
-                                <option value="Europe/Berlin">Đức (Berlin)</option>
-                                <option value="Asia/Ho_Chi_Minh">Việt Nam (TP. HCM)</option>
-                                <option value="Asia/Manila">Philippines (Manila)</option>
-                                <option value="Europe/Istanbul">Thổ Nhĩ Kỳ (Istanbul)</option>
-                                <option value="Europe/London">V.Q. Anh (London)</option>
-                                <option value="Europe/Paris">Pháp (Paris)</option>
-                                <option value="Africa/Cairo">Ai Cập (Cairo)</option>
-                                <option value="Asia/Bangkok">Thái Lan (Bangkok)</option>
-                                <option value="Asia/Seoul">Hàn Quốc (Seoul)</option>
-                                <option value="Europe/Rome">Ý (Rome)</option>
-                                <option value="Europe/Madrid">Tây Ban Nha (Madrid)</option>
-                                <option value="Asia/Dhaka">Bangladesh (Dhaka)</option>
-                                <option value="America/Argentina/Buenos_Aires">Argentina (Buenos Aires)</option>
-                                <option value="America/Toronto">Canada (Toronto)</option>
-                                <option value="Europe/Warsaw">Ba Lan (Warsaw)</option>
-                                <option value="Africa/Johannesburg">Nam Phi (Johannesburg)</option>
-                                <option value="Asia/Kuala_Lumpur">Malaysia (Kuala Lumpur)</option>
-                                <option value="Asia/Baghdad">Iraq (Baghdad)</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <button id="analyzer-toggleKeywordsButton" class="flex-shrink-0 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition-all active:transform active:scale-95">
-                        Hiện Từ khóa
-                    </button>
-                </div>
-            </div>
-
-            <div id="analyzer-analysisButtonContainer" class="hidden mb-4 py-2 flex flex-wrap items-center gap-2"> 
-                <button id="analyzer-analysisButton" 
-                        class="px-6 py-3 rounded-lg font-semibold shadow-md transition-all active:transform active:scale-95 text-base 
-                               bg-gray-200 text-gray-700 hover:bg-gray-300">
-                    📊 Phân tích Kênh (Kênh Hiện Tại)
-                </button>
-                <button id="analyzer-show-saved-list" 
-                        class="px-6 py-3 rounded-lg font-semibold shadow-md transition-all active:transform active:scale-95 text-base 
-                               bg-gray-200 text-gray-700 hover:bg-gray-300">
-                    Xem & Phân Tích Giỏ Hàng (<span id="analyzer-saved-count">0</span> video đã lưu)
-                </button>
-            </div>
-
-            <div id="analyzer-analysisResults" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 id="analyzer-analysisTitle" class="text-xl md:text-2xl font-bold text-center text-gray-800">Phân Tích Thói Quen Đăng Video</h2>
-                    <button id="analyzer-hideAnalysisButton" class="text-sm text-gray-500 hover:text-gray-700 font-medium">[ Ẩn Phân Tích ]</button>
-                </div>
-                
-                <div class="flex flex-wrap -mx-4">
-                    <div class="w-full lg:w-1/3 px-4 mb-6">
-                        <div class="bg-white p-4 rounded-lg shadow-md h-full">
-                            <h3 class="text-base font-bold text-center text-gray-700 mb-2">Phân tích Giờ công chiếu</h3>
-                            <div class="chart-container">
-                                <canvas id="analyzer-chartHour"></canvas>
-                            </div>
-                            <div id="analyzer-chartHourMeaning" class="mt-4 text-sm text-gray-700 bg-blue-50 p-3 rounded-md"></div>
-                            <div id="analyzer-chartHourRecommendation" class="mt-3 text-sm text-blue-700 bg-blue-50 p-3 rounded-md"></div>
-                        </div>
-                    </div>
-                    <div class="w-full lg:w-1/3 px-4 mb-6">
-                        <div class="bg-white p-4 rounded-lg shadow-md h-full">
-                            <h3 class="text-base font-bold text-center text-gray-700 mb-2">Phân tích Thứ trong tuần</h3>
-                            <div class="chart-container">
-                                <canvas id="analyzer-chartDayOfWeek"></canvas>
-                            </div>
-                            <div id="analyzer-chartDayOfWeekMeaning" class="mt-4 text-sm text-gray-700 bg-green-50 p-3 rounded-md"></div>
-                            <div id="analyzer-chartDayOfWeekRecommendation" class="mt-3 text-sm text-green-700 bg-green-50 p-3 rounded-md"></div>
-                        </div>
-                    </div>
-                    <div class="w-full lg:w-1/3 px-4 mb-6">
-                        <div class="bg-white p-4 rounded-lg shadow-md h-full">
-                            <h3 class="text-base font-bold text-center text-gray-700 mb-2">Phân tích Nhịp độ Đăng bài</h3>
-                            <div class="chart-container">
-                                <canvas id="analyzer-chartDayOfMonth"></canvas>
-                            </div>
-                            <div id="analyzer-chartDayOfMonthMeaning" class="mt-4 text-sm text-gray-700 bg-yellow-50 p-3 rounded-md"></div>
-                            <div id="analyzer-chartDayOfMonthRecommendation" class="mt-3 text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="analyzer-error" class="hidden my-4 p-4 bg-red-100 text-red-700 border border-red-300 rounded-lg"></div>
-            <div id="analyzer-status" class="hidden my-4 p-4 bg-blue-100 text-blue-700 border border-blue-300 rounded-lg flex items-center justify-center gap-3">
-                <svg class="loader h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span id="analyzer-statusText">Đang tải...</span>
-            </div>
-            
-            <div id="analyzer-copySuccess" class="copy-success-toast opacity-0 hidden">
-                Đã sao chép!
-            </div>
-
-            <div id="analyzer-results" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-                </div>
-        </div>
-    </div>
-
-    <div id="page-blog" class="page container mx-auto p-4 max-w-7xl">
-        <button class="back-button" data-page="page-hub">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            Quay lại
-        </button>
-        <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Tin tức & Hướng dẫn</h1>
-        <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-            <p class="text-lg text-gray-600">Nội dung các bài viết hướng dẫn sử dụng công cụ và mẹo làm YouTube sẽ sớm được cập nhật tại đây.</p>
-        </div>
-    </div>
-
-    <div id="page-about" class="page container mx-auto p-4 max-w-7xl">
-        <button class="back-button" data-page="page-hub">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            Quay lại
-        </button>
-        <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Về ChannelPulse.me</h1>
-        <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-            <p class="text-lg text-gray-600">Thông tin giới thiệu về dự án và tác giả (notideas) sẽ được cập nhật tại đây.</p>
-        </div>
-    </div>
-
-    <div id="contact-modal" class="modal-overlay hidden">
-        <div class="modal-content" style="max-width: 575px;">
-            <div class="modal-header pb-4 border-b border-gray-200">
-                <h2 id="contact-modal-title" class="text-2xl font-bold text-gray-800">Góp ý & Liên hệ</h2>
-                <button id="contact-modal-close-btn" class="modal-close-btn">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            
-            <div id="contact-modal-body" class="modal-body pt-4">
-                <p class="text-gray-600 mb-6">
-                    Chúng tôi rất mong nhận được phản hồi của bạn! Mọi góp ý, báo lỗi, hoặc câu hỏi đều giúp ChannelPulse trở nên tốt hơn.
-                </p>
-                
-                <div class="space-y-4">
-                    <div>
-                        <label for="contact-email" class="block text-sm font-medium text-gray-700">Email của bạn (để chúng tôi trả lời)</label>
-                        <input type="email" name="email" id="contact-email" required
-                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus-ring-primary-light">
-                    </div>
-                    
-                    <div>
-                        <label for="contact-subject" class="block text-sm font-medium text-gray-700">Chủ đề</label>
-                        <select id="contact-subject" name="chủ đề"
-                                class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus-ring-primary-light bg-white">
-                            <option>Góp ý tính năng</option>
-                            <option>Báo cáo lỗi (Bug)</option>
-                            <option>Câu hỏi khác</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="contact-message" class="block text-sm font-medium text-gray-700">Nội dung tin nhắn</label>
-                        <textarea id="contact-message" name="message" rows="3" maxlength="3000" required
-                                     class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus-ring-primary-light"></textarea>
-                        
-                        <div id="char-counter" class="text-right text-sm text-gray-500 mt-1">0/3000</div>
-                    </div>
-
-                    <div>
-                        <button id="contact-submit-button"
-                                 class="w-full flex justify-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-primary-light hover:bg-primary-dark transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus-ring-primary-dark">
-                            <span>Gửi phản hồi</span>
-                        </button>
-                        <p id="contact-status" class="hidden text-center mt-4"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="analyzer-saved-list-modal" class="modal-overlay hidden">
-        <div class="modal-content" style="max-width: 900px;">
-            <div class="modal-header">
-                <h2 id="analyzer-modal-title">Giỏ Video Đã Lưu (0 video)</h2>
-                <button id="analyzer-modal-close-btn" class="modal-close-btn">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            
-            <div id="analyzer-modal-body" class="modal-body">
-                <p class="text-gray-500 text-center">Bạn chưa lưu video nào.</p>
-            </div>
-            
-            <div class="modal-footer flex flex-col sm:flex-row justify-end gap-3 mt-4">
-                 <button id="analyzer-modal-clear-btn" class="px-5 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all">
-                     Xóa Tất Cả
-                 </button>
-                 <button id="analyzer-modal-analyze-btn" class="px-5 py-2 bg-primary-light text-white font-semibold rounded-lg hover:bg-primary-dark transition-all">
-                     Phân Tích Toàn Bộ Giỏ Hàng
-                 </button>
-            </div>
-        </div>
-    </div>
-
-    <footer class="bg-primary-dark text-gray-300 pt-12 pb-8 mt-16">
-        <div class="container mx-auto max-w-7xl px-4 footer-grid">
-            
-            <div class="footer-col-left">
-                <a href="#" id="nav-brand-footer" data-page="page-hub" 
-                   class="header-nav-link text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                    <img src="images/logo.png" alt="ChannelPulse Logo" class="footer-logo">
-                    <span>ChannelPulse.me</span>
-                </a>
-                <p class="text-gray-400 max-w-xs">Bộ công cụ miễn phí hỗ trợ nhà sáng tạo nội dung YouTube.</p>
-            </div>
-
-            <div class="footer-col-center">
-                <h4 class="text-lg font-semibold text-white mb-3">Liên kết</h4>
-                <ul class="space-y-2">
-                    <li>
-                        <a href="#" data-page="page-contact" 
-                           class="header-nav-link text-gray-300 hover:text-primary-light hover:underline">Góp ý & Liên hệ</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="footer-col-right">
-                <h4 class="text-lg font-semibold text-white mb-3">Kết nối</h4>
-                <div class="flex items-center space-x-2 mb-2"> 
-                    <a href="https://www.youtube.com/@no1ideas" target="_blank" rel="noopener noreferrer" 
-                       class="footer-social-icon text-gray-300 hover:text-white"
-                       aria-label="Kênh YouTube của ChannelPulse">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M19.812 5.404c.834.225 1.402.977 1.402 1.956v9.28c0 .979-.568 1.731-1.402 1.956C18.667 18.825 12 18.825 12 18.825s-6.667 0-7.812-.429c-.835-.225-1.402-.977-1.402-1.956V7.36c0-.979.568-1.731 1.402-1.956C5.333 5.175 12 5.175 12 5.175s6.667 0 7.812.229ZM15.932 12 10.74 9.03V14.97L15.932 12Z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                    <a href="http://facebook.com/MaoNguyen.no1ideas" target="_blank" rel="noopener noreferrer" 
-                       class="footer-social-icon text-gray-300 hover:text-white"
-                       aria-label="Trang Facebook của ChannelPulse">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.505 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33V22C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                </div>
-                <p class="text-gray-400 text-sm mt-2">Theo dõi để không bỏ lỡ bất kỳ cập nhật hay tính năng mới nào.</p>
-            </div>
-
         </div>
 
-        <div class="container mx-auto max-w-7xl px-4 text-center text-sm mt-10">
-            <div class="border-t border-gray-700 w-full mb-8"></div> 
-            <p class="text-gray-400">© 2025 ChannelPulse.me. Mọi quyền được bảo lưu.</p>
-        </div>
-    </footer>
+        <h2 id="tools-section" class="text-3xl font-bold text-center text-gray-800 mb-10">Bộ Công Cụ YouTube</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div id="hub-card-keywords" class="hub-card" data-page="page-keywords">
+                <h2>🚀 Công Cụ Từ Khoá SEO</h2>
+                <p>Phân tích video và tạo bộ từ khoá, tiêu đề, mô tả chuẩn SEO cho chủ đề của bạn.</p>
+            </div>
+            <div id="hub-card-comments" class="hub-card" data-page="page-comments">
+                <h2>📝 Trình Lấy Comment</h2>
+                <p>Lấy toàn bộ bình luận từ video (không dịch) và sắp xếp theo lượt thích.</p>
+            </div>
+            <div id="hub-card-analyzer" class="hub-card" data-page="page-analyzer">
+                <h2>📊 Trình Phân Tích Kênh</h2>
+                <p>Tìm kiếm, lọc video và phân tích thói quen đăng bài của bất kỳ kênh YouTube nào.</p>
+            </div>
+        </div>
+    </div>
 
-    <script src="js/utils.js"></script>
-    <script src="js/keywordsTool.js"></script>
-    <script src="js/commentsTool.js"></script>
-    <script src="js/channelAnalyzer.js"></script> 
-    <script src="js/main.js"></script>
-    
+        <div id="page-keywords" class="page container mx-auto p-6 max-w-7xl">
+        <button class="back-button" data-page="page-hub">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+            Quay lại
+        </button>
+                <h1 class="text-3xl font-bold text-center text-primary-dark mb-6">Công Cụ Phân Tích YouTube & Tạo Từ Khoá Chủ Đề</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-xl font-semibold mb-4">Danh Sách Link YouTube (Tối đa 15)</h2>
+                <div id="keywords-video-inputs" class="space-y-3 max-h-[600px] overflow-y-auto pr-2"></div>
+                                <button id="keywords-search-button" class="mt-5 w-full bg-primary-light text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-dark transition duration-300 flex items-center justify-center gap-2 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-opacity-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                    <span>Tìm kiếm Thông Tin Video</span>
+                </button>
+            </div>
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-xl font-semibold mb-4">Tạo Dữ Liệu SEO cho Chủ Đề</h2>
+                                 <button id="keywords-generate-button" class="w-full bg-primary-light text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-dark transition duration-300 flex items-center justify-center gap-2 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-opacity-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 2.25c.106 0 .21.02.313.06a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0114.25 6c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0119.5 9c.39 0 .77.05 1.135.143a3 3 0 012.049 1.188c.17.228.322.478.46.744A6.7 6.7 0 0124 12c0 .39-.05.77-.143 1.135a3 3 0 01-1.188 2.049c-.228.17-.478.322-.744.46a6.7 6.7 0 01-1.135 1.135a3 3 0 01-2.049 1.188c-.228.17-.478.322-.744.46A6.7 6.7 0 0118 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 0112 16.5c-.39 0-.77.05-1.135.143a3 3 0 01-2.049 1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 017.5 19.5c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17.228-.322-.478-.46-.744A6.7 6.7 0 013 21c-.39 0-.77-.05-1.135-.143a3 3 0 01-2.049-1.188c-.17-.228-.322-.478-.46-.744A6.7 6.7 0 010 18c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 013.75 12c0-.39.05-.77.143-1.135a3 3 0 011.188-2.049c.228-.17.478.322.744-.46A6.7 6.7 0 017.5 6c.39 0 .77.05 1.135.143a3 3 0 012.049-1.188c.103.04.207.06.313.06zM12 15a3 3 0 100-6 3 3 0 000 6z" /></svg>
+                    <span>Tạo Bộ Từ Khoá Của Chủ Đề</span>
+                </button>
+                <div id="keywords-results-container" class="mt-5 space-y-4 max-h-[550px] overflow-y-auto pr-2">
+                    <p class="text-gray-500 text-center">Kết quả tạo từ khoá sẽ xuất hiện ở đây sau khi bạn nhấn nút.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div id="page-comments" class="page container mx-auto p-6">
+        <button class="back-button" data-page="page-hub">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+            Quay lại
+        </button>
+                <div class="comment-tool-container mx-auto max-w-4xl">
+            <h1>📝 Trình Lấy Comment YouTube</h1>
+            <p class="comment-tool-note">Ứng dụng sẽ quét tối đa 500 comment có tương tác nhiều nhất (Top Comments) của video.</p>
+            <div class="comment-row">
+                                <div class="field"><input id="comment-video-url" class="comment-input focus:ring-2 focus:ring-primary-light focus:border-primary-light" type="text" placeholder="Dán link video YouTube vào đây..."></div>
+                                <button id="comment-search-button" class="comment-btn active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-opacity-50">Tìm kiếm</button>
+            </div>
+            <div class="sort-bar" id="comment-sort-bar">
+                            </div>
+            <div id="comment-status"></div>
+            <div id="comment-results"></div>
+        </div>
+    </div>
+
+        <div id="page-analyzer" class="page container mx-auto p-6">
+        <button class="back-button" data-page="page-hub">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+            Quay lại
+        </button>
+        
+        <div class="analyzer-container">
+            <h1>📊 Trình Tìm Kiếm & Phân Tích Video Kênh YouTube</h1>
+
+            <div class="flex flex-col sm:flex-row gap-2 mb-4">
+                                <input type="text" id="analyzer-urlInput" class="flex-grow px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-primary-light text-base" placeholder="Dán link kênh (ví dụ: /channel/..., @handle, /c/...)">
+                                <button id="analyzer-searchButton" class="px-6 py-3 bg-primary-light text-white font-semibold rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-opacity-75 transition-all active:scale-95 text-base">
+                    Tìm kiếm
+                </button>
+            </div>
+
+            <div id="analyzer-filterContainerWrapper" class="hidden filter-container-wrapper py-2 mb-4">
+                                <div id="analyzer-filterContainer" class="bg-gray-50 rounded-lg flex items-center justify-start md:justify-between gap-4 p-4 flex-nowrap min-w-max">
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <label for="analyzer-yearFilter" class="text-gray-700 font-medium">Lọc theo năm:</label>
+                        <select id="analyzer-yearFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-primary-light">
+                            <option value="0">Tất cả năm</option>
+                        </select>
+                    </div>
+                                    </div>
+            </div>
+
+                    </div>
+    </div>
+
+        <div id="page-blog" class="page container mx-auto p-6 max-w-7xl">
+        <button class="back-button" data-page="page-hub">
+            Quay lại
+        </button>
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Tin tức & Hướng dẫn</h1>
+        <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+            <p class="text-lg text-gray-600">Nội dung sẽ sớm được cập nhật tại đây.</p>
+        </div>
+    </div>
+
+    <div id="page-about" class="page container mx-auto p-6 max-w-7xl">
+        <button class="back-button" data-page="page-hub">
+            Quay lại
+        </button>
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Về ChannelPulse.me</h1>
+        <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+            <p class="text-lg text-gray-600">Thông tin giới thiệu sẽ được cập nhật tại đây.</p>
+        </div>
+    </div>
+
+        <div id="contact-modal" class="modal-overlay hidden">
+                <div class="modal-content w-11/12 md:max-w-lg">
+            <div class="modal-header pb-4 border-b border-gray-200">
+                <h2 id="contact-modal-title" class="text-2xl font-bold text-gray-800">Góp ý & Liên hệ</h2>
+                <button id="contact-modal-close-btn" class="modal-close-btn">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div id="contact-modal-body" class="modal-body pt-4">
+                <p class="text-gray-600 mb-6">
+                    Chúng tôi rất mong nhận được phản hồi của bạn! Mọi góp ý, báo lỗi, hoặc câu hỏi đều giúp ChannelPulse trở nên tốt hơn.
+                </p>
+                
+                <div class="space-y-4">
+                                        <div>
+                        <label for="contact-email" class="block text-sm font-medium text-gray-700">Email của bạn</label>
+                        <input type="email" id="contact-email" required
+                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-primary-light">
+                    </div>
+                    
+                    <div>
+                        <label for="contact-subject" class="block text-sm font-medium text-gray-700">Chủ đề</label>
+                        <select id="contact-subject"
+                                class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-primary-light bg-white">
+                            <option>Góp ý tính năng</option>
+                            <option>Báo cáo lỗi (Bug)</option>
+                            <option>Câu hỏi khác</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="contact-message" class="block text-sm font-medium text-gray-700">Nội dung tin nhắn</label>
+                        <textarea id="contact-message" rows="3" maxlength="3000" required
+                                     class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-primary-light"></textarea>
+                        
+                        <div id="char-counter" class="text-right text-sm text-gray-500 mt-1">0/3000</div>
+                    </div>
+
+                    <div>
+                                                <button id="contact-submit-button"
+                                 class="w-full flex justify-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-primary-light hover:bg-primary-dark transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light active:scale-95">
+                            <span>Gửi phản hồi</span>
+                        </button>
+                        <p id="contact-status" class="hidden text-center mt-4"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div id="analyzer-saved-list-modal" class="modal-overlay hidden">
+                <div class="modal-content w-11/12 md:max-w-4xl">
+            <div class="modal-header">
+                <h2 id="analyzer-modal-title">Giỏ Video Đã Lưu (0 video)</h2>
+                <button id="analyzer-modal-close-btn" class="modal-close-btn">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div id="analyzer-modal-body" class="modal-body">
+                <p class="text-gray-500 text-center">Bạn chưa lưu video nào.</p>
+            </div>
+            
+            <div class="modal-footer flex flex-col sm:flex-row justify-end gap-3 mt-4">
+                                 <button id="analyzer-modal-clear-btn" class="px-5 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                     Xóa Tất Cả
+                 </button>
+                 <button id="analyzer-modal-analyze-btn" class="px-5 py-2 bg-primary-light text-white font-semibold rounded-lg hover:bg-primary-dark transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-opacity-50">
+                     Phân Tích Toàn Bộ Giỏ Hàng
+                 </button>
+            </div>
+        </div>
+    </div>
+
+        <footer class="bg-primary-dark text-gray-300 pt-12 pb-8 mt-16">
+        <div class="container mx-auto max-w-7xl px-6 footer-grid">
+                    </div>
+
+        <div class="container mx-auto max-w-7xl px-6 text-center text-sm mt-10">
+            <div class="border-t border-gray-700 w-full mb-8"></div> 
+            <p class="text-gray-400">© 2025 ChannelPulse.me. Mọi quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/keywordsTool.js"></script>
+    <script src="js/commentsTool.js"></script>
+    <script src="js/channelAnalyzer.js"></script> 
+    <script src="js/main.js"></script>
+    
 </body>
 </html>
