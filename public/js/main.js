@@ -1,4 +1,4 @@
-// File: public/js/main.js (ĐÃ SỬA LỖI CÚ PHÁP)
+// File: public/js/main.js (ĐÃ SỬA LỖI CÚ PHÁP HOÀN TOÀN)
 
 // KHÔNG CÓ IMPORT Ở ĐÂY NỮA
 
@@ -8,9 +8,11 @@
 // ==================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ... (Code khởi tạo DOMContentLoaded giữ nguyên)
     const pages = document.querySelectorAll('.page');
     
+    /**
+     * Hàm ẩn tất cả các trang và hiển thị trang được yêu cầu
+     */
     function showPage(pageId) {
         pages.forEach(page => {
             page.classList.remove('active');
@@ -18,26 +20,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const newPage = document.getElementById(pageId);
         if (newPage) {
             newPage.classList.add('active');
-            window.scrollTo(0, 0);
+            window.scrollTo(0, 0); 
         } else {
             console.error(`Không tìm thấy trang với ID: ${pageId}`);
             document.getElementById('page-hub').classList.add('active');
         }
     }
 
-    // ... (Gán sự kiện cho các nút điều hướng giữ nguyên)
+    // Gán sự kiện cho các nút quay lại
     document.querySelectorAll('.back-button').forEach(button => {
         button.addEventListener('click', () => {
             showPage(button.dataset.page);
         });
     });
 
+    // Gán sự kiện cho các card ở trang chủ
     document.querySelectorAll('.hub-card').forEach(card => {
         card.addEventListener('click', () => {
             showPage(card.dataset.page);
         });
     });
 
+    // Gán sự kiện cho các link trên Header (và Footer)
     document.querySelectorAll('.header-nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -55,32 +59,59 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // --- KHỞI CHẠY CÁC SCRIPT CHO TỪNG CÔNG CỤ (Giữ nguyên) ---
-    if (typeof initKeywordsTool === 'function') { initKeywordsTool(); } else { console.error('Không tìm thấy hàm initKeywordsTool()'); }
-    if (typeof initCommentsTool === 'function') { initCommentsTool(); } else { console.error('Không tìm thấy hàm initCommentsTool()'); }
-    if (typeof initChannelAnalyzer === 'function') { initChannelAnalyzer(); } else { console.error('Không tìm thấy hàm initChannelAnalyzer()'); }
-    if (typeof initContactForm === 'function') { initContactForm(); } else { console.error('Không tìm thấy hàm initContactForm()'); }
+    // --- KHỞI CHẠY CÁC SCRIPT CHO TỪNG CÔNG CỤ ---
+    
+    if (typeof initKeywordsTool === 'function') {
+        initKeywordsTool();
+    } else {
+        console.error('Không tìm thấy hàm initKeywordsTool()');
+    }
+    
+    if (typeof initCommentsTool === 'function') {
+        initCommentsTool();
+    } else {
+        console.error('Không tìm thấy hàm initCommentsTool()');
+    }
+
+    if (typeof initChannelAnalyzer === 'function') {
+        initChannelAnalyzer();
+    } else {
+        console.error('Không tìm thấy hàm initChannelAnalyzer()');
+    }
+
+    if (typeof initContactForm === 'function') {
+        initContactForm();
+    } else {
+        console.error('Không tìm thấy hàm initContactForm()');
+    }
 });
 
 // ==================================================================
-// === SCRIPT CHO FORM LIÊN HỆ (Sửa setLoading) ===
+// === SCRIPT CHO FORM LIÊN HỆ ===
 // ==================================================================
 function initContactForm() {
-    // ... (Code định nghĩa Modal và Form elements giữ nguyên)
+    // Modal elements
     const contactModal = document.getElementById('contact-modal');
     const closeModalBtn = document.getElementById('contact-modal-close-btn');
+    
+    // Form elements
     const submitButton = document.getElementById('contact-submit-button');
     const emailInput = document.getElementById('contact-email');
     const subjectInput = document.getElementById('contact-subject');
     const messageInput = document.getElementById('contact-message');
     const statusEl = document.getElementById('contact-status');
+    
+    // Bộ đếm ký tự
     const charCounter = document.getElementById('char-counter');
 
-    if (!contactModal || !submitButton) return; 
+    if (!contactModal || !submitButton) return;
 
-    // --- Logic Mở/Đóng Modal (Giữ nguyên) ---
-    const showModal = () => { contactModal.classList.remove('hidden'); };
-    const hideModal = () => { 
+    // --- Logic Mở/Đóng Modal ---
+    const showModal = () => {
+        contactModal.classList.remove('hidden');
+    };
+
+    const hideModal = () => {
         contactModal.classList.add('hidden');
         statusEl.classList.add('hidden');
         statusEl.className = 'text-center mt-4';
@@ -95,7 +126,8 @@ function initContactForm() {
         }
     });
 
-    // ... (Gán sự kiện cho bộ đếm ký tự giữ nguyên)
+    // Gán sự kiện cho bộ đếm ký tự
+    if (messageInput && charCounter) { /* ... */ }
 
     // --- Logic Gửi Form (Sửa setLoading) ---
     submitButton.addEventListener('click', async () => {

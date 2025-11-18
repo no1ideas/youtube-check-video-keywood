@@ -1,40 +1,38 @@
-// api/youtube-comments.js (Code Đã Tối Ưu)
+// File: api/utils/youtube-comments.js
 
-import { getYoutubeApiKey } from './utils/apiConfig'; 
+/**
+ * Hàm hỗ trợ lấy bình luận (từng trang) từ một video YouTube
+ */
+import { getYoutubeApiKey } from './apiConfig.js';
+import fetch from 'node-fetch';
 
-export default async function handler(request, response) {
-    if (request.method !== 'POST') {
-        return response.status(405).json({ message: 'Method Not Allowed' });
+const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3';
+const API_KEY = getYoutubeApiKey();
+
+export async function fetchVideoComments(videoId, pageToken = null, order = 'relevance') {
+    let url = `${YOUTUBE_API_URL}/commentThreads?key=${API_KEY}&videoId=${videoId}&part=snippet,replies&maxResults=50&order=${order}`;
+    
+    if (pageToken) {
+        url += `&pageToken=${pageToken}`;
     }
 
-    try {
-        // Lấy API Key đã được kiểm tra và xác thực từ module cấu hình
-        const YOUTUBE_API_KEY = getYoutubeApiKey(); 
-        
-        const { videoId, maxResults, pageToken } = request.body;
+    const response = await fetch(url);
+    const data = await response.json();
 
-        if (!videoId) {
-            return response.status(400).json({ message: 'Missing videoId' });
+    if (!response.ok || data.error) {
+        let errorMessage = 'Lỗi API YouTube không xác định.';
+        if (data.error) {
+            errorMessage = data.error.errors[0]?.reason || data.error.message || errorMessage;
         }
-
-        let apiUrl = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&maxResults=${maxResults || 100}&order=relevance&key=${YOUTUBE_API_KEY}`;
-        
-        if (pageToken) {
-            apiUrl += `&pageToken=${pageToken}`;
-        }
-        
-        const apiResponse = await fetch(apiUrl);
-        
-        if (!apiResponse.ok) {
-            const errorText = await apiResponse.text();
-            throw new Error(`YouTube Comment API failed: ${apiResponse.status} - ${errorText}`);
-        }
-
-        const data = await apiResponse.json();
-        response.status(200).json(data);
-
-    } catch (error) {
-        console.error('Error in YouTube Comments API handler:', error.message);
-        response.status(500).json({ message: 'Server error when fetching comments.', error: error.message });
+        throw new Error(`Lỗi YouTube API: ${errorMessage}`);
     }
+    
+    // Thêm tổng số comment nếu có
+    const totalResults = data.pageInfo?.totalResults || null;
+
+    return {
+        items: data.items,
+        nextPageToken: data.nextPageToken || null,
+        videoTotalComments: totalResults
+    };
 }

@@ -35,12 +35,18 @@ window.GAP_LABELS = GAP_LABELS;
 // --- HÀM TIỆN ÍCH CŨ (Gắn vào window) ---
 // ====================================
 
+/**
+ * Trích xuất Video ID từ URL YouTube
+ */
 window.getYoutubeId = function(url) {
     const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
     const match = url.match(regex);
     return match ? match[1] : null;
 }
 
+/**
+ * Cập nhật trạng thái loading cho nút
+ */
 window.setLoading = function(button, isLoading, loadingText) {
     if (!button) return;
 
@@ -67,6 +73,9 @@ window.setLoading = function(button, isLoading, loadingText) {
     }
 }
 
+/**
+ * Hàm Copy to Clipboard (Sử dụng API Navigator.clipboard hiện đại)
+ */
 window.copyToClipboard = function(text, buttonElement) {
     if (navigator.clipboard) {
         navigator.clipboard.writeText(text).then(() => {
@@ -110,20 +119,29 @@ function copyToClipboardFallback(text, buttonElement) {
     document.body.removeChild(textArea);
 }
 
+/**
+ * Tối ưu hóa việc tính toán khoảng cách ngày theo lịch
+ */
 window.calculateDayDifference = function(date1, date2) {
     const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
-    const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+    const d2 = new Date(date2.getFullYear(), date2.getMonth(), d2.getDate());
     const diffTime = Math.abs(d1.getTime() - d2.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
     return diffDays;
 }
 
+/**
+ * Hiển thị thông báo trạng thái
+ */
 window.showStatusMessage = function(element, message, type) {
     element.textContent = message;
     element.className = `status-message status-${type}`; 
     element.style.display = 'block';
 }
 
+/**
+ * Ẩn thông báo trạng thái
+ */
 window.hideStatusMessage = function(element) {
     element.style.display = 'none';
     element.textContent = '';
