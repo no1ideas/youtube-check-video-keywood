@@ -1,9 +1,9 @@
-/* File: public/css/style.css (PHIÊN BẢN CUỐI CÙNG ĐÃ TỐI ƯU CHO VS CODE) */
+/* File: public/css/style.css (PHIÊN BẢN ỔN ĐỊNH CUỐI CÙNG) */
 
 /* Biến CSS cho màu sắc chủ đạo (Blue Theme) */
 :root {
     /* MÀU CHỦ ĐẠO THƯƠNG HIỆU: Lấy từ Blue logo */
-    --primary-blue: #1890FF;       /* Màu xanh chính */
+    --primary-blue: #1890FF;       /* Màu xanh chính (Sử dụng cho button, hover) */
     --primary-blue-dark: #0C457D;    /* Màu xanh đậm */
     --primary-blue-extra-dark: #002766; /* Màu nền cho Header/Footer */
     
@@ -16,15 +16,15 @@
     --border-light-gray: #d1d5db;  /* Viền xám nhạt */
     --bg-white: #ffffff;           /* Nền trắng tinh khiết */
     
-    /* MÀU CHO DARK HEADER (Giá trị HEX trực tiếp để VS Code không báo lỗi biến) */
-    --dark-bg-start: #002766; /* primary-blue-extra-dark */
-    --dark-bg-end: #0C457D; /* primary-blue-dark */
-    --dark-text: #ffffff; /* bg-white */
+    /* MÀU CHO DARK HEADER (Giá trị HEX trực tiếp) */
+    --dark-bg-start: #002766; 
+    --dark-bg-end: #0C457D; 
+    --dark-text: #ffffff; 
     --dark-highlight: #40a9ff; 
 }
 
 /* =============================================================
-   HEADER VÀ RESET
+   RESET VÀ BODY
    =============================================================
 */
 * {
@@ -47,8 +47,11 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border-light-gray); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-gray-light); }
 
+/* =============================================================
+   NAVBAR (SỬA LỖI CHÍNH)
+   =============================================================
+*/
 .navbar {
-    /* Gradient Blue đậm */
     background: linear-gradient(135deg, var(--dark-bg-start) 0%, var(--dark-bg-end) 100%);
     padding: 0 2rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
@@ -69,18 +72,14 @@ body {
     height: 100%;
 }
 
-.nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--dark-text);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1.1rem;
-    padding: 0.5rem 0;
+/* Menu chính */
+.nav-menu { 
+    display: flex; 
+    list-style: none; /* Rất quan trọng để loại bỏ dấu chấm */
+    margin: 0;
+    padding: 0; 
 }
 
-.nav-menu { display: flex; list-style: none; }
 .nav-item { position: relative; margin-right: 10px; }
 
 .nav-link {
@@ -98,8 +97,6 @@ body {
     color: var(--dark-highlight);
     background: rgba(255, 255, 255, 0.1); 
 }
-
-.nav-link.active { font-weight: 600; }
 
 /* Dropdown */
 .dropdown {
@@ -137,14 +134,6 @@ body {
     gap: 12px;
 }
 
-.dropdown-link i {
-    width: 20px;
-    font-size: 1.2rem;
-    text-align: center;
-    transition: all 0.25s ease;
-    flex-shrink: 0;
-}
-
 /* Màu icon riêng */
 .dropdown-link.seo i { color: #10b981; }
 .dropdown-link.comment i { color: #f59e0b; }
@@ -157,9 +146,7 @@ body {
     padding-left: 1.5rem;
 }
 
-.dropdown-link:hover i {
-    color: var(--primary-blue-extra-dark); 
-}
+.dropdown-link:hover i { color: var(--primary-blue-extra-dark); } 
 
 /* =============================================================
    QUY TẮC CHUNG CHO CÁC PAGE VÀ COMPONENTS
@@ -177,6 +164,7 @@ body {
 #page-hub { display: block; }
 
 /* Logo */
+.nav-logo { font-size: 1.1rem; }
 img.header-logo { height: 35px; width: 35px; object-fit: contain; background-color: transparent !important; }
 img.footer-logo { height: 40px; width: 40px; object-fit: contain; background-color: transparent !important; }
 
