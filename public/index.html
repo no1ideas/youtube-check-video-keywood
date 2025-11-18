@@ -410,54 +410,39 @@
         </div>
     </div>
 
-    <footer class="bg-primary-dark text-gray-300 pt-12 pb-8 mt-16">
-        <div class="container mx-auto max-w-7xl px-4 footer-grid">
-            
-            <div class="footer-col-left">
-                <a href="#" id="nav-brand-footer" data-page="page-hub" 
-                    class="header-nav-link text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                    <img src="images/logo.png" alt="ChannelPulse Logo" class="footer-logo">
-                    <span>ChannelPulse.me</span>
-                </a>
-                <p class="text-gray-400 max-w-xs">Bộ công cụ miễn phí hỗ trợ nhà sáng tạo nội dung YouTube.</p>
-            </div>
-
-            <div class="footer-col-center">
-                <h4 class="text-lg font-semibold text-white mb-3">Liên kết</h4>
-                <ul class="space-y-2">
-                    <li>
-                        <button data-page="page-contact" 
-                            class="header-nav-link text-gray-300 hover:text-primary-light hover:underline">Góp ý & Liên hệ</button>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="footer-col-right">
-                <h4 class="text-lg font-semibold text-white mb-3">Kết nối</h4>
-                <div class="flex items-center space-x-2 mb-2"> 
-                    <a href="https://www.youtube.com/@no1ideas" target="_blank" rel="noopener noreferrer" 
-                        class="footer-social-icon text-gray-300 hover:text-white"
-                        aria-label="Kênh YouTube của ChannelPulse">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M19.812 5.404c.834.225 1.402.977 1.402 1.956v9.28c0 .979-.568 1.731-1.402 1.956C18.667 18.825 12 18.825 12 18.825s-6.667 0-7.812-.429c-.835-.225-1.402-.977-1.402-1.956V7.36c0-.979.568-1.731 1.402-1.956C5.333 5.175 12 5.175 12 5.175s6.667 0 7.812.229ZM15.932 12 10.74 9.03V14.97L15.932 12Z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                    <a href="http://facebook.com/MaoNguyen.no1ideas" target="_blank" rel="noopener noreferrer" 
-                        class="footer-social-icon text-gray-300 hover:text-white"
-                        aria-label="Trang Facebook của ChannelPulse">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.505 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33V22C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
+    <footer class="footer"> <div class="nav-container py-10">
+            <div class="footer-grid">
+                <div class="footer-col-left flex flex-col items-start">
+                    <div class="nav-logo mb-4">
+                         <img src="logo.png" alt="ChannelPulse Logo" class="footer-logo">
+                        <span>ChannelPulse.me</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Công cụ tối ưu hóa kênh YouTube miễn phí, nhanh chóng và chính xác.</p>
                 </div>
-                <p class="text-gray-400 text-sm mt-2">Theo dõi để không bỏ lỡ bất kỳ cập nhật hay tính năng mới nào.</p>
+                
+                <div class="footer-col-center">
+                    <h3 class="text-lg font-bold mb-4 text-white">Công cụ</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" data-page="page-keywords" class="text-gray-400 hover:text-white transition-colors">Trình Tạo Từ Khóa</a></li>
+                        <li><a href="#" data-page="page-comments" class="text-gray-400 hover:text-white transition-colors">Trình Lấy Comment</a></li>
+                        <li><a href="#" data-page="page-analyzer" class="text-gray-400 hover:text-white transition-colors">Phân Tích Kênh</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col-right flex flex-col items-start">
+                    <h3 class="text-lg font-bold mb-4 text-white">Liên hệ</h3>
+                    <p class="text-gray-400 mb-4">Email: support@channelpulse.me</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white footer-social-icon"><i class="fab fa-facebook-f text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white footer-social-icon"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white footer-social-icon"><i class="fab fa-youtube text-xl"></i></a>
+                    </div>
+                </div>
             </div>
-
-        </div>
-
-        <div class="container mx-auto max-w-7xl px-4 text-center text-sm mt-10">
-            <div class="border-t border-gray-700 w-full mb-8"></div> 
-            <p class="text-gray-400">© 2025 ChannelPulse.me. Mọi quyền được bảo lưu.</p>
+            
+            <div class="mt-8 pt-4 border-t border-gray-700 text-center text-gray-500 text-sm">
+                &copy; 2025 ChannelPulse.me. All rights reserved.
+            </div>
         </div>
     </footer>
 

@@ -9,7 +9,7 @@
 :root {
     /* Màu sắc chính (Primary Color Palette) */
     --color-primary-light: #FF5A5F; /* Đỏ/Cam sáng cho nút bấm, nhấn mạnh */
-    --color-primary-dark: #334155; /* Xanh xám đậm cho nền Navbar, Footer */
+    --color-primary-dark: #1E293B; /* XANH NAVY ĐẬM MỚI cho nền Navbar, Footer */
     --color-secondary: #10B981; /* Xanh lá cây cho thành công/làm nổi bật */
     --color-text-dark: #1F2937; /* Màu chữ đậm */
     --color-text-light: #F9FAFB; /* Màu chữ nhạt */
@@ -36,7 +36,7 @@ body {
     left: 0;
     width: 100%;
     height: var(--navbar-height);
-    background-color: var(--color-primary-dark);
+    background-color: var(--color-primary-dark); /* Dùng màu Navy mới */
     color: var(--color-text-light);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
     z-index: var(--z-navbar);
@@ -226,7 +226,7 @@ body {
 .comment-tool-container h1 {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--color-primary-dark);
+    color: var(--color-primary-dark); /* Dùng màu Navy mới */
     margin-bottom: 0.5rem;
     text-align: center;
 }
@@ -408,7 +408,7 @@ body {
 .analyzer-container h1 {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--color-primary-dark);
+    color: var(--color-primary-dark); /* Dùng màu Navy mới */
     text-align: center;
     margin-bottom: 1.5rem;
 }
@@ -705,6 +705,13 @@ body {
 
 
 /* --- 8. FOOTER --- */
+
+/* Bổ sung bộ chọn để đặt màu nền Navy mới cho footer */
+.footer {
+    background-color: var(--color-primary-dark);
+    color: var(--color-text-light);
+    padding: 3rem 0; /* Giả định bạn cần padding cho footer */
+}
 
 .footer-grid {
     display: grid;
