@@ -13,8 +13,6 @@
     --color-secondary: #10B981; /* Xanh lá cây cho thành công/làm nổi bật */
     --color-text-dark: #1F2937; /* Màu chữ đậm */
     --color-text-light: #F9FAFB; /* Màu chữ nhạt */
-    --color-text-footer: #F3F4F6; /* Màu chữ Footer tối ưu độ tương phản */
-    --filter-to-white: brightness(0) invert(1); /* Lọc logo thành màu trắng */
 
     /* Kích thước */
     --navbar-height: 70px;
@@ -717,7 +715,7 @@ body {
 .footer-logo {
     width: 32px;
     height: 32px;
-    filter: var(--filter-to-white); /* Dùng biến để đổi logo thành trắng */
+    filter: brightness(0) invert(1); /* Đổi logo trắng cho nền tối */
 }
 
 .footer-social-icon {
@@ -726,24 +724,6 @@ body {
 
 .footer-social-icon:hover {
     color: var(--color-primary-light);
-}
-
-.footer-col-center ul button,
-.footer-col-center ul a {
-    /* Style cho các nút/link trong cột giữa (Liên kết) */
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    text-align: left;
-    color: var(--color-text-footer); /* Màu chữ tối ưu */
-    transition: color 0.2s;
-}
-
-.footer-col-center ul button:hover,
-.footer-col-center ul a:hover {
-    color: var(--color-primary-light);
-    text-decoration: underline;
 }
 
 /* --- 9. MEDIA QUERIES (RESPONSIVE) --- */
@@ -853,8 +833,6 @@ body {
     }
 
     .footer-col-left, .footer-col-center, .footer-col-right {
-        display: flex;
-        flex-direction: column;
         align-items: center;
         text-align: center;
     }
@@ -862,12 +840,6 @@ body {
     .footer-col-left {
         padding-bottom: 1rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .footer-col-center ul {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
     }
 }
 
