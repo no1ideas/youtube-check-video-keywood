@@ -1,4 +1,4 @@
-// File: api/utils/apiConfig.js (Code Đã Khôi Phục)
+// File: api/utils/apiConfig.js 
 
 /**
  * Lấy và kiểm tra khóa API YouTube.
@@ -6,7 +6,7 @@
  * @throws {Error} Nếu khóa API bị thiếu.
  */
 export function getYoutubeApiKey() {
-    // Tên biến môi trường được dùng trong các file API khác
+    // Tên biến môi trường: MY_YOUTUBE_API_KEY
     const key = process.env.MY_YOUTUBE_API_KEY; 
     if (!key) {
         throw new Error("Lỗi cấu hình: Khóa API YouTube (MY_YOUTUBE_API_KEY) chưa được thiết lập.");
@@ -20,7 +20,7 @@ export function getYoutubeApiKey() {
  * @throws {Error} Nếu khóa API bị thiếu.
  */
 export function getGeminiApiKey() {
-    // Tên biến môi trường được dùng trong các file API khác
+    // Tên biến môi trường: MY_GEMINI_API_KEY
     const key = process.env.MY_GEMINI_API_KEY; 
     if (!key) {
         throw new Error("Lỗi cấu hình: Khóa API Gemini (MY_GEMINI_API_KEY) chưa được thiết lập.");
@@ -33,7 +33,6 @@ export function getGeminiApiKey() {
  * @returns {string} Tên mô hình (mặc định là 'gemini-2.5-flash').
  */
 export function getGeminiModelName() {
-    // Tên biến môi trường được dùng trong các file API khác
-    // Nếu biến môi trường này thiếu, nó dùng giá trị mặc định ổn định
+    // Tên biến môi trường: GEMINI_MODEL_NAME
     return process.env.GEMINI_MODEL_NAME || 'gemini-2.5-flash';
 }

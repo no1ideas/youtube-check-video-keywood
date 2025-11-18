@@ -1,4 +1,4 @@
-// File: public/js/utils.js (ĐÃ KHÔI PHỤC VÀ TỐI ƯU CƠ CHẾ GLOBAL)
+// File: public/js/utils.js (KHÔI PHỤC CƠ CHẾ GLOBAL VÀ TỐI ƯU HÀM)
 
 // --- HẰNG SỐ CHUNG CHO BIỂU ĐỒ VÀ PHÂN TÍCH ---
 
@@ -24,6 +24,11 @@ const GAP_LABELS = [
     'Dưới 1 ngày', '1 ngày', '2 ngày', '3 ngày', 
     '4-6 ngày', '7-14 ngày', 'Trên 14 ngày'
 ];
+
+window.CHART_COLORS = CHART_COLORS;
+window.HOUR_LABELS = HOUR_LABELS;
+window.WEEKDAY_NAMES = WEEKDAY_NAMES;
+window.GAP_LABELS = GAP_LABELS;
 
 
 // ====================================

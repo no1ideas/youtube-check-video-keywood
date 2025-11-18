@@ -1,33 +1,32 @@
-/* File: public/css/style.css (Đã điều chỉnh màu sắc và fix lỗi biến) */
+/* File: public/css/style.css (PHIÊN BẢN CUỐI CÙNG ĐÃ TỐI ƯU CHO VS CODE) */
 
-/* Biến CSS cho màu sắc chủ đạo (từ logo mới) */
+/* Biến CSS cho màu sắc chủ đạo (Blue Theme) */
 :root {
     /* MÀU CHỦ ĐẠO THƯƠNG HIỆU: Lấy từ Blue logo */
-    --primary-blue: #1890FF;       /* Màu xanh chính (Blue-Light cũ) */
-    --primary-blue-dark: #0C457D;    /* Màu xanh đậm (Dark Theme Header) */
-    --primary-blue-extra-dark: #002766; /* Màu nền cho Header */
+    --primary-blue: #1890FF;       /* Màu xanh chính */
+    --primary-blue-dark: #0C457D;    /* Màu xanh đậm */
+    --primary-blue-extra-dark: #002766; /* Màu nền cho Header/Footer */
     
     /* MÀU XÁM VÀ NỀN (Tối ưu độ tương phản) */
-    --text-color-dark: #1f2937;    /* Màu chữ đậm (Giao diện chính) */
+    --text-color-dark: #1f2937;    /* Màu chữ đậm */
     --text-color-medium: #4b5563;  /* Màu chữ xám trung tính */
     --text-gray-light: #6b7280;    /* Màu chữ xám nhạt */
-    --bg-main: #fcfcfc;            /* Nền trắng gần như tinh khiết */
+    --bg-main: #fcfcfc;            /* Nền trắng chính */
     --bg-light-gray: #f3f4f6;      /* Nền xám nhẹ cho các section */
     --border-light-gray: #d1d5db;  /* Viền xám nhạt */
     --bg-white: #ffffff;           /* Nền trắng tinh khiết */
     
-    /* MÀU CHO DARK HEADER (Đã làm lại thành Primary Blue Theme) */
-    --dark-bg-start: var(--primary-blue-extra-dark);
-    --dark-bg-end: var(--primary-blue-dark);
-    --dark-text: var(--bg-white);
-    --dark-highlight: #40a9ff; /* Highlight sáng hơn */
+    /* MÀU CHO DARK HEADER (Giá trị HEX trực tiếp để VS Code không báo lỗi biến) */
+    --dark-bg-start: #002766; /* primary-blue-extra-dark */
+    --dark-bg-end: #0C457D; /* primary-blue-dark */
+    --dark-text: #ffffff; /* bg-white */
+    --dark-highlight: #40a9ff; 
 }
 
 /* =============================================================
-   MÃ CSS MẪU MỚI: HEADER DARK THEME (Đã Khắc phục Lỗi Reset)
+   HEADER VÀ RESET
    =============================================================
 */
-/* Khôi phục Reset cơ bản và Box-sizing */
 * {
     margin: 0;
     padding: 0;
@@ -36,8 +35,8 @@
 }
 
 body {
-    background: var(--bg-main); /* Nền chính sáng hơn */
-    color: var(--text-color-dark); /* Chữ đậm hơn */
+    background: var(--bg-main); 
+    color: var(--text-color-dark); 
     padding-top: 60px; 
     font-family: "Inter", sans-serif;
 }
@@ -49,10 +48,10 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: var(--text-gray-light); }
 
 .navbar {
-    /* Áp dụng màu Gradient tối (Màu Blue đậm nhất của thương hiệu) */
+    /* Gradient Blue đậm */
     background: linear-gradient(135deg, var(--dark-bg-start) 0%, var(--dark-bg-end) 100%);
     padding: 0 2rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Shadow đậm hơn cho Header tối */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
     position: fixed;
     top: 0;
     left: 0;
@@ -70,7 +69,6 @@ body {
     height: 100%;
 }
 
-/* Logo và Tên Thương hiệu */
 .nav-logo {
     display: flex;
     align-items: center;
@@ -82,16 +80,8 @@ body {
     padding: 0.5rem 0;
 }
 
-/* Menu Chính */
-.nav-menu {
-    display: flex;
-    list-style: none;
-}
-
-.nav-item {
-    position: relative;
-    margin-right: 10px; 
-}
+.nav-menu { display: flex; list-style: none; }
+.nav-item { position: relative; margin-right: 10px; }
 
 .nav-link {
     display: block;
@@ -106,12 +96,10 @@ body {
 .nav-link:hover,
 .nav-link.active {
     color: var(--dark-highlight);
-    background: rgba(255, 255, 255, 0.1); /* Hover/active nhẹ nhàng hơn */
+    background: rgba(255, 255, 255, 0.1); 
 }
 
-.nav-link.active {
-    font-weight: 600;
-}
+.nav-link.active { font-weight: 600; }
 
 /* Dropdown */
 .dropdown {
@@ -121,17 +109,17 @@ body {
     background: var(--dark-bg-start);
     min-width: 300px; 
     border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8); /* Shadow đậm hơn */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8); 
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
     transition: all 0.3s ease;
     padding: 0.5rem 0;
-    border: 1px solid var(--primary-blue-dark); /* Viền màu blue đậm */
+    border: 1px solid var(--primary-blue-dark); 
     z-index: 100;
 }
 
-/* FIX DROPDOWN HOVER (Menu Cấp 2): Kích hoạt hiển thị */
+/* FIX DROPDOWN HOVER */
 .nav-item:hover > .dropdown {
     opacity: 1;
     visibility: visible;
@@ -164,60 +152,43 @@ body {
 
 .dropdown-link:hover {
     background: var(--dark-highlight);
-    color: var(--primary-blue-extra-dark); /* Chữ đen khi hover highlight */
+    color: var(--primary-blue-extra-dark); 
     font-weight: 600;
     padding-left: 1.5rem;
 }
 
 .dropdown-link:hover i {
-    color: var(--primary-blue-extra-dark); /* Icon đen khi hover highlight */
+    color: var(--primary-blue-extra-dark); 
 }
 
 /* =============================================================
-   CÁC QUY TẮC CŨ (Đã Tích Hợp và Sửa Lỗi)
+   QUY TẮC CHUNG CHO CÁC PAGE VÀ COMPONENTS
    =============================================================
 */
 
-/* [SỬA LỖI FOCUS] */
 .focus\:border-primary-light:focus {
-    border-color: var(--primary-blue) !important; /* Dùng primary-blue mới */
+    border-color: var(--primary-blue) !important; 
     box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.4) !important;
 }
 
-/* Ẩn/Hiện các trang (Cấu trúc Single Page Application - SPA) */
+/* Ẩn/Hiện các trang */
 .page { display: none; }
 .page.active { display: block; }
 #page-hub { display: block; }
 
-/* [SỬA LỖI] Điều chỉnh logo */
-img.header-logo {
-    height: 35px; 
-    width: 35px; 
-    object-fit: contain;
-    background-color: transparent !important; 
-}
-img.footer-logo {
-    height: 40px; 
-    width: 40px; 
-    object-fit: contain;
-    background-color: transparent !important; 
-}
+/* Logo */
+img.header-logo { height: 35px; width: 35px; object-fit: contain; background-color: transparent !important; }
+img.footer-logo { height: 40px; width: 40px; object-fit: contain; background-color: transparent !important; }
 
-/* --- FIX FOOTER HOVER (Lỗi Chữ Bị Chìm) --- */
-.footer-col-left a.header-nav-link:hover span {
-    color: var(--primary-blue) !important; /* Dùng primary-blue mới */
-}
+/* Footer Hover */
+.footer-col-left a.header-nav-link:hover span { color: var(--primary-blue) !important; }
+.footer-col-center a.header-nav-link:hover { color: var(--primary-blue) !important; text-decoration: underline; }
 
-.footer-col-center a.header-nav-link:hover {
-    color: var(--primary-blue) !important; /* Dùng primary-blue mới */
-    text-decoration: underline;
-}
-
-/* Trang chủ (Hub) */
+/* Trang chủ (Hub Card) */
 .hub-card {
     background-color: var(--bg-white);
     border-radius: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05); /* Shadow nhẹ nhàng */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05); 
     padding: 2rem;
     text-align: center;
     transition: all 0.3s ease;
@@ -230,20 +201,12 @@ img.footer-logo {
 .hub-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
-    border: 1px solid var(--primary-blue); /* Highlight viền xanh khi hover */
+    border: 1px solid var(--primary-blue); 
 }
-.hub-card h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    color: var(--primary-blue-dark); /* Dùng màu blue đậm */
-}
-.hub-card p {
-    font-size: 1rem;
-    color: var(--text-color-medium); 
-}
+.hub-card h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--primary-blue-dark); }
+.hub-card p { font-size: 1rem; color: var(--text-color-medium); }
 
-/* Nút quay lại chung */
+/* Nút quay lại */
 .back-button {
     display: inline-flex;
     align-items: center;
@@ -258,12 +221,9 @@ img.footer-logo {
     transition: all 0.2s;
     margin-bottom: 16px;
 }
-.back-button:hover {
-    background-color: var(--bg-light-gray);
-}
+.back-button:hover { background-color: var(--bg-light-gray); }
 
-/* --- Các quy tắc còn lại cho Tools, Modals, Footer Grid... (Giữ nguyên) --- */
-
+/* Popover và Copy Buttons */
 .popover { display: none; position: absolute; z-index: 50; width: 320px; max-height: 400px; overflow-y: auto; word-wrap: break-word; }
 .result-btn:hover + .popover, .popover:hover { display: block; }
 .toggle-desc { color: var(--primary-blue); font-weight: 500; cursor: pointer; margin-left: 4px; } 
@@ -275,6 +235,8 @@ img.footer-logo {
 .popover-copy-btn { background-color: #e0f2f1; color: #0f766e; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; transition: all 0.2s; cursor: pointer; }
 .popover-copy-btn:hover { background-color: #cce9e6; } 
 .popover-copy-btn:disabled { background-color: #d1fae5; color: #065f46; cursor: not-allowed; }
+
+/* Comment Tool */
 .comment-tool-container { width:100%; max-width:900px; background:var(--bg-white); padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06) }
 .comment-tool-container h1 { margin:0 0 8px; text-align:center; color:var(--primary-blue-dark); font-weight:800; } 
 .comment-tool-note { text-align: center; font-size: 0.875rem; color: var(--text-gray-light); margin-bottom: 18px; }
@@ -311,11 +273,15 @@ img.footer-logo {
 .metric-label { font-size:12px; color:#666; margin-bottom:4px }
 .metric-value { font-weight:800; font-size:16px; word-break:normal; line-height: 1.3; }
 @media (max-width: 980px){ .thread-row{ grid-template-columns:1fr } .thread-right { margin-top: 16px; } }
+
+/* Analyzer Tool */
 .analyzer-container { width:100%; max-width: 100%; background:var(--bg-white); padding:24px; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,.06) }
 .analyzer-container h1 { margin:0 0 18px; text-align:center; color:var(--primary-blue-dark); font-weight:800; } 
 .filter-container-wrapper { overflow-x: auto; scrollbar-width: none; }
 .filter-container-wrapper::-webkit-scrollbar { display: none; }
 .chart-container { position: relative; width: 100%; height: 300px; margin: auto; }
+
+/* Toasts and Modals */
 .copy-success-toast { position: fixed; bottom: 20px; right: 20px; background-color: #10B981; color: white; padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100; opacity: 0; transition: opacity 0.3s ease; }
 .save-video-btn { background-color: #e0f2f1; color: #0f766e; font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 6px; transition: all 0.2s; margin-left: auto; }
 .save-video-btn:hover { background-color: #cce9e6; } 
@@ -335,8 +301,12 @@ img.footer-logo {
 .modal-list-title { flex: 1; font-size: 0.875rem; line-height: 1.3; }
 .modal-list-remove-btn { color: #ef4444; font-size: 0.75rem; font-weight: 500; cursor: pointer; text-decoration: underline; flex-shrink: 0; }
 .modal-footer { margin-top: 20px; }
+
+/* Loader */
 .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-blue); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* Footer Grid */
 .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2rem; }
 .footer-col-left { justify-self: start; text-align: left; }
 .footer-col-center { justify-self: center; text-align: left; width: 100%; }
