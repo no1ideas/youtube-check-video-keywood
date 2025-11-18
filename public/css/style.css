@@ -1,152 +1,160 @@
+/* File: public/css/style.css (Đã điều chỉnh màu sắc và fix lỗi biến) */
+
 /* Biến CSS cho màu sắc chủ đạo (từ logo mới) */
 :root {
-    --primary-blue-dark: #0C457D; /* Màu xanh đậm từ logo */
-    --primary-blue-light: #1890FF; /* Màu xanh nhạt từ logo */
-    --text-gray-medium: #4b5563; /* Màu chữ xám trung tính */
-    --text-gray-light: #6b7280; /* Màu chữ xám nhạt */
-    --bg-light-gray: #f3f4f6; /* Nền xám nhạt */
-    --border-light-gray: #d1d5db; /* Viền xám nhạt */
-    --bg-white: #ffffff; /* Nền trắng */
+    /* MÀU CHỦ ĐẠO THƯƠNG HIỆU: Lấy từ Blue logo */
+    --primary-blue: #1890FF;       /* Màu xanh chính (Blue-Light cũ) */
+    --primary-blue-dark: #0C457D;    /* Màu xanh đậm (Dark Theme Header) */
+    --primary-blue-extra-dark: #002766; /* Màu nền cho Header */
     
-    /* BIẾN MỚI CHO DARK THEME HEADER */
-    --dark-bg-start: #1e293b;
-    --dark-bg-end: #0f172a;
-    --dark-text: #cbd5e1;
-    --dark-highlight: #00d4ff; 
+    /* MÀU XÁM VÀ NỀN (Tối ưu độ tương phản) */
+    --text-color-dark: #1f2937;    /* Màu chữ đậm (Giao diện chính) */
+    --text-color-medium: #4b5563;  /* Màu chữ xám trung tính */
+    --text-gray-light: #6b7280;    /* Màu chữ xám nhạt */
+    --bg-main: #fcfcfc;            /* Nền trắng gần như tinh khiết */
+    --bg-light-gray: #f3f4f6;      /* Nền xám nhẹ cho các section */
+    --border-light-gray: #d1d5db;  /* Viền xám nhạt */
+    --bg-white: #ffffff;           /* Nền trắng tinh khiết */
+    
+    /* MÀU CHO DARK HEADER (Đã làm lại thành Primary Blue Theme) */
+    --dark-bg-start: var(--primary-blue-extra-dark);
+    --dark-bg-end: var(--primary-blue-dark);
+    --dark-text: var(--bg-white);
+    --dark-highlight: #40a9ff; /* Highlight sáng hơn */
 }
 
 /* =============================================================
-    MÃ CSS MẪU MỚI: HEADER DARK THEME (Đã Khắc phục Lỗi Reset)
-    =============================================================
+   MÃ CSS MẪU MỚI: HEADER DARK THEME (Đã Khắc phục Lỗi Reset)
+   =============================================================
 */
 /* Khôi phục Reset cơ bản và Box-sizing */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box; /* RẤT QUAN TRỌNG cho Layout và Box Model */
-    font-family: "Inter", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; 
+    font-family: "Inter", sans-serif;
 }
 
 body {
-    background: var(--bg-light-gray);
-    color: var(--text-gray-medium);
-    padding-top: 60px; /* Bù đắp chiều cao Header cố định (Khắc phục khoảng trống thừa) */
-    font-family: "Inter", sans-serif;
+    background: var(--bg-main); /* Nền chính sáng hơn */
+    color: var(--text-color-dark); /* Chữ đậm hơn */
+    padding-top: 60px; 
+    font-family: "Inter", sans-serif;
 }
 
 /* Tùy chỉnh thanh cuộn */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f1f1f1; }
-::-webkit-scrollbar-thumb { background: #a8a8a8; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #7c7c7c; }
+::-webkit-scrollbar-track { background: var(--bg-main); }
+::-webkit-scrollbar-thumb { background: var(--border-light-gray); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-gray-light); }
 
 .navbar {
-    /* Áp dụng màu Gradient tối (Khắc phục lỗi nền trắng) */
-    background: linear-gradient(135deg, var(--dark-bg-start) 0%, var(--dark-bg-end) 100%);
-    padding: 0 2rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    height: 60px; /* Chiều cao cố định */
+    /* Áp dụng màu Gradient tối (Màu Blue đậm nhất của thương hiệu) */
+    background: linear-gradient(135deg, var(--dark-bg-start) 0%, var(--dark-bg-end) 100%);
+    padding: 0 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Shadow đậm hơn cho Header tối */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 60px; 
 }
 
 .nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
 }
 
 /* Logo và Tên Thương hiệu */
 .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--dark-text);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1.1rem;
-    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--dark-text);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.5rem 0;
 }
 
 /* Menu Chính */
 .nav-menu {
-    display: flex;
-    list-style: none;
+    display: flex;
+    list-style: none;
 }
 
 .nav-item {
-    position: relative;
-    margin-right: 10px; 
+    position: relative;
+    margin-right: 10px; 
 }
 
 .nav-link {
-    display: block;
-    padding: 1rem 1.2rem;
-    color: var(--dark-text);
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    position: relative;
+    display: block;
+    padding: 1rem 1.2rem;
+    color: var(--dark-text);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
 .nav-link:hover,
 .nav-link.active {
-    color: var(--dark-highlight);
-    background: rgba(0, 212, 255, 0.1);
+    color: var(--dark-highlight);
+    background: rgba(255, 255, 255, 0.1); /* Hover/active nhẹ nhàng hơn */
 }
 
 .nav-link.active {
-    font-weight: 600;
+    font-weight: 600;
 }
 
 /* Dropdown */
 .dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: var(--dark-bg-start);
-    min-width: 300px; 
-    border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(10px);
-    transition: all 0.3s ease;
-    padding: 0.5rem 0;
-    border: 1px solid #334155;
-    z-index: 100;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--dark-bg-start);
+    min-width: 300px; 
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8); /* Shadow đậm hơn */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    padding: 0.5rem 0;
+    border: 1px solid var(--primary-blue-dark); /* Viền màu blue đậm */
+    z-index: 100;
 }
 
 /* FIX DROPDOWN HOVER (Menu Cấp 2): Kích hoạt hiển thị */
 .nav-item:hover > .dropdown {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
 .dropdown-link {
-    display: flex;
-    align-items: flex-start;
-    padding: 0.75rem 1.25rem;
-    color: var(--dark-text);
-    text-decoration: none;
-    font-size: 0.95rem;
-    transition: all 0.25s ease;
-    gap: 12px;
+    display: flex;
+    align-items: flex-start;
+    padding: 0.75rem 1.25rem;
+    color: var(--dark-text);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.25s ease;
+    gap: 12px;
 }
 
 .dropdown-link i {
-    width: 20px;
-    font-size: 1.2rem;
-    text-align: center;
-    transition: all 0.25s ease;
-    flex-shrink: 0;
+    width: 20px;
+    font-size: 1.2rem;
+    text-align: center;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
 }
 
 /* Màu icon riêng */
@@ -155,120 +163,110 @@ body {
 .dropdown-link.analytics i { color: #8b5cf6; }
 
 .dropdown-link:hover {
-    background: var(--dark-highlight);
-    color: var(--dark-bg-end);
-    font-weight: 600;
-    padding-left: 1.5rem;
+    background: var(--dark-highlight);
+    color: var(--primary-blue-extra-dark); /* Chữ đen khi hover highlight */
+    font-weight: 600;
+    padding-left: 1.5rem;
 }
 
 .dropdown-link:hover i {
-    color: var(--dark-bg-end);
+    color: var(--primary-blue-extra-dark); /* Icon đen khi hover highlight */
 }
 
 /* =============================================================
-    CÁC QUY TẮC CŨ (Đã Tích Hợp và Sửa Lỗi)
-    =============================================================
+   CÁC QUY TẮC CŨ (Đã Tích Hợp và Sửa Lỗi)
+   =============================================================
 */
 
 /* [SỬA LỖI FOCUS] */
 .focus\:border-primary-light:focus {
-    border-color: var(--primary-blue-light) !important;
-    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.4) !important;
+    border-color: var(--primary-blue) !important; /* Dùng primary-blue mới */
+    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.4) !important;
 }
 
-/* [TỐI ƯU CẤU TRÚC SPA]
-    1. Chỉ hiển thị page.active
-    2. #page-hub không cần quy tắc riêng vì nó được kích hoạt class .active ngay khi tải.
-*/
+/* Ẩn/Hiện các trang (Cấu trúc Single Page Application - SPA) */
 .page { display: none; }
 .page.active { display: block; }
-/* #page-hub { display: block; } <--- Đã bị xóa/tối ưu hóa */
-
+#page-hub { display: block; }
 
 /* [SỬA LỖI] Điều chỉnh logo */
 img.header-logo {
-    height: 35px; /* Điều chỉnh kích thước logo cho Header mới */
-    width: 35px; 
-    object-fit: contain;
-    background-color: transparent !important; 
+    height: 35px; 
+    width: 35px; 
+    object-fit: contain;
+    background-color: transparent !important; 
 }
 img.footer-logo {
-    height: 40px; 
-    width: 40px; 
-    object-fit: contain;
-    background-color: transparent !important; 
+    height: 40px; 
+    width: 40px; 
+    object-fit: contain;
+    background-color: transparent !important; 
 }
 
-/* --- FIX FOOTER HOVER (Khắc phục lỗi hover chữ và logo) --- */
-/* (1) FIX hover cho tên thương hiệu ở Footer: Phải dùng .nav-logo:hover */
-.footer-col-left a#nav-brand-footer:hover span {
-    color: var(--primary-blue-light) !important; 
+/* --- FIX FOOTER HOVER (Lỗi Chữ Bị Chìm) --- */
+.footer-col-left a.header-nav-link:hover span {
+    color: var(--primary-blue) !important; /* Dùng primary-blue mới */
 }
 
-/* (2) FIX hover cho liên kết thường ở Footer: Dùng class đã có */
 .footer-col-center a.header-nav-link:hover {
-    color: var(--primary-blue-light) !important;
-    text-decoration: underline;
+    color: var(--primary-blue) !important; /* Dùng primary-blue mới */
+    text-decoration: underline;
 }
-
-/* [QUY TẮC CŨ ĐÃ XÓA VÌ KHÔNG CHÍNH XÁC/DƯ THỪA]
-    .footer-col-left a.header-nav-link:hover span { ... } 
-*/
-
 
 /* Trang chủ (Hub) */
 .hub-card {
-    background-color: var(--bg-white);
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
-    text-align: center;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    background-color: var(--bg-white);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05); /* Shadow nhẹ nhàng */
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 .hub-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--primary-blue); /* Highlight viền xanh khi hover */
 }
 .hub-card h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    color: var(--primary-blue-dark); 
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--primary-blue-dark); /* Dùng màu blue đậm */
 }
 .hub-card p {
-    font-size: 1rem;
-    color: var(--text-gray-medium); 
+    font-size: 1rem;
+    color: var(--text-color-medium); 
 }
 
 /* Nút quay lại chung */
 .back-button {
-    display: inline-flex;
-    align-items: center;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--text-gray-medium); 
-    background-color: var(--bg-white);
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid var(--border-light-gray); 
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 16px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-color-dark); 
+    background-color: var(--bg-white);
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light-gray); 
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 16px;
 }
 .back-button:hover {
-    background-color: #f9fafb;
+    background-color: var(--bg-light-gray);
 }
 
 /* --- Các quy tắc còn lại cho Tools, Modals, Footer Grid... (Giữ nguyên) --- */
 
 .popover { display: none; position: absolute; z-index: 50; width: 320px; max-height: 400px; overflow-y: auto; word-wrap: break-word; }
 .result-btn:hover + .popover, .popover:hover { display: block; }
-.toggle-desc { color: var(--primary-blue-light); font-weight: 500; cursor: pointer; margin-left: 4px; } 
+.toggle-desc { color: var(--primary-blue); font-weight: 500; cursor: pointer; margin-left: 4px; } 
 .toggle-desc:hover { text-decoration: underline; }
 .desc-full { display: none; }
 .copy-btn { background-color: var(--bg-light-gray); color: #374151; border: 1px solid var(--border-light-gray); padding: 2px 8px; border-radius: 6px; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; flex-shrink: 0; }
@@ -283,13 +281,13 @@ img.footer-logo {
 .comment-row { display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap }
 .comment-row .field { flex:1; min-width:260px }
 .comment-input[type="text"] { width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:10px; font-size:15px; outline:none; }
-.comment-btn { padding:12px 18px; font-size:15px; background:var(--primary-blue-light); color:#fff; border:none; border-radius:10px; cursor:pointer; transition:.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.comment-btn { padding:12px 18px; font-size:15px; background:var(--primary-blue); color:#fff; border:none; border-radius:10px; cursor:pointer; transition:.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .comment-btn:hover { background:var(--primary-blue-dark); } 
 .comment-btn:disabled { background:#cfcfcf; cursor:not-allowed }
 .sort-bar { display:none; gap:10px; align-items:center; flex-wrap:wrap; margin:12px 0 6px; }
 .sort-title { font-weight:700; color:#444; flex-shrink: 0; }
 .sort-btn { border:1px solid #e5e7eb; background:var(--bg-white); color:#333; padding:8px 12px; border-radius:10px; cursor:pointer; font-size:14px; flex-shrink: 0; }
-.sort-btn.active { border-color:var(--primary-blue-light); color:var(--primary-blue-light); font-weight:800 } 
+.sort-btn.active { border-color:var(--primary-blue); color:var(--primary-blue); font-weight:800 } 
 .time-filter-select { border:1px solid #e5e7eb; background:var(--bg-white); color:#333; padding: 8px 12px; border-radius:10px; font-size:14px; margin-right: 10px; }
 .sort-hint { margin-left:auto; color:#888; font-size:12px; flex-shrink: 0; }
 #comment-status { text-align:center; font-size:14px; color:#777; margin:8px 0 0 }
@@ -337,7 +335,7 @@ img.footer-logo {
 .modal-list-title { flex: 1; font-size: 0.875rem; line-height: 1.3; }
 .modal-list-remove-btn { color: #ef4444; font-size: 0.75rem; font-weight: 500; cursor: pointer; text-decoration: underline; flex-shrink: 0; }
 .modal-footer { margin-top: 20px; }
-.loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-blue-light); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+.loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-blue); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2rem; }
 .footer-col-left { justify-self: start; text-align: left; }
