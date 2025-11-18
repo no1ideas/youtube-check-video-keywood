@@ -704,13 +704,14 @@ body {
 }
 
 
+/* ... (Các phần 1 đến 7 giữ nguyên) ... */
+
 /* --- 8. FOOTER --- */
 
-/* Bổ sung bộ chọn để đặt màu nền Navy mới cho footer */
 .footer {
-    background-color: var(--color-primary-dark);
+    background-color: var(--color-primary-dark); /* Màu Navy Đậm: #1E293B */
     color: var(--color-text-light);
-    padding: 3rem 0; /* Giả định bạn cần padding cho footer */
+    padding: 3rem 0; 
 }
 
 .footer-grid {
@@ -722,7 +723,8 @@ body {
 .footer-logo {
     width: 32px;
     height: 32px;
-    filter: brightness(0) invert(1); /* Đổi logo trắng cho nền tối */
+    /* ĐÃ LOẠI BỎ: filter: brightness(0) invert(1); */ 
+    /* Logo sẽ giữ màu gốc (xanh/trắng) trên nền Navy */
 }
 
 .footer-social-icon {
@@ -732,6 +734,8 @@ body {
 .footer-social-icon:hover {
     color: var(--color-primary-light);
 }
+
+/* ... (Các phần 9. MEDIA QUERIES giữ nguyên) ... */
 
 /* --- 9. MEDIA QUERIES (RESPONSIVE) --- */
 
