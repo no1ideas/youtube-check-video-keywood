@@ -16,8 +16,8 @@
 }
 
 /* =============================================================
-   MÃ CSS MẪU MỚI: HEADER DARK THEME (Đã Khắc phục Lỗi Reset)
-   =============================================================
+    MÃ CSS MẪU MỚI: HEADER DARK THEME (Đã Khắc phục Lỗi Reset)
+    =============================================================
 */
 /* Khôi phục Reset cơ bản và Box-sizing */
 * {
@@ -166,8 +166,8 @@ body {
 }
 
 /* =============================================================
-   CÁC QUY TẮC CŨ (Đã Tích Hợp và Sửa Lỗi)
-   =============================================================
+    CÁC QUY TẮC CŨ (Đã Tích Hợp và Sửa Lỗi)
+    =============================================================
 */
 
 /* [SỬA LỖI FOCUS] */
@@ -176,10 +176,14 @@ body {
     box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.4) !important;
 }
 
-/* Ẩn/Hiện các trang (Cấu trúc Single Page Application - SPA) */
+/* [TỐI ƯU CẤU TRÚC SPA]
+    1. Chỉ hiển thị page.active
+    2. #page-hub không cần quy tắc riêng vì nó được kích hoạt class .active ngay khi tải.
+*/
 .page { display: none; }
 .page.active { display: block; }
-#page-hub { display: block; }
+/* #page-hub { display: block; } <--- Đã bị xóa/tối ưu hóa */
+
 
 /* [SỬA LỖI] Điều chỉnh logo */
 img.header-logo {
@@ -195,15 +199,22 @@ img.footer-logo {
     background-color: transparent !important; 
 }
 
-/* --- FIX FOOTER HOVER (Lỗi Chữ Bị Chìm) --- */
-.footer-col-left a.header-nav-link:hover span {
+/* --- FIX FOOTER HOVER (Khắc phục lỗi hover chữ và logo) --- */
+/* (1) FIX hover cho tên thương hiệu ở Footer: Phải dùng .nav-logo:hover */
+.footer-col-left a#nav-brand-footer:hover span {
     color: var(--primary-blue-light) !important; 
 }
 
+/* (2) FIX hover cho liên kết thường ở Footer: Dùng class đã có */
 .footer-col-center a.header-nav-link:hover {
     color: var(--primary-blue-light) !important;
     text-decoration: underline;
 }
+
+/* [QUY TẮC CŨ ĐÃ XÓA VÌ KHÔNG CHÍNH XÁC/DƯ THỪA]
+    .footer-col-left a.header-nav-link:hover span { ... } 
+*/
+
 
 /* Trang chủ (Hub) */
 .hub-card {
