@@ -1,22 +1,19 @@
-/* File: public/css/style.css (PHIÊN BẢN ỔN ĐỊNH CUỐI CÙNG) */
+/* File: public/css/style.css (PHIÊN BẢN ỔN ĐỊNH HOÀN TOÀN) */
 
 /* Biến CSS cho màu sắc chủ đạo (Blue Theme) */
 :root {
-    /* MÀU CHỦ ĐẠO THƯƠNG HIỆU: Lấy từ Blue logo */
-    --primary-blue: #1890FF;       /* Màu xanh chính (Sử dụng cho button, hover) */
-    --primary-blue-dark: #0C457D;    /* Màu xanh đậm */
-    --primary-blue-extra-dark: #002766; /* Màu nền cho Header/Footer */
+    --primary-blue: #1890FF;       
+    --primary-blue-dark: #0C457D;    
+    --primary-blue-extra-dark: #002766; 
     
-    /* MÀU XÁM VÀ NỀN (Tối ưu độ tương phản) */
-    --text-color-dark: #1f2937;    /* Màu chữ đậm */
-    --text-color-medium: #4b5563;  /* Màu chữ xám trung tính */
-    --text-gray-light: #6b7280;    /* Màu chữ xám nhạt */
-    --bg-main: #fcfcfc;            /* Nền trắng chính */
-    --bg-light-gray: #f3f4f6;      /* Nền xám nhẹ cho các section */
-    --border-light-gray: #d1d5db;  /* Viền xám nhạt */
-    --bg-white: #ffffff;           /* Nền trắng tinh khiết */
+    --text-color-dark: #1f2937;    
+    --text-color-medium: #4b5563;  
+    --text-gray-light: #6b7280;    
+    --bg-main: #fcfcfc;            
+    --bg-light-gray: #f3f4f6;      
+    --border-light-gray: #d1d5db;  
+    --bg-white: #ffffff;           
     
-    /* MÀU CHO DARK HEADER (Giá trị HEX trực tiếp) */
     --dark-bg-start: #002766; 
     --dark-bg-end: #0C457D; 
     --dark-text: #ffffff; 
@@ -48,7 +45,7 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: var(--text-gray-light); }
 
 /* =============================================================
-   NAVBAR (SỬA LỖI CHÍNH)
+   NAVBAR (FIX LỖI HIỂN THỊ MENU)
    =============================================================
 */
 .navbar {
@@ -72,10 +69,20 @@ body {
     height: 100%;
 }
 
-/* Menu chính */
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--dark-text);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.5rem 0;
+}
+
 .nav-menu { 
     display: flex; 
-    list-style: none; /* Rất quan trọng để loại bỏ dấu chấm */
+    list-style: none; 
     margin: 0;
     padding: 0; 
 }
@@ -97,6 +104,8 @@ body {
     color: var(--dark-highlight);
     background: rgba(255, 255, 255, 0.1); 
 }
+
+.nav-link.active { font-weight: 600; }
 
 /* Dropdown */
 .dropdown {
@@ -134,18 +143,12 @@ body {
     gap: 12px;
 }
 
-/* Màu icon riêng */
+.dropdown-link i { width: 20px; font-size: 1.2rem; text-align: center; transition: all 0.25s ease; flex-shrink: 0; }
 .dropdown-link.seo i { color: #10b981; }
 .dropdown-link.comment i { color: #f59e0b; }
 .dropdown-link.analytics i { color: #8b5cf6; }
 
-.dropdown-link:hover {
-    background: var(--dark-highlight);
-    color: var(--primary-blue-extra-dark); 
-    font-weight: 600;
-    padding-left: 1.5rem;
-}
-
+.dropdown-link:hover { background: var(--dark-highlight); color: var(--primary-blue-extra-dark); font-weight: 600; padding-left: 1.5rem; }
 .dropdown-link:hover i { color: var(--primary-blue-extra-dark); } 
 
 /* =============================================================
